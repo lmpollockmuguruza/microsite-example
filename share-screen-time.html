@@ -11,14 +11,14 @@
 <body class="govuk-template__body" data-access="member" data-page="share" data-only-for="restrict">
 
   <div class="govuk-width-container">
-    <main class="govuk-main-wrapper" id="main-content">
+    <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full" style="max-width:780px">
 
           <!-- Confirmation (shown after submit) -->
-          <div id="done" class="smart-hide" tabindex="-1">
+          <div id="done" class="smart-hide govuk-!-margin-top-8" tabindex="-1">
             <div class="govuk-panel govuk-panel--confirmation">
-              <h1 class="govuk-panel__title">Thank you, we've got it</h1>
+              <h1 class="govuk-panel__title"><svg class="smart-icon" aria-hidden="true"><use href="#i-party-popper"></use></svg> Thank you, we've got it</h1>
               <div class="govuk-panel__body">Your reference<br><strong id="ref"></strong></div>
             </div>
             <p class="govuk-body">We'll ask you for the next one in about a month. You don't need to do anything else.</p>
@@ -29,18 +29,23 @@
           </div>
 
           <div id="form-page">
-            <div class="govuk-error-summary smart-hide" data-module="govuk-error-summary" id="error-summary" tabindex="-1">
+            <div class="govuk-error-summary smart-hide govuk-!-margin-top-6" data-module="govuk-error-summary" id="error-summary" tabindex="-1">
               <div role="alert">
                 <h2 class="govuk-error-summary__title">There is a problem</h2>
                 <div class="govuk-error-summary__body"><ul class="govuk-list govuk-error-summary__list"></ul></div>
               </div>
             </div>
 
-            <span class="govuk-caption-l">Once a month · about 2 minutes</span>
-            <h1 class="govuk-heading-xl">Share your child's screen time</h1>
-            <p class="govuk-body-l">Take a screenshot of the weekly screen time report on your child's phone and upload it here. It shows us how the restrictions are working. It is not a test, and there are no wrong answers.</p>
+            <div class="smart-hero smart-hero--compact smart-hero--mint">
+              <div>
+                <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg> Once a month · about 2 minutes</span>
+                <h1 class="govuk-heading-xl">Share your child's screen time</h1>
+                <p class="govuk-body-l">Take a screenshot of the weekly screen time report and upload it here. It helps us see how the restrictions are working. It's not a test, and there are no wrong answers.</p>
+              </div>
+              <img src="assets/images/illustrations/upload.svg" alt="">
+            </div>
 
-            <h2 class="govuk-heading-m">1. Take the screenshot</h2>
+            <h2 class="govuk-heading-l smart-numbered" data-n="1">Take the screenshot</h2>
             <div class="govuk-tabs" data-module="govuk-tabs">
               <h3 class="govuk-tabs__title">How to take the screenshot</h3>
               <ul class="govuk-tabs__list">
@@ -73,8 +78,8 @@
               <p><strong>Which screen?</strong> We need one screen that shows the most in one picture (the weekly average, most-used apps, pickups) and looks the same for every family. That makes the automatic reading much more reliable. Test in the pilot which screen works best on each platform.</p>
             </aside>
 
-            <h2 class="govuk-heading-m">2. Upload it</h2>
-            <form id="upload" novalidate>
+            <h2 class="govuk-heading-l smart-numbered" data-n="2">Upload it</h2>
+            <form id="upload" class="smart-box" novalidate>
 
               <div class="govuk-form-group" id="week-group">
                 <fieldset class="govuk-fieldset" aria-describedby="week-hint">
@@ -130,7 +135,7 @@
                 </fieldset>
               </div>
 
-              <button type="submit" class="govuk-button" data-module="govuk-button">Send</button>
+              <button type="submit" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg> Send</button>
             </form>
 
             <aside class="smart-design-note" data-decision="S3 A1">
@@ -159,6 +164,7 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
   <script>
     (function () {

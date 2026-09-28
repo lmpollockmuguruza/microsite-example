@@ -78,19 +78,26 @@
   }
 
   // ------------------------------------------------------------------ header
-  var mark =
-    '<svg class="smart-header__mark" viewBox="0 0 34 34" aria-hidden="true" focusable="false">' +
-    '<rect x="8" y="2" width="18" height="30" rx="4" fill="none" stroke="#fff" stroke-width="3"/>' +
-    '<circle cx="17" cy="26.5" r="1.8" fill="#fff"/>' +
-    '<path d="M12 12.5l3.5 3.5 6.5-7" fill="none" stroke="#6fa4d2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>'
+  function icon (name) {
+    return '<svg class="smart-icon" aria-hidden="true" focusable="false"><use href="#i-' + name + '"></use></svg>'
+  }
+  window.SMART.icon = icon
+
+  // The logo mark (a sun, a parent and a child) deliberately shows no phone,
+  // because the public page is seen by the control group (decision A4).
+  function logo (href) {
+    return '<a class="smart-logo" href="' + href + '">' +
+      '<img src="assets/images/logo-mark.svg" alt="">' +
+      '<span><span class="smart-logo__name">SMART <span>Study</span></span>' +
+      '<span class="smart-logo__tagline">' + SITE.tagline + '</span></span></a>'
+  }
 
   var navItems = [
-    { href: 'start.html', text: 'Start here', key: 'start' },
-    { href: 'guides.html', text: 'Guides', key: 'guides' },
-    { href: 'videos.html', text: 'Videos and webinars', key: 'videos' },
-    { href: 'share-screen-time.html', text: 'Share screen time', key: 'share', group: 'restrict' },
-    { href: 'help.html', text: 'Get help', key: 'help' }
+    { href: 'start.html', text: 'Start here', key: 'start', icon: 'house' },
+    { href: 'guides.html', text: 'Guides', key: 'guides', icon: 'book-open' },
+    { href: 'videos.html', text: 'Videos and webinars', key: 'videos', icon: 'circle-play' },
+    { href: 'share-screen-time.html', text: 'Share screen time', key: 'share', icon: 'upload', group: 'restrict' },
+    { href: 'help.html', text: 'Get help', key: 'help', icon: 'life-buoy' }
   ]
 
   var header = el(
@@ -102,17 +109,15 @@
     '<a class="govuk-link" href="decisions.html">See the open decisions</a>.' +
     '</div></div>' +
     '<header class="smart-header" role="banner"><div class="govuk-width-container smart-header__inner">' +
-    '<a class="smart-header__brand" href="' + (signedIn ? 'start.html' : 'index.html') + '">' + mark +
-    '<span><span class="smart-header__name">' + SITE.name + '</span>' +
-    '<span class="smart-header__tagline">' + SITE.tagline + '</span></span></a>' +
+    logo(signedIn ? 'start.html' : 'index.html') +
     (signedIn
-      ? '<a class="smart-header__signout" href="index.html" data-signout>Sign out</a>'
+      ? '<a class="smart-header__signout" href="index.html" data-signout>' + icon('log-out') + 'Sign out</a>'
       : '') +
     '</div></header>' +
     (signedIn
       ? '<nav class="smart-nav" aria-label="Main"><div class="govuk-width-container"><ul class="smart-nav__list">' +
         navItems.filter(function (i) { return !i.group || i.group === session.group }).map(function (i) {
-          return '<li class="smart-nav__item"><a href="' + i.href + '"' + (i.key === page ? ' aria-current="page"' : '') + '>' + i.text + '</a></li>'
+          return '<li class="smart-nav__item"><a href="' + i.href + '"' + (i.key === page ? ' aria-current="page"' : '') + '>' + icon(i.icon) + i.text + '</a></li>'
         }).join('') +
         '</ul></div></nav>'
       : '') +
@@ -121,19 +126,30 @@
   while (header.firstChild) body.insertBefore(header.lastChild, body.firstChild)
 
   // ------------------------------------------------------------------ footer
+  // Partner logos are placeholders: each organisation's logo needs their
+  // permission and brand guidelines (decision B5).
+  var partners = [
+    ['Department for Education', 'Commissioned by'],
+    ['IFF Research', 'Lead partner'],
+    ['University of Cambridge', 'Research partner'],
+    ['PUBLIC', 'Delivery partner']
+  ]
   var footer = el(
-    '<footer class="govuk-footer" role="contentinfo"><div class="govuk-width-container">' +
-    '<div class="govuk-footer__meta"><div class="govuk-footer__meta-item govuk-footer__meta-item--grow">' +
+    '<footer class="smart-footer" role="contentinfo"><div class="govuk-width-container">' +
+    '<div class="smart-footer__top">' + logo(signedIn ? 'start.html' : 'index.html') + '</div>' +
+    '<p class="smart-footer__label">This study is run by</p>' +
+    '<ul class="smart-partners">' + partners.map(function (p) {
+      return '<li class="smart-partner"><span>[' + p[0] + ' logo]<small>' + p[1] + '</small></span></li>'
+    }).join('') + '</ul>' +
     '<h2 class="govuk-visually-hidden">Support links</h2>' +
-    '<ul class="govuk-footer__inline-list">' +
-    '<li class="govuk-footer__inline-list-item"><a class="govuk-footer__link" href="privacy.html">Privacy notice</a></li>' +
-    '<li class="govuk-footer__inline-list-item"><a class="govuk-footer__link" href="privacy.html#cookies">Cookies</a></li>' +
-    '<li class="govuk-footer__inline-list-item"><a class="govuk-footer__link" href="accessibility.html">Accessibility statement</a></li>' +
-    '<li class="govuk-footer__inline-list-item"><a class="govuk-footer__link" href="' + (signedIn ? 'help.html' : 'index.html#contact') + '">Contact us</a></li>' +
-    '<li class="govuk-footer__inline-list-item"><a class="govuk-footer__link" href="decisions.html">Mock-up: open decisions</a></li>' +
+    '<ul class="smart-footer__links">' +
+    '<li><a href="privacy.html">Privacy notice</a></li>' +
+    '<li><a href="privacy.html#cookies">Cookies</a></li>' +
+    '<li><a href="accessibility.html">Accessibility statement</a></li>' +
+    '<li><a href="' + (signedIn ? 'help.html' : 'index.html#contact') + '">Contact us</a></li>' +
+    '<li><a href="decisions.html">Mock-up: open decisions</a></li>' +
     '</ul>' +
-    '<p class="govuk-body-s govuk-!-margin-bottom-0">This study is run by IFF Research, the University of Cambridge and PUBLIC for the Department for Education.</p>' +
-    '</div></div></div></footer>'
+    '</div></footer>'
   )
   body.appendChild(footer)
 
@@ -307,7 +323,9 @@
     var id = n.getAttribute('data-vimeo')
     var title = n.getAttribute('data-title') || 'Video'
     n.classList.add('smart-video')
-    var b = el('<button type="button" class="govuk-button govuk-button--inverse" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0">▶&nbsp; Play video<span class="govuk-visually-hidden">: ' + esc(title) + '</span></button>')
+    var poster = n.getAttribute('data-poster')
+    if (poster) n.style.backgroundImage = 'url(' + poster + ')'
+    var b = el('<button type="button" class="govuk-button smart-button--coral smart-video__play">' + icon('circle-play') + 'Play video<span class="govuk-visually-hidden">: ' + esc(title) + '</span></button>')
     n.appendChild(b)
     var load = function (start) {
       n.innerHTML = '<iframe src="' + vimeoSrc(id, start) + '" title="' + esc(title) + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>'

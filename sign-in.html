@@ -23,10 +23,10 @@
             </div>
           </div>
 
-          <h1 class="govuk-heading-l">Sign in</h1>
+          <h1 class="govuk-heading-xl">Sign in</h1>
           <p class="govuk-body">Use the family ID and password from the letter or email we sent you.</p>
 
-          <form id="sign-in" novalidate>
+          <form id="sign-in" class="smart-box" novalidate>
             <div class="govuk-form-group" id="family-id-group">
               <label class="govuk-label govuk-label--s" for="family-id">Family ID</label>
               <div class="govuk-hint" id="family-id-hint">For example, SMART-R-4821</div>
@@ -40,7 +40,7 @@
               <input class="govuk-input govuk-input--width-20" id="password" name="password" type="password" autocomplete="current-password" spellcheck="false">
             </div>
 
-            <button type="submit" class="govuk-button" data-module="govuk-button">Sign in</button>
+            <button type="submit" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Sign in</button>
           </form>
 
           <details class="govuk-details">
@@ -61,11 +61,15 @@
           </aside>
 
         </div>
+        <div class="govuk-grid-column-one-third">
+          <img src="assets/images/illustrations/sign-in.svg" alt="" style="width:100%;height:auto;margin-top:40px">
+        </div>
       </div>
     </main>
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
   <script>
     (function () {

@@ -11,23 +11,27 @@
 <body class="govuk-template__body" data-access="member" data-page="videos">
 
   <div class="govuk-width-container">
-    <main class="govuk-main-wrapper" id="main-content">
+    <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
+      <div class="smart-hero smart-hero--compact smart-hero--lilac">
+        <div>
+          <h1 class="govuk-heading-xl">Videos and webinars</h1>
+          <p class="govuk-body-l">Catch up on the welcome webinar, and watch short videos that show you what to do.</p>
+        </div>
+        <img src="assets/images/illustrations/videos.svg" alt="">
+      </div>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-          <h1 class="govuk-heading-xl">Videos and webinars</h1>
-          <p class="govuk-body-l">Watch the welcome webinar if you missed it, and short videos that show you what to do.</p>
-
           <h2 class="govuk-heading-l" id="welcome">Welcome webinar</h2>
-          <div id="webinar" data-vimeo="1084537" data-title="Welcome webinar recording"></div>
-          <p class="smart-video-meta">Recorded 3 November 2026 · <span data-show-for="restrict">About 40 minutes</span><span data-show-for="delay">About 30 minutes</span> · Subtitles available (press CC)</p>
+          <div id="webinar" data-vimeo="1084537" data-poster="assets/images/illustrations/videos.svg" data-title="Welcome webinar recording"></div>
+          <p class="smart-video-meta"><span><svg class="smart-icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Recorded 3 November 2026</span><span><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg><span data-show-for="restrict">About 40 minutes</span><span data-show-for="delay">About 30 minutes</span></span><span><svg class="smart-icon" aria-hidden="true"><use href="#i-message-square-text"></use></svg>Subtitles (press CC)</span></p>
 
           <h3 class="govuk-heading-s">Jump to a part of the webinar</h3>
           <ul class="smart-chapters">
-            <li><button type="button" data-seek="0" data-target="webinar">0:00 Welcome and who we are</button></li>
-            <li><button type="button" data-seek="120" data-target="webinar">2:00 Why this study matters</button></li>
-            <li><button type="button" data-seek="240" data-target="webinar">4:00 What we're asking your family to do</button></li>
-            <li data-show-for="restrict"><button type="button" data-seek="360" data-target="webinar">6:00 Live walkthrough: setting up restrictions</button></li>
-            <li><button type="button" data-seek="480" data-target="webinar">8:00 Getting help, and questions from parents</button></li>
+            <li><button type="button" data-seek="0" data-target="webinar"><time>0:00</time>Welcome and who we are</button></li>
+            <li><button type="button" data-seek="120" data-target="webinar"><time>2:00</time>Why this study matters</button></li>
+            <li><button type="button" data-seek="240" data-target="webinar"><time>4:00</time>What we're asking your family to do</button></li>
+            <li data-show-for="restrict"><button type="button" data-seek="360" data-target="webinar"><time>6:00</time>Live walkthrough: setting up restrictions</button></li>
+            <li><button type="button" data-seek="480" data-target="webinar"><time>8:00</time>Getting help, and questions from parents</button></li>
           </ul>
 
           <details class="govuk-details">
@@ -54,15 +58,16 @@
           <div data-show-for="restrict">
             <h2 class="govuk-heading-l">Set-up videos</h2>
             <p class="govuk-body">Each set-up guide has a video. Open the guide to watch it, with buttons to jump to each step.</p>
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a class="govuk-link" href="guide-iphone-parent.html#video">Your child's iPhone, set up from your iPhone or iPad</a> (10 minutes)</li>
-              <li><a class="govuk-link" href="guide-iphone-child.html#video">Your child's iPhone, set up on their phone</a> (3 minutes)</li>
-              <li><a class="govuk-link" href="guide-android.html#video">Your child's Android phone</a> (1 minute)</li>
+            <ul class="smart-cards">
+              <li class="smart-card"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-play"></use></svg></span><h3 class="smart-card__title"><a href="guide-iphone-parent.html#video">iPhone, from your iPhone or iPad</a></h3><p>10 minutes</p></li>
+              <li class="smart-card smart-card--sun"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-play"></use></svg></span><h3 class="smart-card__title"><a href="guide-iphone-child.html#video">iPhone, on your child's phone</a></h3><p>3 minutes</p></li>
+              <li class="smart-card smart-card--mint"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-play"></use></svg></span><h3 class="smart-card__title"><a href="guide-android.html#video">Android phone</a></h3><p>1 minute</p></li>
             </ul>
           </div>
 
           <h2 class="govuk-heading-l" id="children">For your child</h2>
-          <div id="kids" data-vimeo="22439234" data-title="A video for children about the study"></div>
+          <p class="govuk-body">A short video to watch together, explaining the study in a way that makes sense to 9 to 11 year olds.</p>
+          <div id="kids" data-vimeo="22439234" data-poster="assets/images/illustrations/guide-delay.svg" data-title="A video for children about the study"></div>
           <p class="smart-video-meta">About 3 minutes · For children aged 9 to 11 · Placeholder video</p>
 
           <aside class="smart-design-note" data-decision="V1 V4">
@@ -75,6 +80,7 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
 </body>
 </html>

@@ -17,18 +17,23 @@
         <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="guides.html">Guides</a></li>
       </ol>
     </nav>
-    <main class="govuk-main-wrapper" id="main-content">
+    <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
+      <div class="smart-hero smart-hero--compact smart-hero--lemon">
+        <div>
+          <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg> Guide for parents</span>
+          <h1 class="govuk-heading-xl">Waiting for a first smartphone</h1>
+          <p class="govuk-body-l">What we're asking, how to explain it to your child, and what to do when it gets tricky.</p>
+        </div>
+        <img src="assets/images/illustrations/guide-delay.svg" alt="">
+      </div>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-          <span class="govuk-caption-l">Guide for parents</span>
-          <h1 class="govuk-heading-xl">Waiting for a first smartphone</h1>
           <ul class="smart-guide-meta">
-            <li>About <strong>10 minutes</strong> to read</li>
-            <li>Updated 2 November 2026</li>
+            <li><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg> About 10 minutes to read</li>
+            <li><svg class="smart-icon" aria-hidden="true"><use href="#i-calendar"></use></svg> Updated 2 November 2026</li>
           </ul>
-
           <div class="govuk-button-group smart-no-print">
-            <a href="#" class="govuk-button govuk-button--secondary" data-print>Print or save as PDF</a>
+            <a href="#" class="govuk-button govuk-button--secondary" data-print><svg class="smart-icon" aria-hidden="true"><use href="#i-printer"></use></svg> Print or save as PDF</a>
           </div>
 
           <div class="govuk-warning-text">
@@ -37,12 +42,15 @@
           </div>
 
           <h2 class="govuk-heading-l">What we're asking</h2>
+          <div class="smart-box">
           <p class="govuk-body">Until <strong>April 2028</strong>, please don't get your child their own smartphone.</p>
           <p class="govuk-body">That's all. We're not asking you to change anything else. Your child can still:</p>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>use a family tablet, computer or games console, as they do now</li>
-            <li>borrow your phone, for example to call a friend or play a game with you</li>
+          <ul class="smart-chips">
+            <li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-tablet-smartphone"></use></svg>Use a family tablet or computer</li>
+            <li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-phone"></use></svg>Borrow your phone</li>
+            <li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-monitor-play"></use></svg>Play games and watch TV, as now</li>
           </ul>
+          </div>
 
           <aside class="smart-design-note" data-decision="C10">
             <p><strong>Does a basic phone count?</strong> Many parents will ask whether a "brick" phone (calls and texts only) is fine for walking to school. The answer needs agreeing with IFF and Cambridge, then stating plainly here. [TBC]</p>
@@ -81,6 +89,7 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
 </body>
 </html>

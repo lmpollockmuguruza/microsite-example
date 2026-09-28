@@ -62,7 +62,7 @@
           <div class="smart-decision" id="A4">
             <h3 class="govuk-heading-m">A4. The public name of the study</h3>
             <p class="govuk-body">If "SMART" stands for something with "smartphone" in it, the name alone tells control families what the study is about. The privacy notice and the web address (for example, smartstudy.org.uk) have the same problem.</p>
-            <p class="govuk-body"><strong>Suggestion:</strong> use a neutral public name and web address. Keep "smartphone" for signed-in pages.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> use a neutral public name and web address. Keep "smartphone" for signed-in pages. The same applies to the logo and the public illustration, which show a sun, a family and a school, but no phones.</p>
           </div>
 
           <div class="smart-decision" id="A5">
@@ -75,10 +75,25 @@
           <h2 class="govuk-heading-l govuk-!-margin-top-6">B. Brand, platform and accessibility</h2>
 
           <div class="smart-decision" id="B1">
-            <h3 class="govuk-heading-m">B1. How "DfE" can it look?</h3>
-            <p class="govuk-body">The site will not be on GOV.UK, so it cannot use the GOV.UK crown, the GOV.UK header, or the GDS Transport font. Those are only for GOV.UK domains. It <em>can</em> use GOV.UK Frontend components, which are openly licensed, and the DfE name as the organisation that commissioned the study.</p>
-            <p class="govuk-body">The mock-up uses GOV.UK components with Arial, DfE's blue (#003a69), its own study logo, and a footer line naming DfE. Using the DfE logo would need permission from DfE's communications team.</p>
-            <p class="govuk-body"><strong>Suggestion:</strong> keep it as it is, "DfE-flavoured" but clearly a research study. Ask DfE whether they want their logo in the footer.</p>
+            <h3 class="govuk-heading-m">B1. How "DfE" should it look?</h3>
+            <p class="govuk-body">The site will not be on GOV.UK, so it cannot use the GOV.UK crown, the GOV.UK header or the GDS Transport font. Families also respond better to something warm than to something that looks like a tax form.</p>
+            <p class="govuk-body">The mock-up now has <strong>its own study identity</strong>: the SMART logo, the Nunito typeface (rounded and very readable), a warm palette anchored on DfE blue (#003a69), icons and illustrations. Underneath, it still uses GOV.UK Frontend for forms, error messages, accordions and tabs, so we keep their accessibility testing.</p>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>More playful:</strong> brighter colours and more illustration. Better for children's materials, but it can feel less official to parents.</li>
+              <li><strong>Where it is now:</strong> friendly, with DfE blue and plenty of white space. It's credible without looking like government.</li>
+              <li><strong>Closer to GOV.UK</strong> (the first version): the most official, but the least warm.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> the current middle ground. Check it with parents in the pilot user testing.</p>
+          </div>
+
+          <div class="smart-decision" id="B5">
+            <h3 class="govuk-heading-m">B5. Logo, partner logos and illustrations</h3>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>Study logo:</strong> the mark is a sun, a parent and a child. It deliberately shows no phone, so the logo doesn't hint at the intervention on the public page (see A4). We could keep it, refine it, or have a designer create one alongside the printed onboarding pack.</li>
+              <li><strong>Partner logos</strong> (DfE, IFF, Cambridge, PUBLIC): the dashed boxes are placeholders. Each needs the organisation's permission and follows its brand guidelines. DfE's logo in particular goes through DfE's communications team. Having all four logos is reassuring to parents, but it's more to agree.</li>
+              <li><strong>Illustrations</strong> were drawn for this mock-up, in one style and with people of different skin tones. For launch: keep and extend them, commission an illustrator (who could also make the children's video), or license a set. Stock photos of families are cheaper, but look generic and date quickly.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> commission one illustrator for the site, the printed pack and the animated video, so everything families see looks like it belongs together. Ask partners for logos now, as approvals take time.</p>
           </div>
 
           <div class="smart-decision" id="B2">
@@ -254,6 +269,7 @@
     </main>
   </div>
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
 </body>
 </html>
