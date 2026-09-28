@@ -11,14 +11,23 @@
 <body class="govuk-template__body" data-access="member" data-page="help">
 
   <div class="govuk-width-container">
-    <main class="govuk-main-wrapper" id="main-content">
+    <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
+      <div class="smart-hero smart-hero--compact smart-hero--peach">
+        <div>
+          <h1 class="govuk-heading-xl">Get help</h1>
+          <p class="govuk-body-l">Most questions are answered below. If yours isn't, we're happy to help.</p>
+        </div>
+        <img src="assets/images/illustrations/help.svg" alt="">
+      </div>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-          <h1 class="govuk-heading-xl">Get help</h1>
 
-          <div class="govuk-inset-text smart-inset-friendly">
-            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Email us</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a><br>We reply within 5 working days. Please include your family ID: <strong data-family-id></strong></p>
+          <div class="smart-callout">
+            <span class="smart-callout__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-mail"></use></svg></span>
+            <div>
+              <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Email us at <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a></p>
+              <p class="govuk-body">We reply within 5 working days. Please include your family ID: <strong data-family-id></strong></p>
+            </div>
           </div>
 
           <h2 class="govuk-heading-l">Common questions</h2>
@@ -64,7 +73,7 @@
           <div data-show-for="restrict">
             <h2 class="govuk-heading-l" id="request-app">Ask for an app to be allowed</h2>
             <p class="govuk-body">If your family needs an app that isn't on the allowed list, tell us. Within 5 working days, we'll either add it to the list for everyone or explain why not.</p>
-            <form class="request-form" data-thanks="Thanks. We'll reply by email within 5 working days." novalidate>
+            <form class="request-form smart-box" data-thanks="Thanks. We'll reply by email within 5 working days." novalidate>
               <div class="govuk-form-group">
                 <label class="govuk-label govuk-label--s" for="app-name">Name of the app</label>
                 <input class="govuk-input govuk-!-width-two-thirds" id="app-name" type="text" required>
@@ -74,12 +83,12 @@
                 <div class="govuk-hint" id="app-why-hint">For example, "for football club messages".</div>
                 <textarea class="govuk-textarea" id="app-why" rows="3" aria-describedby="app-why-hint"></textarea>
               </div>
-              <button type="submit" class="govuk-button govuk-button--secondary">Send request</button>
+              <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Send request</button>
             </form>
           </div>
 
           <h2 class="govuk-heading-l" id="report">Tell us about a problem with a guide</h2>
-          <form class="request-form" data-thanks="Thanks for telling us. We'll check the guide and get back to you." novalidate>
+          <form class="request-form smart-box" data-thanks="Thanks for telling us. We'll check the guide and get back to you." novalidate>
             <div class="govuk-form-group">
               <label class="govuk-label govuk-label--s" for="which-guide">Which guide?</label>
               <select class="govuk-select" id="which-guide">
@@ -98,7 +107,7 @@
               <label class="govuk-label govuk-label--s" for="what">What did you see?</label>
               <textarea class="govuk-textarea" id="what" rows="4"></textarea>
             </div>
-            <button type="submit" class="govuk-button govuk-button--secondary">Send</button>
+            <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Send</button>
           </form>
 
           <aside class="smart-design-note" data-decision="C3">
@@ -110,6 +119,7 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
   <script>
     (function () {

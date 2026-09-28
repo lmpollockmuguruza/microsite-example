@@ -11,15 +11,16 @@
 </head>
 <body class="govuk-template__body" data-access="public" data-page="home">
 
-  <div class="smart-hero">
-    <div class="govuk-width-container">
-      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">The SMART Study</h1>
-      <p class="govuk-body-l govuk-!-margin-bottom-0">A research study with around 80 primary schools in England, running from April 2027 to April 2028.</p>
-    </div>
-  </div>
-
   <div class="govuk-width-container">
     <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
+      <div class="smart-hero">
+        <div>
+          <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-school"></use></svg> Around 80 primary schools in England</span>
+          <h1 class="govuk-heading-xl">Welcome to the SMART Study</h1>
+          <p class="govuk-body-l">A research study with primary schools and families, running from April 2027 to April 2028.</p>
+        </div>
+        <img src="assets/images/illustrations/school.svg" alt="">
+      </div>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -31,32 +32,36 @@
             </ul>
           </aside>
 
-          <aside class="smart-design-note" data-decision="B1 B2 B4">
-            <p><strong>Look and feel.</strong> Built with GOV.UK Frontend components in DfE blue, with Arial rather than the GOV.UK font and no crown. A study site that isn't on GOV.UK isn't allowed to use either. That leaves open whether it's built in Webflow or hosted by us, and which languages it's in.</p>
+          <aside class="smart-design-note" data-decision="B1 B5">
+            <p><strong>Look and feel.</strong> A study identity of its own: the SMART logo, the Nunito typeface, a warm palette and illustrations, with GOV.UK components underneath for accessible forms. DfE blue anchors it to the department without borrowing GOV.UK branding.</p>
+            <p><strong>Logos and illustrations:</strong> the partner logos are placeholders until each organisation agrees. The illustrations were drawn for this mock-up. For launch, we could keep them, commission an illustrator, or use a licensed set.</p>
           </aside>
 
-          <h2 class="govuk-heading-m">Who is running the study</h2>
-          <p class="govuk-body">The Department for Education has asked three organisations to run this study:</p>
-          <ul class="govuk-list govuk-list--bullet">
-            <li><strong>IFF Research</strong>, who lead the study and run the surveys</li>
-            <li><strong>the University of Cambridge</strong></li>
-            <li><strong>PUBLIC</strong></li>
+          <h2 class="govuk-heading-l">Who is running the study</h2>
+          <p class="govuk-body">The Department for Education has asked IFF Research, the University of Cambridge and PUBLIC to run this study. IFF Research leads it and runs the surveys.</p>
+          <ul class="smart-partners" aria-label="Organisations running the study">
+            <li class="smart-partner"><span>[DfE logo]<small>Commissioned by</small></span></li>
+            <li class="smart-partner"><span>[IFF Research logo]<small>Lead partner</small></span></li>
+            <li class="smart-partner"><span>[University of Cambridge logo]<small>Research partner</small></span></li>
+            <li class="smart-partner"><span>[PUBLIC logo]<small>Delivery partner</small></span></li>
           </ul>
           <p class="govuk-body">If your child's school is taking part, the school or IFF Research will have sent you a letter about it.</p>
 
+          <div class="smart-box">
           <h2 class="govuk-heading-m">If you have been given sign-in details</h2>
           <p class="govuk-body">Some families taking part have been given sign-in details. Sign in to find the information and support for your family.</p>
           <a href="sign-in.html" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
             Sign in
             <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"/></svg>
           </a>
-          <p class="govuk-body">If you have not been given sign-in details, you do not need to do anything on this website.</p>
+          <p class="govuk-body govuk-!-margin-bottom-0">If you have not been given sign-in details, you do not need to do anything on this website.</p>
+          </div>
 
           <aside class="smart-design-note" data-decision="A2">
             <p>The line above is there so control families who find the button aren't left wondering what they've missed. We could remove the sign-in button from this page altogether and send treatment families a direct link instead.</p>
           </aside>
 
-          <h2 class="govuk-heading-m" id="contact">Contact us</h2>
+          <h2 class="govuk-heading-l" id="contact">Contact us</h2>
           <p class="govuk-body">If you have a question about the study, email <a class="govuk-link" href="mailto:smart-study@iffresearch.example">smart-study@iffresearch.example</a> [TBC: IFF's contact address].</p>
           <p class="govuk-body">Read the <a class="govuk-link" href="privacy.html">privacy notice</a> to find out how we use your information.</p>
 
@@ -66,6 +71,7 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/site.js"></script>
 </body>
 </html>

@@ -30,8 +30,12 @@ The **Review tools** box (bottom right) turns the purple design notes on and off
 
 ## How it's built
 
-- [GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) components, compiled with Arial and DfE blue (`src/scss/site.scss`). It has no GOV.UK crown or Transport font, because those are only allowed on GOV.UK domains (see decision B1).
-- `assets/js/site.js` adds the shared header, navigation, footer, cookie banner and review tools, plus the phone-screen drawings (`data-phone`), step progress and click-to-load Vimeo players (`data-vimeo`).
+- **Look and feel:** a study identity of its own, with the SMART logo (a sun, a parent and a child, and deliberately no phone), the Nunito typeface, a warm palette anchored on DfE blue (#003a69), Lucide icons and flat illustrations. Styles are in `src/scss/site.scss`.
+- **Underneath:** [GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) for forms, error messages, accordions and tabs, so they keep GOV.UK's accessibility testing. There's no GOV.UK crown or Transport font, as those are only for GOV.UK domains (decision B1).
+- **Logos:** the partner logos (DfE, IFF, Cambridge, PUBLIC) are dashed placeholders until each organisation agrees (decision B5).
+- **Illustrations and logo mark** are SVGs drawn by `tools/illustrations.py`. Change a colour or shape there and run `python3 tools/illustrations.py`.
+- **Icons:** `assets/js/icons.js` adds an icon sprite. Use `<svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg>`.
+- `assets/js/site.js` adds the shared header, navigation, footer, cookie banner and review tools, plus the drawn phone screens (`data-phone`), step progress and click-to-load Vimeo players (`data-vimeo`, with an optional `data-poster`).
 - Content for a single group is marked `data-show-for="restrict"` or `data-show-for="delay"`.
 
 To rebuild the CSS after editing the SCSS: `npm install && npm run build`.
