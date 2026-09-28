@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Get help – The SMART Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="govuk-template__body" data-access="member" data-page="help">
+
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-xl">Get help</h1>
+
+          <div class="govuk-inset-text smart-inset-friendly">
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Email us</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a><br>We reply within 5 working days. Please include your family ID: <strong data-family-id></strong></p>
+          </div>
+
+          <h2 class="govuk-heading-l">Common questions</h2>
+          <div class="govuk-accordion" data-module="govuk-accordion" id="faq">
+            <div class="govuk-accordion__section" data-show-for="restrict">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-1">I've forgotten my Screen Time passcode</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">On iPhone, tap <strong>Forgot Passcode?</strong> and enter the Apple Account email and password you used when you set it up. [TBC: tested steps]</p></div>
+            </div>
+            <div class="govuk-accordion__section" data-show-for="restrict">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-2">My child has found a way around the restrictions</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">It happens, and it's useful for us to know. Email us with what happened and we'll help you close the gap.</p></div>
+            </div>
+            <div class="govuk-accordion__section" data-show-for="restrict">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-3">My child is getting a new phone</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">Follow the <a class="govuk-link" href="guides.html">set-up guide</a> again on the new phone. It's quicker the second time.</p></div>
+            </div>
+            <div class="govuk-accordion__section" id="family-sharing" data-show-for="restrict">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-4">Setting up Family Sharing on iPhone</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">[TBC: short steps, and a link to Apple's own help page]</p></div>
+            </div>
+            <div class="govuk-accordion__section" id="brands" data-show-for="restrict">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-5">Help for Samsung, Xiaomi and other Android phones</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">[TBC: where to find parental controls on the most common brands in the sample]</p></div>
+            </div>
+            <div class="govuk-accordion__section" data-show-for="delay">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-6">Can my child use my phone?</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">Yes. The study is about children having their <em>own</em> smartphone. Borrowing yours is fine.</p></div>
+            </div>
+            <div class="govuk-accordion__section" id="talking">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-7">How do I explain this to my child?</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">Keep it simple: it's for a year, lots of families at their school are doing it, and it's to help grown-ups understand what's best for children. [TBC: tips from phase 1 research]</p></div>
+            </div>
+            <div class="govuk-accordion__section">
+              <div class="govuk-accordion__section-header"><h3 class="govuk-accordion__section-heading"><span class="govuk-accordion__section-button" id="faq-8">Can we leave the study?</span></h3></div>
+              <div class="govuk-accordion__section-content"><p class="govuk-body">Yes, at any time, without giving a reason. [TBC: IFF's withdrawal process]</p></div>
+            </div>
+          </div>
+
+          <aside class="smart-design-note" data-decision="E2">
+            <p><strong>FAQs vs forum.</strong> The research layer includes a Discourse forum. If it goes ahead, this list becomes "the top questions from the forum" and links there. Without a forum, these FAQs and the email address are the whole support system, so they'll need to grow with what parents ask.</p>
+          </aside>
+
+          <div data-show-for="restrict">
+            <h2 class="govuk-heading-l" id="request-app">Ask for an app to be allowed</h2>
+            <p class="govuk-body">If your family needs an app that isn't on the allowed list, tell us. Within 5 working days, we'll either add it to the list for everyone or explain why not.</p>
+            <form class="request-form" data-thanks="Thanks. We'll reply by email within 5 working days." novalidate>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="app-name">Name of the app</label>
+                <input class="govuk-input govuk-!-width-two-thirds" id="app-name" type="text" required>
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="app-why">Why does your child need it?</label>
+                <div class="govuk-hint" id="app-why-hint">For example, "for football club messages".</div>
+                <textarea class="govuk-textarea" id="app-why" rows="3" aria-describedby="app-why-hint"></textarea>
+              </div>
+              <button type="submit" class="govuk-button govuk-button--secondary">Send request</button>
+            </form>
+          </div>
+
+          <h2 class="govuk-heading-l" id="report">Tell us about a problem with a guide</h2>
+          <form class="request-form" data-thanks="Thanks for telling us. We'll check the guide and get back to you." novalidate>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="which-guide">Which guide?</label>
+              <select class="govuk-select" id="which-guide">
+                <option value="">Choose a guide</option>
+                <option value="iphone-parent">Child's iPhone, from your iPhone or iPad</option>
+                <option value="iphone-child">Child's iPhone, set up on their phone</option>
+                <option value="android">Child's Android phone</option>
+                <option value="delay">Waiting for a first smartphone</option>
+              </select>
+            </div>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="which-step">Which step? (if you know)</label>
+              <input class="govuk-input govuk-input--width-3" id="which-step" type="text" inputmode="numeric">
+            </div>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="what">What did you see?</label>
+              <textarea class="govuk-textarea" id="what" rows="4"></textarea>
+            </div>
+            <button type="submit" class="govuk-button govuk-button--secondary">Send</button>
+          </form>
+
+          <aside class="smart-design-note" data-decision="C3">
+            <p>The "tell us which step" links on each guide open this form with the guide and step already filled in. Reports go to the same inbox as the email address, so they can be sorted into "help this family" and "fix the guide".</p>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search)
+      if (q.get('guide')) document.getElementById('which-guide').value = q.get('guide')
+      if (q.get('step')) document.getElementById('which-step').value = q.get('step')
+      document.querySelectorAll('.request-form').forEach(function (f) {
+        f.addEventListener('submit', function (e) {
+          e.preventDefault()
+          var p = document.createElement('div')
+          p.className = 'govuk-notification-banner govuk-notification-banner--success'
+          p.setAttribute('role', 'alert')
+          p.innerHTML = '<div class="govuk-notification-banner__content"><p class="govuk-notification-banner__heading"></p></div>'
+          p.querySelector('p').textContent = f.getAttribute('data-thanks')
+          f.parentNode.replaceChild(p, f)
+        })
+      })
+    })()
+  </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Guides – The SMART Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="govuk-template__body" data-access="member" data-page="guides">
+
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+          <!-- ============================== RESTRICT ============================== -->
+          <div data-show-for="restrict">
+            <h1 class="govuk-heading-xl">Set up restrictions on your child's phone</h1>
+            <p class="govuk-body-l">We have 3 guides, depending on which phones you and your child have. Answer 2 questions and we'll show you the right one.</p>
+
+            <form id="picker" novalidate>
+              <div class="govuk-form-group" id="q1-group">
+                <fieldset class="govuk-fieldset">
+                  <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">What kind of phone does your child have?</legend>
+                  <p class="govuk-error-message smart-hide" id="q1-error"><span class="govuk-visually-hidden">Error:</span> Select the kind of phone your child has</p>
+                  <div class="govuk-radios" data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="child-iphone" name="child" type="radio" value="iphone" data-aria-controls="q2-wrap">
+                      <label class="govuk-label govuk-radios__label" for="child-iphone">An iPhone</label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="q2-wrap">
+                      <div class="govuk-form-group" id="q2-group">
+                        <fieldset class="govuk-fieldset">
+                          <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Do you have your own iPhone or iPad?</legend>
+                          <div class="govuk-hint">This lets you change your child's settings from your own device.</div>
+                          <p class="govuk-error-message smart-hide" id="q2-error"><span class="govuk-visually-hidden">Error:</span> Select yes if you have your own iPhone or iPad</p>
+                          <div class="govuk-radios govuk-radios--small">
+                            <div class="govuk-radios__item">
+                              <input class="govuk-radios__input" id="parent-yes" name="parent" type="radio" value="yes">
+                              <label class="govuk-label govuk-radios__label" for="parent-yes">Yes</label>
+                            </div>
+                            <div class="govuk-radios__item">
+                              <input class="govuk-radios__input" id="parent-no" name="parent" type="radio" value="no">
+                              <label class="govuk-label govuk-radios__label" for="parent-no">No, I have an Android phone or no smartphone</label>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="child-android" name="child" type="radio" value="android">
+                      <label class="govuk-label govuk-radios__label" for="child-android">An Android phone</label>
+                      <div class="govuk-hint govuk-radios__hint">For example Samsung, Google Pixel, Motorola, Xiaomi or Oppo</div>
+                    </div>
+                    <div class="govuk-radios__divider">or</div>
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="child-unsure" name="child" type="radio" value="unsure">
+                      <label class="govuk-label govuk-radios__label" for="child-unsure">I'm not sure</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <button type="submit" class="govuk-button" data-module="govuk-button">Show my guide</button>
+            </form>
+
+            <div class="govuk-inset-text smart-hide" id="unsure">
+              <p class="govuk-body">If there's an Apple logo on the back of the phone, it's an iPhone. Otherwise, it's almost certainly an Android phone.</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">Still not sure? Email <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a> and we'll help.</p>
+            </div>
+
+            <aside class="smart-design-note" data-decision="C4">
+              <p><strong>Why ask questions first?</strong> Three near-identical guides side by side is where parents go wrong. Two plain questions send each family to exactly one guide. The full list stays below for anyone who wants it, and for the printed pack.</p>
+              <p>The Android guide works whatever phone the parent has (Family Link runs on iPhone too), so it only needs one question.</p>
+            </aside>
+
+            <h2 class="govuk-heading-m">All set-up guides</h2>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a class="govuk-link govuk-!-font-weight-bold" href="guide-iphone-parent.html">Child has an iPhone, and you have an iPhone or iPad</a><br><span class="govuk-body-s">About 30 minutes · Checked on iOS 26.1, 21 September 2026</span></li>
+              <li><a class="govuk-link govuk-!-font-weight-bold" href="guide-iphone-child.html">Child has an iPhone, and you do not have an Apple device</a><br><span class="govuk-body-s">About 25 minutes · Checked on iOS 26.1, 21 September 2026</span></li>
+              <li><a class="govuk-link govuk-!-font-weight-bold" href="guide-android.html">Child has an Android phone</a><br><span class="govuk-body-s">About 30 minutes · Checked on Android 16 and Family Link, 14 September 2026</span></li>
+            </ul>
+
+            <h2 class="govuk-heading-m">Which apps are allowed?</h2>
+            <p class="govuk-body">Everything is blocked, apart from a short list of apps that most families told us they need:</p>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>Phone and Messages (texts)</li>
+              <li>Maps</li>
+              <li>Camera and Photos</li>
+              <li>Clock and Calculator</li>
+              <li>your child's school app [TBC: named school apps]</li>
+              <li>[TBC: WhatsApp? Decision from phase 1 research]</li>
+            </ul>
+            <p class="govuk-body">Anything your child installs later is blocked automatically. If your family needs another app, <a class="govuk-link" href="help.html#request-app">ask us to add it</a>. We'll reply within 5 working days.</p>
+
+            <aside class="smart-design-note" data-decision="C6">
+              <p><strong>The allowed-apps list appears in every guide.</strong> It should be stored once and shown everywhere, so a change (for example, a new app agreed on 1 March) updates every guide, the PDF and this page together.</p>
+            </aside>
+          </div>
+
+          <!-- ============================== DELAY ============================== -->
+          <div data-show-for="delay">
+            <h1 class="govuk-heading-xl">Guides</h1>
+            <p class="govuk-body-l">For the next 12 months, we're asking you not to get your child their own smartphone. These guides can help.</p>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a class="govuk-link govuk-!-font-weight-bold" href="guide-delay.html">Waiting for a first smartphone: a guide for parents</a><br><span class="govuk-body-s">About 10 minutes to read</span></li>
+              <li><a class="govuk-link govuk-!-font-weight-bold" href="guide-delay.html#talking">Talking to your child about the study</a><br><span class="govuk-body-s">About 5 minutes to read</span></li>
+            </ul>
+
+            <aside class="smart-design-note" data-decision="C7">
+              <p><strong>What if a delay-group child gets a phone anyway</strong> (for example, as a gift from a grandparent)? Should the delay group see the restriction guides as a fallback, or would that blur the two groups? For now they're hidden. The delay guide just asks the parent to tell us.</p>
+            </aside>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('picker')
+      if (!form) return
+      function err (id, on) {
+        document.getElementById(id + '-group').classList.toggle('govuk-form-group--error', on)
+        document.getElementById(id + '-error').classList.toggle('smart-hide', !on)
+      }
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        var child = (form.querySelector('[name=child]:checked') || {}).value
+        var parent = (form.querySelector('[name=parent]:checked') || {}).value
+        err('q1', !child)
+        err('q2', child === 'iphone' && !parent)
+        document.getElementById('unsure').classList.toggle('smart-hide', child !== 'unsure')
+        if (child === 'android') location.href = 'guide-android.html'
+        if (child === 'iphone' && parent) location.href = parent === 'yes' ? 'guide-iphone-parent.html' : 'guide-iphone-child.html'
+      })
+    })()
+  </script>
+</body>
+</html>

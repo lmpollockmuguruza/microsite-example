@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Sign in – The SMART Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="govuk-template__body" data-access="public" data-page="sign-in">
+
+  <div class="govuk-width-container">
+    <a href="index.html" class="govuk-back-link">Back</a>
+    <main class="govuk-main-wrapper" id="main-content">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+          <div class="govuk-error-summary smart-hide" data-module="govuk-error-summary" id="error-summary" tabindex="-1">
+            <div role="alert">
+              <h2 class="govuk-error-summary__title">There is a problem</h2>
+              <div class="govuk-error-summary__body"><ul class="govuk-list govuk-error-summary__list"></ul></div>
+            </div>
+          </div>
+
+          <h1 class="govuk-heading-l">Sign in</h1>
+          <p class="govuk-body">Use the family ID and password from the letter or email we sent you.</p>
+
+          <form id="sign-in" novalidate>
+            <div class="govuk-form-group" id="family-id-group">
+              <label class="govuk-label govuk-label--s" for="family-id">Family ID</label>
+              <div class="govuk-hint" id="family-id-hint">For example, SMART-R-4821</div>
+              <p class="govuk-error-message smart-hide" id="family-id-error"><span class="govuk-visually-hidden">Error:</span> <span></span></p>
+              <input class="govuk-input govuk-input--width-20" id="family-id" name="familyId" type="text" autocomplete="username" spellcheck="false" autocapitalize="characters" aria-describedby="family-id-hint">
+            </div>
+
+            <div class="govuk-form-group" id="password-group">
+              <label class="govuk-label govuk-label--s" for="password">Password</label>
+              <p class="govuk-error-message smart-hide" id="password-error"><span class="govuk-visually-hidden">Error:</span> <span></span></p>
+              <input class="govuk-input govuk-input--width-20" id="password" name="password" type="password" autocomplete="current-password" spellcheck="false">
+            </div>
+
+            <button type="submit" class="govuk-button" data-module="govuk-button">Sign in</button>
+          </form>
+
+          <details class="govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">I cannot find my sign-in details</span></summary>
+            <div class="govuk-details__text">
+              Email <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a> with your name and your child's school. We'll reply within 5 working days. [TBC: self-service reset, see decision A1]
+            </div>
+          </details>
+
+          <aside class="smart-design-note" data-decision="A1">
+            <p><strong>Try the mock-up.</strong> Any password works.</p>
+            <ul>
+              <li><strong>SMART-R-4821</strong> (any ID with <strong>-R-</strong>) signs in as a <strong>restrict</strong> family: their child has a phone and they set up restrictions.</li>
+              <li><strong>SMART-D-1093</strong> (any ID with <strong>-D-</strong>) signs in as a <strong>delay</strong> family: their child has no phone yet.</li>
+            </ul>
+            <p>In a real build the ID wouldn't show the group. Here it does, so reviewers can switch between them.</p>
+            <p><strong>Decisions to make:</strong> an ID with a password, or a sign-in link sent by email (no password to forget, but it needs an email address)? Who creates the IDs (IFF, at randomisation?) and how do they reach families?</p>
+          </aside>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('sign-in')
+      var summary = document.getElementById('error-summary')
+      function showErrors (errors) {
+        var list = summary.querySelector('ul')
+        list.innerHTML = ''
+        ;['family-id', 'password'].forEach(function (f) {
+          var msg = errors[f]
+          document.getElementById(f + '-group').classList.toggle('govuk-form-group--error', !!msg)
+          document.getElementById(f).classList.toggle('govuk-input--error', !!msg)
+          var p = document.getElementById(f + '-error')
+          p.classList.toggle('smart-hide', !msg)
+          p.lastElementChild.textContent = msg || ''
+          if (msg) list.insertAdjacentHTML('beforeend', '<li><a href="#' + f + '">' + msg + '</a></li>')
+        })
+        var any = Object.keys(errors).length > 0
+        summary.classList.toggle('smart-hide', !any)
+        document.title = (any ? 'Error: ' : '') + 'Sign in – The SMART Study'
+        if (any) summary.focus()
+      }
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        var id = form.familyId.value.trim().toUpperCase()
+        var errors = {}
+        if (!id) errors['family-id'] = 'Enter your family ID'
+        else if (!/^SMART-[RD]-\d{4}$/.test(id)) errors['family-id'] = 'Enter your family ID in the right format, like SMART-R-4821'
+        if (!form.password.value) errors.password = 'Enter your password'
+        showErrors(errors)
+        if (Object.keys(errors).length) return
+        window.SMART.signIn(id, id.charAt(6) === 'R' ? 'restrict' : 'delay')
+        var next = new URLSearchParams(location.search).get('next')
+        location.href = next && /^[\w-]+\.html/.test(next) ? next : 'start.html'
+      })
+    })()
+  </script>
+</body>
+</html>

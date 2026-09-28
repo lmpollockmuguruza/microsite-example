@@ -1,0 +1,15 @@
+{
+  "name": "smart-study-microsite-mockup",
+  "private": true,
+  "description": "Clickable mock-up of the SMART Study microsite",
+  "scripts": {
+    "build:css": "sass --load-path=node_modules --style=compressed --no-source-map --quiet-deps src/scss/site.scss assets/css/site.css",
+    "build:js": "cp node_modules/govuk-frontend/dist/govuk/all.bundle.js assets/js/govuk-frontend.js",
+    "build": "npm run build:css && npm run build:js",
+    "serve": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "govuk-frontend": "^5.14.0",
+    "sass": "^1.80.0"
+  }
+}

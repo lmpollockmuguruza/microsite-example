@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Open decisions – The SMART Study mock-up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="govuk-template__body" data-access="public" data-page="decisions">
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <span class="govuk-caption-l">Mock-up only, not part of the site</span>
+          <h1 class="govuk-heading-xl">Open decisions</h1>
+          <p class="govuk-body-l">Every purple design note in the mock-up links to one of these. Each one sets out the question, the options, and a suggestion to react to.</p>
+          <p class="govuk-body">To see the notes where they apply, <a class="govuk-link" href="sign-in.html">sign in</a> as <strong>SMART-R-4821</strong> (restrict) or <strong>SMART-D-1093</strong> (delay), with any password.</p>
+
+          <h2 class="govuk-heading-m">The 5 to decide first</h2>
+          <p class="govuk-body">These shape the build. Most of the others can be settled during or after the pilot.</p>
+          <ol class="govuk-list govuk-list--number">
+            <li><a class="govuk-link" href="#B2">B2 Platform</a>: Webflow and Memberstack, or a GOV.UK Frontend site we host ourselves</li>
+            <li><a class="govuk-link" href="#A1">A1 Sign-in</a>: family ID and password, or an emailed link, and who creates the IDs</li>
+            <li><a class="govuk-link" href="#C1">C1 Updating content</a>: how PUBLIC edits guides with no developer</li>
+            <li><a class="govuk-link" href="#D1">D1 Engagement data</a>: Google Analytics, or our own record of activity per family ID</li>
+            <li><a class="govuk-link" href="#S3">S3 Screenshot pipeline</a>: our own form and storage, or Qualtrics</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+          <!-- ============================================================ A -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">A. Access, and keeping the groups apart</h2>
+
+          <div class="smart-decision" id="A1">
+            <h3 class="govuk-heading-m">A1. How do families sign in, and how is access really enforced?</h3>
+            <p class="govuk-body">The mock-up's sign-in is fake and runs in the browser. The real one must check every request on the server, so a forwarded link or a guessed web address shows nothing to someone who isn't signed in. (The tech spec says content should not be "viewable if a link is forwarded".)</p>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>Family ID and password</strong> (as in the spec and the mock-up): works without an email address and can go in a paper letter. But passwords get forgotten, and resetting one needs an email or a helpdesk.</li>
+              <li><strong>Emailed sign-in link</strong> (no password): nothing to forget. Needs an email address for every family, and IFF holds those.</li>
+              <li><strong>Both:</strong> a family ID in the letter, then a sign-in link sent to that family's email address.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> family ID and password, printed in the onboarding pack by IFF at randomisation, with IFF as the reset route. Use one ID per family, not per child. [Check: can the ID be the same one IFF uses in the surveys, so the data joins up without extra matching?]</p>
+          </div>
+
+          <div class="smart-decision" id="A2">
+            <h3 class="govuk-heading-m">A2. Should the public page show a sign-in button?</h3>
+            <p class="govuk-body">Control families will see it too. The mock-up keeps it, with the line "If you have not been given sign-in details, you do not need to do anything". The alternative is a sign-in page that only has a direct link, sent to treatment families.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> keep it, with the neutral wording. It's less confusing for treatment families who arrive through the public page.</p>
+          </div>
+
+          <div class="smart-decision" id="A3">
+            <h3 class="govuk-heading-m">A3. What exactly can control families and the public see?</h3>
+            <p class="govuk-body">The public page in the mock-up has: the study name, who is running it, the dates, a contact and the privacy notice. It says nothing about phones. Table 3 in the deliverables doc gives control families the "common core": welcome, partners, scale and timing, contact points, payments.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> keep this page minimal, and leave contact points and payments to IFF's letters. Confirm with IFF and Cambridge that this is enough for informed consent.</p>
+          </div>
+
+          <div class="smart-decision" id="A4">
+            <h3 class="govuk-heading-m">A4. The public name of the study</h3>
+            <p class="govuk-body">If "SMART" stands for something with "smartphone" in it, the name alone tells control families what the study is about. The privacy notice and the web address (for example, smartstudy.org.uk) have the same problem.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> use a neutral public name and web address. Keep "smartphone" for signed-in pages.</p>
+          </div>
+
+          <div class="smart-decision" id="A5">
+            <h3 class="govuk-heading-m">A5. Webinar recordings and other participants</h3>
+            <p class="govuk-body">Recordings may show other parents' names, faces or questions.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> record only the presenter. Read questions out without names, or cut the Q&amp;A from the upload.</p>
+          </div>
+
+          <!-- ============================================================ B -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">B. Brand, platform and accessibility</h2>
+
+          <div class="smart-decision" id="B1">
+            <h3 class="govuk-heading-m">B1. How "DfE" can it look?</h3>
+            <p class="govuk-body">The site will not be on GOV.UK, so it cannot use the GOV.UK crown, the GOV.UK header, or the GDS Transport font. Those are only for GOV.UK domains. It <em>can</em> use GOV.UK Frontend components, which are openly licensed, and the DfE name as the organisation that commissioned the study.</p>
+            <p class="govuk-body">The mock-up uses GOV.UK components with Arial, DfE's blue (#003a69), its own study logo, and a footer line naming DfE. Using the DfE logo would need permission from DfE's communications team.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> keep it as it is, "DfE-flavoured" but clearly a research study. Ask DfE whether they want their logo in the footer.</p>
+          </div>
+
+          <div class="smart-decision" id="B2">
+            <h3 class="govuk-heading-m">B2. Which platform?</h3>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>Webflow with Memberstack</strong> (preferred in the deliverables doc): quick to build, visual editor, no developer needed for updates. However: the GOV.UK components would have to be rebuilt in Webflow (so their accessibility testing doesn't come with them), and both companies are US-based, so the DPA and data location need checking.</li>
+              <li><strong>A GOV.UK Frontend site we host ourselves</strong> (what this mock-up is): for example, Eleventy with the x-govuk plugin, content in Markdown, edited through a web-based CMS (Decap or Pages CMS), hosted in the UK, with a small sign-in service. It looks and works like GOV.UK and we control the data. It needs a developer to set up and to fix anything that breaks.</li>
+              <li><strong>WordPress with a membership plugin</strong>, on UK hosting (the alternative in the deliverables doc): familiar editing, but plugins need ongoing security updates.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> decide after the DPIA says where login and screenshot data can be stored. If UK-only, go with the self-hosted GOV.UK Frontend site. If not, Webflow is the fastest route and the mock-up's layout can be rebuilt there.</p>
+          </div>
+
+          <div class="smart-decision" id="B3">
+            <h3 class="govuk-heading-m">B3. Accessibility testing</h3>
+            <p class="govuk-body">Test against WCAG 2.2 AA, with automated checks (such as axe) and manual testing with a screen reader and keyboard, before the pilot. Publish an accessibility statement.</p>
+          </div>
+
+          <div class="smart-decision" id="B4">
+            <h3 class="govuk-heading-m">B4. Languages</h3>
+            <p class="govuk-body">The spec says English plus the main community languages, to be confirmed from the sample. Translating the guides doubles the work every time a phone update changes a step.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> English only for the pilot. For the main trial, translate the set-up guides and add translated subtitles to the videos. Keep the rest in English with a "need help in another language?" contact.</p>
+          </div>
+
+          <!-- ============================================================ C -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">C. Content, and keeping it up to date</h2>
+
+          <div class="smart-decision" id="C1">
+            <h3 class="govuk-heading-m">C1. How PUBLIC updates the guides without a developer</h3>
+            <p class="govuk-body">Whatever the platform, store each guide as structured content, not one long page:</p>
+            <table class="govuk-table">
+              <caption class="govuk-table__caption govuk-table__caption--s">Suggested content model</caption>
+              <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">Item</th><th scope="col" class="govuk-table__header">Fields</th></tr></thead>
+              <tbody class="govuk-table__body">
+                <tr class="govuk-table__row"><td class="govuk-table__cell">Guide</td><td class="govuk-table__cell">Title, who it's for (restrict or delay, phone type), time needed, "checked on" OS version and date, version number, video, list of steps, change log</td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">Step</td><td class="govuk-table__cell">Title, instructions, picture (screenshot or drawn screen), video start time, "updated" note (optional)</td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">Allowed app</td><td class="govuk-table__cell">Name, why it's allowed, date added. Shown in every guide.</td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">Update</td><td class="govuk-table__cell">Date, group, text, link. Shown in "What's new" and reused in the newsletter.</td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">FAQ</td><td class="govuk-table__cell">Question, answer, group</td></tr>
+              </tbody>
+            </table>
+            <p class="govuk-body">In Webflow, each of these is a CMS Collection. In a self-hosted site, each is a Markdown file edited through a CMS. Either way, changing a step means editing a form field, not code, and the web page, PDF and "What's new" all update together.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> agree this model before the build, and set up a named editor and a reviewer, so one person makes a change and a second person checks it on a real phone.</p>
+          </div>
+
+          <div class="smart-decision" id="C2">
+            <h3 class="govuk-heading-m">C2. Real screenshots or drawn screens?</h3>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>Real screenshots:</strong> they look exactly like the parent's phone. But they need re-taking after updates, on test devices with no personal data, and need proper alt text.</li>
+              <li><strong>Drawn screens</strong> (as in the mock-up): updated by editing text, readable by screen readers, and the "tap here" box is always clear. They look less real.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> test both with parents in the pilot user-testing sessions (16 to 20 November). This is exactly the kind of question those sessions are for.</p>
+          </div>
+
+          <div class="smart-decision" id="C3">
+            <h3 class="govuk-heading-m">C3. How we find out a guide is out of date</h3>
+            <p class="govuk-body">There are three sources: a check of every guide on real devices within a week of each major iOS or Android release (iOS in September, with smaller updates throughout the year); "tell us which step" reports from parents; and helpdesk emails. Each fix gets a change log entry and, if it matters, a "What's new" item.</p>
+          </div>
+
+          <div class="smart-decision" id="C4">
+            <h3 class="govuk-heading-m">C4. Send parents to one guide through questions</h3>
+            <p class="govuk-body">Two questions (child's phone, then parent's phone if it's an iPhone) lead to exactly one of the three guides. The full list stays below for anyone who wants it. <strong>Suggestion:</strong> keep this, and test it in the pilot.</p>
+          </div>
+
+          <div class="smart-decision" id="C5">
+            <h3 class="govuk-heading-m">C5. Task list on the Start page</h3>
+            <p class="govuk-body">The task list gives each family 3 things to do. Should the statuses be real (worked out from what they've done on the site), or fixed text? If real, see D2.</p>
+          </div>
+
+          <div class="smart-decision" id="C6">
+            <h3 class="govuk-heading-m">C6. Store the allowed-apps list once</h3>
+            <p class="govuk-body">The allowed-apps list appears in every guide, and on the guides page. Store it once so that adding an app (after a request, see the Get help page) updates every guide at once. WhatsApp and school apps are still [TBC] from the phase 1 research.</p>
+          </div>
+
+          <div class="smart-decision" id="C7">
+            <h3 class="govuk-heading-m">C7. What if a delay-group child gets a smartphone?</h3>
+            <p class="govuk-body">Should the delay group see the restriction guides as a fallback? That's reasonable for families, but it adds a third path to the analysis. For now the mock-up asks them to tell us, and hides the guides. This needs agreeing with IFF and Cambridge.</p>
+          </div>
+
+          <div class="smart-decision" id="C8">
+            <h3 class="govuk-heading-m">C8. PDFs</h3>
+            <p class="govuk-body">In the mock-up, "Print or save as PDF" uses a print stylesheet, so the PDF always matches the web page. For the paper onboarding pack, export the same page. <strong>Suggestion:</strong> no separately designed PDFs, because they drift out of date.</p>
+          </div>
+
+          <div class="smart-decision" id="C9">
+            <h3 class="govuk-heading-m">C9. Android brands</h3>
+            <p class="govuk-body">Brand tips inline in the guide (simpler to keep up to date), or a "Which brand?" question that shows brand-specific steps (easier to follow)? <strong>Suggestion:</strong> tips inline, covering the 3 most common brands in the pilot sample.</p>
+          </div>
+
+          <div class="smart-decision" id="C10">
+            <h3 class="govuk-heading-m">C10. Are basic (non-smart) phones fine in the delay group?</h3>
+            <p class="govuk-body">This needs a clear yes or no from the research team, stated plainly in the delay guide. Parents will ask.</p>
+          </div>
+
+          <!-- ============================================================ V -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">V. Video</h2>
+
+          <div class="smart-decision" id="V1">
+            <h3 class="govuk-heading-m">V1. Vimeo set-up</h3>
+            <p class="govuk-body">Vimeo is a good fit: no ads and no recommended videos. On a paid plan (Standard or above), videos can be hidden on vimeo.com, set to play only on our domain, captioned (with checked captions uploaded), and view counts are available per video. The mock-up loads the player only when someone presses Play, with <code>dnt=1</code>, so no Vimeo cookies are set before then.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> Vimeo Standard, domain-restricted, with a transcript under every video.</p>
+          </div>
+
+          <div class="smart-decision" id="V2">
+            <h3 class="govuk-heading-m">V2. One video per guide, or one per step?</h3>
+            <p class="govuk-body">The mock-up uses one video per guide with "play from step X" buttons. Short clips per step are easier to re-record one at a time, but mean more files. <strong>Suggestion:</strong> one per guide for the pilot. Look again if updates keep changing single steps.</p>
+          </div>
+
+          <div class="smart-decision" id="V3">
+            <h3 class="govuk-heading-m">V3. Webinar recordings per group</h3>
+            <p class="govuk-body">Restrict and delay families see different recordings. Each has chapters, so parents can skip to the part they need.</p>
+          </div>
+
+          <div class="smart-decision" id="V4">
+            <h3 class="govuk-heading-m">V4. Video views per family</h3>
+            <p class="govuk-body">Vimeo counts views per video, not per family. To count views per family, the site records a "played" event against the family ID (through Vimeo's player API). See D1.</p>
+          </div>
+
+          <!-- ============================================================ S -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">S. Screen time screenshots</h2>
+
+          <div class="smart-decision" id="S1">
+            <h3 class="govuk-heading-m">S1. Which screen, and how often?</h3>
+            <p class="govuk-body">Ask for one standard screen (the weekly report) so the automatic reading works reliably. The mock-up asks once a month. Frequency and timing need agreeing with IFF's survey schedule.</p>
+          </div>
+
+          <div class="smart-decision" id="S2">
+            <h3 class="govuk-heading-m">S2. Step count and sleep score from smartwatches</h3>
+            <p class="govuk-body"><strong>Suggestion:</strong> leave these out of the first version. Keep the form to screen time, with typed-in numbers as an alternative.</p>
+          </div>
+
+          <div class="smart-decision" id="S3">
+            <h3 class="govuk-heading-m">S3. Build the pipeline, or use a form tool?</h3>
+            <ul class="govuk-list govuk-list--bullet smart-decision__options">
+              <li><strong>Build our own</strong> (as in the mock-up): an upload tied to the signed-in family ID, UK storage (for example, AWS London or Azure UK South), image metadata removed on upload, Gemini API processing on PUBLIC's paid terms, a sample checked by hand, and images deleted after the numbers are extracted.</li>
+              <li><strong>Qualtrics (via IFF) or Tally:</strong> quicker, and IFF may already have a DPA in place. The family ID is passed in the link, and the form looks less joined-up with the site.</li>
+            </ul>
+            <p class="govuk-body"><strong>Suggestion:</strong> build our own for the main trial, so it can be offered wherever families are (site, newsletter, IFF surveys) with one data store. For the pilot, a Qualtrics form is enough.</p>
+          </div>
+
+          <div class="smart-decision" id="S4">
+            <h3 class="govuk-heading-m">S4. Confirmation email</h3>
+            <p class="govuk-body">An email after each upload reassures parents, but adds to the messages they get. <strong>Suggestion:</strong> no email. Show the on-screen confirmation and the "What you've sent before" list instead.</p>
+          </div>
+
+          <!-- ============================================================ D -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">D. Engagement data</h2>
+
+          <div class="smart-decision" id="D1">
+            <h3 class="govuk-heading-m">D1. Google Analytics, or our own activity log?</h3>
+            <p class="govuk-body">The spec asks for Google Analytics <em>and</em> clicks and views "identified to user". Google's terms don't allow data that identifies people to be sent to Google Analytics, and it needs cookie consent, so families who reject cookies would leave gaps in the compliance data.</p>
+            <p class="govuk-body"><strong>Suggestion:</strong> record the few events that matter for compliance (sign-in, guide opened, step ticked, video played, screenshot uploaded) in our own UK database, against the family ID, as part of the research data described in the privacy notice. If page-level statistics are needed too, use a cookie-free tool (such as Plausible, hosted in the EU) with no family IDs. Check this with the DPIA.</p>
+          </div>
+
+          <div class="smart-decision" id="D2">
+            <h3 class="govuk-heading-m">D2. Guide progress as a compliance signal</h3>
+            <p class="govuk-body">The "I've done this step" ticks help parents. Recorded against the family ID, "ticked all 9 steps" is a good indicator that restrictions were set up. Is that acceptable to parents, and should the site say so next to the ticks?</p>
+          </div>
+
+          <!-- ============================================================ E -->
+          <h2 class="govuk-heading-l govuk-!-margin-top-6">E. Scope</h2>
+
+          <div class="smart-decision" id="E1">
+            <h3 class="govuk-heading-m">E1. Sections in the spec that aren't in the mock-up</h3>
+            <p class="govuk-body">"Month by month", a children's section, the newsletter archive and the forum. The mock-up includes one children's video and "talking to your child" tips in the guides and FAQs. <strong>Suggestion:</strong> add the newsletter archive when the first newsletter goes out, and keep the others for after the pilot.</p>
+          </div>
+
+          <div class="smart-decision" id="E2">
+            <h3 class="govuk-heading-m">E2. FAQs and the forum</h3>
+            <p class="govuk-body">If the Discourse forum goes ahead, the FAQs become the forum's most common questions, with a link to the forum. If not, the FAQs and the support email are all the support families get.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

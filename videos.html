@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title>Videos and webinars – The SMART Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="govuk-template__body" data-access="member" data-page="videos">
+
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-xl">Videos and webinars</h1>
+          <p class="govuk-body-l">Watch the welcome webinar if you missed it, and short videos that show you what to do.</p>
+
+          <h2 class="govuk-heading-l" id="welcome">Welcome webinar</h2>
+          <div id="webinar" data-vimeo="1084537" data-title="Welcome webinar recording"></div>
+          <p class="smart-video-meta">Recorded 3 November 2026 · <span data-show-for="restrict">About 40 minutes</span><span data-show-for="delay">About 30 minutes</span> · Subtitles available (press CC)</p>
+
+          <h3 class="govuk-heading-s">Jump to a part of the webinar</h3>
+          <ul class="smart-chapters">
+            <li><button type="button" data-seek="0" data-target="webinar">0:00 Welcome and who we are</button></li>
+            <li><button type="button" data-seek="120" data-target="webinar">2:00 Why this study matters</button></li>
+            <li><button type="button" data-seek="240" data-target="webinar">4:00 What we're asking your family to do</button></li>
+            <li data-show-for="restrict"><button type="button" data-seek="360" data-target="webinar">6:00 Live walkthrough: setting up restrictions</button></li>
+            <li><button type="button" data-seek="480" data-target="webinar">8:00 Getting help, and questions from parents</button></li>
+          </ul>
+
+          <details class="govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">Read the webinar transcript</span></summary>
+            <div class="govuk-details__text">[Transcript placeholder: a checked transcript goes here, with the same headings as the parts above.]</div>
+          </details>
+
+          <aside class="smart-design-note" data-decision="V3 A5">
+            <p><strong>One recording per group.</strong> The restrict and delay webinars say different things, so each family only sees their own. Here the video is the same placeholder for both.</p>
+            <p><strong>Chapters</strong> let parents skip the introduction and go straight to the part they need. We just need the times when we edit the recording.</p>
+            <p><strong>The Q&amp;A part</strong> may show other parents' names and questions. Edit it out, or anonymise it, before uploading.</p>
+          </aside>
+
+          <h2 class="govuk-heading-l">Coming up</h2>
+          <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-visually-hidden">Upcoming live sessions</caption>
+            <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">Date</th><th scope="col" class="govuk-table__header">Session</th><th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Link</span></th></tr></thead>
+            <tbody class="govuk-table__body">
+              <tr class="govuk-table__row"><td class="govuk-table__cell">Thu 5 Nov 2026, 7pm</td><td class="govuk-table__cell">Welcome webinar (repeat)</td><td class="govuk-table__cell"><a class="govuk-link" href="#">Join<span class="govuk-visually-hidden"> the welcome webinar on 5 November</span></a></td></tr>
+              <tr class="govuk-table__row" data-show-for="restrict"><td class="govuk-table__cell">Tue 10 Nov 2026, 12:30pm</td><td class="govuk-table__cell">Drop-in: help with set-up</td><td class="govuk-table__cell"><a class="govuk-link" href="#">Join<span class="govuk-visually-hidden"> the set-up drop-in on 10 November</span></a></td></tr>
+            </tbody>
+          </table>
+
+          <div data-show-for="restrict">
+            <h2 class="govuk-heading-l">Set-up videos</h2>
+            <p class="govuk-body">Each set-up guide has a video. Open the guide to watch it, with buttons to jump to each step.</p>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a class="govuk-link" href="guide-iphone-parent.html#video">Your child's iPhone, set up from your iPhone or iPad</a> (10 minutes)</li>
+              <li><a class="govuk-link" href="guide-iphone-child.html#video">Your child's iPhone, set up on their phone</a> (3 minutes)</li>
+              <li><a class="govuk-link" href="guide-android.html#video">Your child's Android phone</a> (1 minute)</li>
+            </ul>
+          </div>
+
+          <h2 class="govuk-heading-l" id="children">For your child</h2>
+          <div id="kids" data-vimeo="22439234" data-title="A video for children about the study"></div>
+          <p class="smart-video-meta">About 3 minutes · For children aged 9 to 11 · Placeholder video</p>
+
+          <aside class="smart-design-note" data-decision="V1 V4">
+            <p><strong>Vimeo set-up:</strong> a paid plan (Standard or above) lets us hide videos on vimeo.com, allow them to play only on our domain, remove end-screen suggestions, add checked captions, and see view counts per video. On free plans, the videos are public on vimeo.com.</p>
+            <p><strong>Views per family:</strong> Vimeo only reports views per video, not per family. To count "family SMART-R-4821 watched the webinar", the site would need to record a "played" event against the family ID itself (see D1).</p>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/govuk-frontend.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
