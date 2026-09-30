@@ -40,4 +40,26 @@ The **Review tools** box (bottom right) turns the purple design notes on and off
 
 To rebuild the CSS after editing the SCSS: `npm install && npm run build`.
 
+## The set-up guides (one source, three outputs)
+
+The restrictions guidance lives in **`content/guidance.js`**: the routes (A, B, C), the steps, the allowed-apps list, and a short description of every phone screen. Run `npm run build:guides` to generate:
+
+| Output | Where | Use it for |
+| --- | --- | --- |
+| Guide pages | `guide-iphone-parent.html` (A), `guide-iphone-child.html` (B), `guide-android.html` (C) | The microsite. Don't edit these by hand. |
+| Word document | `exports/SMART-restrictions-guidance.docx` | Review, sign-off, printing. Text is editable. Includes review notes at the end. |
+| Figma boards | `exports/figma/route-a.svg`, `-b`, `-c` | Drag into Figma: one board per route, text stays editable (Inter). |
+| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. |
+
+Screens are drawn by `tools/screens.js` from descriptions like:
+
+```js
+{ os: 'ios', bar: { back: 'Settings', title: 'Screen Time' },
+  blocks: [{ type: 'group', header: 'Limit Usage', rows: [
+    { label: 'App Limits', sub: 'Set time limits for apps', icon: 'hourglass', colour: '#FF9500', chevron: true, hl: 'Tap' }
+  ] }] }
+```
+
+`hl` draws the coral "tap here" outline with a label; `avoid` draws a red dashed "don't" outline; `span` stretches either over several rows. After a software update, changing a label means changing a word and rebuilding.
+
 The real build's platform and editing workflow are still open (decisions B2 and C1).
