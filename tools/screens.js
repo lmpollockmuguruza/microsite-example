@@ -205,6 +205,11 @@ function iosGroup (b, y, ctx) {
       s += text(rx, cy + 5, row.value, { size: 14.5, fill: IOS.light, anchor: 'end' })
       rx -= textWidth(row.value, 14.5, 400) + 10
     }
+    if (row.swipe) {
+      s += `<rect x="${gx + gw - 86}" y="${ry}" width="86" height="${h}" fill="${IOS.red}"${i === 0 ? ' rx="0"' : ''}/>` + text(gx + gw - 43, cy + 5.5, 'Delete', { size: 15, weight: 500, fill: '#FFF', anchor: 'middle' })
+      rx = gx + gw - 96
+      lx -= 10
+    }
     const labelColour = row.blue ? IOS.blue : row.placeholder ? '#B8B8BD' : IOS.text
     const maxLabel = rx - lx - 4
     if (row.sub) {
@@ -215,7 +220,9 @@ function iosGroup (b, y, ctx) {
     }
     if (row.valueDark) s += text(gx + 110, cy + 5.5, row.value, { size: 15, fill: IOS.text })
     if (i < b.rows.length - 1) s += `<rect x="${r1(row.select || row.minus || row.plus ? gx + 16 + 32 + (row.icon ? 43 : 0) : row.icon && !row.plainIcon ? lx : gx + 16)}" y="${r1(ry + h - 0.5)}" width="${r1(gx + gw - (row.icon && !row.plainIcon ? lx : gx + 16))}" height="0.6" fill="${IOS.sep}"/>`
-    if (row.hl || row.avoid) {
+    if (row.swipe && row.hl) {
+      ctx.hls.push({ hl: row.hl, box: { x: gx + gw - 86, y: ry, w: 86, h }, pos: 'below' })
+    } else if (row.hl || row.avoid) {
       const n = row.span || 1
       const hh = heights.slice(i, i + n).reduce((a, c) => a + c, 0)
       const pos = i === 0 && b.header ? 'below' : row.toggle && i > 0 ? 'left' : undefined
@@ -318,6 +325,50 @@ function iosBlock (b, y, ctx) {
     case 'urlbar':
       s += `<rect x="${gx}" y="${y}" width="${gw}" height="42" rx="21" fill="#FFF" stroke="#E0E0E5"/>` + glyph('lock', W / 2 - textWidth(b.text, 15, 400) / 2 - 22, y + 13, 15, IOS.light, 2.2) + text(W / 2, y + 26.5, b.text, { size: 15, anchor: 'middle' })
       return { s, y: y + 60 }
+    case 'passcode': {
+      s += text(W / 2, y + 26, b.title, { size: 17, weight: 600, anchor: 'middle' })
+      s += text(W / 2, y + 56, b.text, { size: 15, fill: IOS.grey, anchor: 'middle' })
+      const filled = b.filled || 0
+      ;[0, 1, 2, 3].forEach(i => {
+        const cx = W / 2 - 51 + i * 34
+        s += i < filled ? `<circle cx="${cx}" cy="${y + 92}" r="7.5" fill="#000"/>` : `<circle cx="${cx}" cy="${y + 92}" r="7" fill="none" stroke="#000" stroke-width="1.4"/>`
+      })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W / 2 - 70, y: y + 76, w: 140, h: 32 }, pos: 'below' })
+      const keys = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], null, ['0', ''], null]
+      keys.forEach((k, i) => {
+        if (!k) return
+        const cx = W / 2 + ((i % 3) - 1) * 92
+        const cy = y + 164 + Math.floor(i / 3) * 78
+        s += `<circle cx="${cx}" cy="${cy}" r="33" fill="#E3E3E8"/>` + text(cx, cy + (k[1] ? 4 : 9), k[0], { size: 28, anchor: 'middle' })
+        if (k[1]) s += text(cx, cy + 19, k[1], { size: 9, weight: 600, anchor: 'middle', ls: 1.5 })
+      })
+      return { s, y: y + 164 + 3 * 78 + 50 }
+    }
+    case 'chart': {
+      const h = 186
+      s += `<rect x="${gx}" y="${y}" width="${gw}" height="${h}" rx="12" fill="${IOS.card}"/>`
+      s += text(gx + 16, y + 26, 'Daily Average', { size: 13, fill: IOS.grey }) + text(gx + 16, y + 58, b.value, { size: 28, weight: 600 })
+      const bars = b.bars || [40, 70, 30, 55, 60, 20, 45]
+      const base = y + h - 34
+      bars.forEach((v, i) => {
+        const x = gx + 24 + i * 40
+        s += `<rect x="${x}" y="${base - v}" width="20" height="${v}" rx="3" fill="#30B0C7"/>` + text(x + 10, base + 18, 'MTWTFSS'[i], { size: 11, fill: IOS.light, anchor: 'middle' })
+      })
+      s += `<rect x="${gx + 16}" y="${base}" width="${gw - 32}" height="1" fill="${IOS.sep}"/>`
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: gx, y, w: gw, h } })
+      return { s, y: y + h + 18 }
+    }
+    case 'page': {
+      s += `<rect x="0" y="${y}" width="${W}" height="54" fill="${b.colour || '#1A1A1A'}"/>` + text(20, y + 34, b.title, { size: 19, weight: 700, fill: '#FFF' })
+      let py = y + 76
+      s += text(20, py, b.heading, { size: 20, weight: 700 })
+      py += 18
+      ;[300, 280, 310, 190].forEach(w => { py += 18; s += `<rect x="20" y="${py}" width="${w}" height="9" rx="4.5" fill="#DADADF"/>` })
+      py += 28
+      s += `<rect x="20" y="${py}" width="${W - 40}" height="110" rx="12" fill="${b.tint || '#E8F1FB'}"/>`
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 10, y, w: W - 20, h: py + 110 - y } })
+      return { s, y: py + 130 }
+    }
     case 'message': {
       const dark = b.dark
       const fg = dark ? '#FFF' : IOS.text
@@ -377,7 +428,10 @@ function andBlock (b, y, ctx) {
           s += `<circle cx="${lx + 10}" cy="${cy}" r="9" fill="none" stroke="${row.radio === 'on' ? AND.blue : AND.grey}" stroke-width="2"/>` + (row.radio === 'on' ? `<circle cx="${lx + 10}" cy="${cy}" r="5" fill="${AND.blue}"/>` : '')
           lx += 44
         }
-        if (row.app) {
+        if (row.letter) {
+          s += `<circle cx="${lx + 18}" cy="${cy}" r="18" fill="${row.colour || AND.blue}"/>` + text(lx + 18, cy + 6.5, row.letter, { size: 18, weight: 700, fill: '#FFF', anchor: 'middle' })
+          lx += 52
+        } else if (row.app) {
           s += `<circle cx="${lx + 18}" cy="${cy}" r="18" fill="${row.colour || AND.blue}"/>` + glyph(row.icon, lx + 8, cy - 10, 20, '#FFF', 2.2)
           lx += 52
         } else if (row.icon) {
@@ -429,6 +483,41 @@ function andBlock (b, y, ctx) {
       s += text(80, y + 42, b.name, { size: 16, weight: 600, fill: AND.text }) + text(80, y + 62, b.sub, { size: 13.5, fill: AND.grey })
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 16, y: y + 8, w: W - 32, h: 76 } })
       return { s, y: y + 96 }
+    }
+    case 'ahero': {
+      s += glyph(b.icon, 22, y + 8, 40, AND.blue, 2)
+      s += text(22, y + 88, b.title, { size: 24, fill: AND.text })
+      const lines = wrap(b.text, 15, 400, W - 44)
+      lines.forEach((l, i) => { s += text(22, y + 116 + i * 21, l, { size: 15, fill: AND.grey }) })
+      return { s, y: y + 116 + lines.length * 21 + 10 }
+    }
+    case 'afield': {
+      s += `<rect x="20" y="${y + 10}" width="${W - 40}" height="54" rx="6" fill="#FFF" stroke="${b.focus ? AND.blue : AND.light}" stroke-width="${b.focus ? 2 : 1.2}"/>`
+      s += `<rect x="32" y="${y + 3}" width="${textWidth(b.label, 12, 400) + 10}" height="14" fill="${b.bg || AND.bg}"/>` + text(37, y + 14, b.label, { size: 12, fill: b.focus ? AND.blue : AND.grey })
+      s += text(36, y + 43, b.value || b.placeholder || '', { size: 16, fill: b.value ? AND.text : AND.light })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 20, y: y + 10, w: W - 40, h: 54 } })
+      return { s, y: y + 78 }
+    }
+    case 'actions': {
+      if (b.left) s += text(36, y + 34, b.left, { size: 14.5, weight: 600, fill: AND.blue })
+      const tw = textWidth(b.right, 14.5, 600) + 44
+      s += `<rect x="${r1(W - 20 - tw)}" y="${y + 10}" width="${r1(tw)}" height="40" rx="20" fill="${AND.blue}"/>` + text(W - 20 - tw / 2, y + 35, b.right, { size: 14.5, weight: 600, fill: '#FFF', anchor: 'middle' })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W - 20 - tw, y: y + 10, w: tw, h: 40 } })
+      return { s, y: y + 64 }
+    }
+    case 'dialog': {
+      s += `<rect x="0" y="${y - 400}" width="${W}" height="1200" fill="#000" fill-opacity=".32"/>`
+      const dy = y + 10
+      const dh = 250
+      s += `<rect x="24" y="${dy}" width="${W - 48}" height="${dh}" rx="28" fill="${AND.surface}"/>`
+      s += text(48, dy + 44, b.title, { size: 22, fill: AND.text })
+      s += `<rect x="44" y="${dy + 76}" width="${W - 88}" height="54" rx="6" fill="${AND.surface}" stroke="${AND.blue}" stroke-width="2"/>`
+      s += `<rect x="54" y="${dy + 69}" width="${textWidth(b.label, 12, 400) + 10}" height="14" fill="${AND.surface}"/>` + text(59, dy + 80, b.label, { size: 12, fill: AND.blue })
+      s += text(58, dy + 109, b.value, { size: 16, fill: AND.text })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 44, y: dy + 76, w: W - 88, h: 54 } })
+      s += text(W - 120, dy + 206, 'Cancel', { size: 14.5, weight: 600, fill: AND.blue, anchor: 'end' }) + text(W - 56, dy + 206, b.ok || 'Add', { size: 14.5, weight: 600, fill: AND.blue, anchor: 'end' })
+      if (b.okHl) ctx.hls.push({ hl: b.okHl, box: { x: W - 92, y: dy + 186, w: 48, h: 30 }, pos: 'below' })
+      return { s, y: dy + dh + 40 }
     }
     case 'storeitem': {
       s += `<rect x="20" y="${y + 8}" width="60" height="60" rx="14" fill="#FFF" stroke="${AND.sep}"/>` + glyph(b.icon, 32, y + 20, 36, '#1E8E3E', 2)
