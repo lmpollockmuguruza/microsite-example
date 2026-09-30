@@ -40,6 +40,12 @@ $line: #dfe5ec;
 @font-face { font-family: "Nunito"; font-style: normal; font-weight: 800; font-display: swap; src: url("../fonts/nunito-latin-800-normal.woff2") format("woff2"); }
 @font-face { font-family: "Nunito"; font-style: normal; font-weight: 900; font-display: swap; src: url("../fonts/nunito-latin-900-normal.woff2") format("woff2"); }
 
+// Inter: used inside the drawn phone screens (close to the phones' own system fonts)
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 500; font-display: swap; src: url("../fonts/inter-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }
+
 $radius: 20px;
 $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
 
@@ -698,4 +704,64 @@ html.smart-notes-off .smart-design-note { display: none; }
   .smart-step { break-inside: avoid; box-shadow: none; border: 1px solid #999; }
   .smart-hero { padding: 0; background: none; img { max-height: 120px; width: auto; } }
   .smart-phone { box-shadow: none; }
+}
+
+
+// ---------------------------------------------------------------- Guide steps: drawn phone screens
+.smart-step__meta {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; margin: -8px 0 14px; padding: 0; list-style: none;
+  @include govuk.govuk-font(16, $weight: bold); color: #4a5b70;
+  li { display: inline-flex; align-items: center; gap: 6px; }
+}
+.smart-step__list > li { margin-bottom: 8px; }
+.smart-inset-warn { background: $lemon; }
+.smart-check {
+  display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start;
+  margin: 0 0 20px; padding: 14px 16px; border-radius: 14px; background: $mint-light;
+  .smart-icon { width: 26px; height: 26px; color: $teal; }
+}
+.smart-screens {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 32px;
+  margin: 24px 0 16px;
+  // Phones: one screen at a time, swipe sideways
+  @include govuk.govuk-media-query($until: tablet) {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    gap: 16px;
+    margin-right: -18px;
+    padding: 4px 18px 14px 2px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+  }
+}
+.smart-screen {
+  margin: 0;
+  max-width: 300px;
+  scroll-snap-align: start;
+  svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 14px rgba(18, 38, 63, .16)); }
+  figcaption {
+    display: grid; grid-template-columns: 26px 1fr; gap: 8px; margin-top: 12px;
+    @include govuk.govuk-font(14); color: #3b4a5c;
+  }
+}
+.smart-screen__n {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9px;
+  background: $sun; color: $navy; font-weight: 900;
+}
+.smart-screen__draft {
+  display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 999px;
+  background: #fde7d3; color: $coral-dark; font-weight: 800; font-size: 13px;
+}
+.smart-chips--list .smart-chip { flex-direction: row; }
+.smart-chip__for { font-weight: 400; color: #4a5b70; }
+.smart-chip__for::before { content: "·"; margin: 0 6px 0 2px; }
+
+@media print {
+  .smart-screens { display: flex; flex-wrap: wrap; overflow: visible; margin: 10px 0; }
+  .smart-screen { width: 30%; break-inside: avoid; svg { filter: none; } }
+  .smart-step__done { display: none; }
 }
