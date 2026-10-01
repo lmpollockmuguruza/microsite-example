@@ -46,6 +46,11 @@ $line: #dfe5ec;
 @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
 @font-face { font-family: "Inter"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }
 
+// Comic lettering (The Off-Grid Gang)
+@font-face { font-family: "Bangers"; font-weight: 400; font-display: swap; src: url("../fonts/bangers-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Comic Neue"; font-weight: 400; font-display: swap; src: url("../fonts/comic-neue-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Comic Neue"; font-weight: 700; font-display: swap; src: url("../fonts/comic-neue-latin-700-normal.woff2") format("woff2"); }
+
 $radius: 20px;
 $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
 
@@ -241,6 +246,11 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
   grid-template-columns: 1.6fr 1fr;
   padding: 26px 36px;
   img { max-height: 210px; object-fit: contain; }
+  @include govuk.govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr;
+    padding: 22px 20px;
+    img { max-height: 150px; }
+  }
 }
 .smart-hero__eyebrow {
   display: inline-flex;
@@ -765,3 +775,42 @@ html.smart-notes-off .smart-design-note { display: none; }
   .smart-screen { width: 30%; break-inside: avoid; svg { filter: none; } }
   .smart-step__done { display: none; }
 }
+
+
+// ---------------------------------------------------------------- Newsletter and comic
+.smart-icon--flip { transform: rotate(180deg); }
+.smart-comic { max-width: 820px; margin: 10px 0 24px; scroll-margin-top: 10px; }
+.smart-comic__bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;
+  .govuk-button { display: inline-flex; align-items: center; gap: 8px; width: auto; flex: 0 0 auto; }
+  @include govuk.govuk-media-query($until: tablet) { .govuk-button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+}
+.smart-comic__count { margin: 0; white-space: nowrap; font-family: "Bangers", "Nunito", sans-serif; font-size: clamp(20px, 5vw, 26px); letter-spacing: 1px; color: $navy; text-align: center; }
+.smart-comic__dots {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 14px;
+  span { width: 10px; height: 10px; border-radius: 50%; background: #CBD3DD; }
+  span.is-on { background: $coral-dark; transform: scale(1.25); }
+}
+.smart-comic__art svg { display: block; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 10px 30px rgba(18, 38, 63, .18); }
+.smart-comic__text { margin-top: 16px; }
+.smart-chapters-list, .smart-issues { list-style: none; margin: 0 0 30px; padding: 0; }
+.smart-chapters-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.smart-chapter {
+  display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center;
+  padding: 12px 14px; border-radius: 16px; background: #EEF1F5; color: #4a5b70;
+  @include govuk.govuk-font(16);
+}
+.smart-chapter--open { background: $lemon; color: $navy; box-shadow: 0 0 0 3px $sun; }
+.smart-chapter__n {
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #FFF;
+  font-family: "Bangers", sans-serif; font-size: 24px; color: $navy;
+}
+.smart-issue {
+  display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: center;
+  padding: 14px 16px; margin-bottom: 10px; border-radius: 16px; background: #EEF1F5; color: #4a5b70;
+}
+.smart-issue--open { background: #FFF; box-shadow: $shadow; }
+.smart-issue__icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: $lilac-light; color: $navy; }
+.smart-issue__title { @include govuk.govuk-font(19, $weight: bold); }
+
+.smart-comic__zoom { display: inline-block; margin-top: 10px; @include govuk.govuk-font(16, $weight: bold); }

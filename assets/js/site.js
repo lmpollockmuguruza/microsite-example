@@ -97,6 +97,7 @@
     { href: 'guides.html', text: 'Guides', key: 'guides', icon: 'book-open' },
     { href: 'videos.html', text: 'Videos and webinars', key: 'videos', icon: 'circle-play' },
     { href: 'share-screen-time.html', text: 'Share screen time', key: 'share', icon: 'upload', group: 'restrict' },
+    { href: 'newsletter.html', text: 'Newsletter', key: 'newsletter', icon: 'mail' },
     { href: 'help.html', text: 'Get help', key: 'help', icon: 'life-buoy' }
   ]
 

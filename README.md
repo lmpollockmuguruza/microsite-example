@@ -63,3 +63,16 @@ Screens are drawn by `tools/screens.js` from descriptions like:
 `hl` draws the coral "tap here" outline with a label; `avoid` draws a red dashed "don't" outline; `span` stretches either over several rows. After a software update, changing a label means changing a word and rebuilding.
 
 The real build's platform and editing workflow are still open (decisions B2 and C1).
+
+## The comic: "The Off-Grid Gang" (Newsletter → Nudges)
+
+A 12-chapter comic for children aged 8 to 12, read with a parent. Each newsletter unlocks 3 new pages. Chapter 1 (the "rules of the game" opener plus 3 pages) is in **`content/comic.js`**. The characters, scenery and lettering are in `tools/comic-kit.js`. Run `npm run build:comic` to generate:
+
+| Output | Where |
+| --- | --- |
+| Newsletter page, with the comic reader under "Nudges" | `newsletter.html` |
+| One SVG per page (site and Figma) | `assets/comic/chapter-1/` |
+| One board with all 4 pages, to drop into Figma | `exports/figma/comic-chapter-1.svg` |
+| 2x PNGs, for newsletter emails and printing | `exports/comic/chapter-1/` |
+
+Lettering uses Bangers and Comic Neue (both Google Fonts, built into Figma), so it stays editable. Every page has a text version on the site, for screen readers and reading aloud.
