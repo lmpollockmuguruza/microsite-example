@@ -73,4 +73,7 @@ A 12-issue comic for children aged 8 to 12, with 4 pages per monthly newsletter 
   - `assets/comic/character-sheet.png` (the site) and `assets/comic/character-sheet.svg`
   - `exports/figma/wheres-margot-character-sheet.svg` (Figma; text in Fredoka and Atkinson Hyperlegible stays editable)
   - `exports/comic/wheres-margot-character-sheet.png` (to share)
-- Chapter 1 will be drawn after the characters are approved.
+- **Issue 1 (opener plus pages 1 to 4):** drawn by `tools/build-issue-1.js` with the same kit. Run `npm run build:issue` to produce:
+  - `assets/comic/issue-1/*.png` (the site, 2x) and `*.svg` (fonts linked)
+  - `exports/figma/wheres-margot-issue-1.svg` (all five pages on one Figma board, with editable lettering)
+  - the comic reader on `newsletter.html`, between the `<!-- comic:start -->` and `<!-- comic:end -->` markers, with a text version of every page

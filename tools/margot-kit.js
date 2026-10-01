@@ -186,7 +186,24 @@ const ARMS = {
   hold: [[[-40, -156], [-46, -124], [-18, -112]], [[40, -156], [46, -124], [18, -112]]],
   wave: [[[-40, -156], [-50, -122], [-48, -92]], [[40, -156], [64, -176], [66, -214]]],
   mug: [[[-40, -156], [-50, -122], [-48, -92]], [[40, -156], [52, -128], [30, -118]]],
-  shrug: [[[-40, -156], [-60, -130], [-64, -150]], [[40, -156], [60, -130], [64, -150]]]
+  shrug: [[[-40, -156], [-60, -130], [-64, -150]], [[40, -156], [60, -130], [64, -150]]],
+  hips: [[[-40, -156], [-62, -128], [-38, -106]], [[40, -156], [62, -128], [38, -106]]],
+  point: [[[-40, -156], [-50, -122], [-48, -92]], [[40, -156], [72, -150], [104, -160]]],
+  cheer: [[[-40, -156], [-60, -186], [-58, -226]], [[40, -156], [60, -186], [58, -226]]],
+  run: [[[-40, -156], [-60, -132], [-50, -104]], [[40, -156], [58, -134], [70, -162]]],
+  shock: [[[-40, -156], [-64, -166], [-54, -200]], [[40, -156], [64, -166], [54, -200]]],
+  reach: [[[-40, -156], [-66, -150], [-92, -158]], [[40, -156], [66, -150], [92, -158]]]
+}
+
+// Legs: [hip, knee, ankle, shoe angle]
+const LEGS = {
+  stand: [[[-13, 0], [-14, -50], [-14, -16], 0], [[13, 0], [14, -50], [14, -16], 0]],
+  run: [[[-13, 0], [-32, -56], [-52, -44], 30], [[13, 0], [22, -50], [18, -16], 0]],
+  kick: [[[-13, 0], [-14, -50], [-14, -16], 0], [[13, 0], [40, -70], [70, -82], -30]],
+  jump: [[[-13, 0], [-26, -58], [-16, -34], 20], [[13, 0], [26, -58], [16, -34], -20]]
+}
+function shoeAt (x, y, ang, c, side) {
+  return `<g transform="translate(${f(x)} ${f(y)}) rotate(${ang}) scale(${side} 1)">${fill(smooth([[-4, 14], [-6, 4], [4, -2], [18, 0], [22, 10], [10, 16]]), c)}</g>`
 }
 
 function standing (who, o = {}) {
@@ -203,12 +220,22 @@ function standing (who, o = {}) {
   // legs
   const legC = shorts ? p.skin : skirt ? '#2E3A6E' : adult ? '#7B6A8E' : UNI.trousers
   const legTop = shorts ? -70 : skirt ? -80 : hem + 4
-  s += limb([[-13, legTop], [-14, -50], [-14, -16]], adult ? 18 : 20, adult ? 14 : 16, legC) + limb([[13, legTop], [14, -50], [14, -16]], adult ? 18 : 20, adult ? 14 : 16, legC)
-  if (shorts) s += fill('M-24 -46 h20 v28 h-20z', UNI.polo) + fill('M4 -46 h20 v28 h-20z', UNI.polo)
-  if (who === 'kofi') s += fill('M4 -32 h20 v16 h-20z', UNI.polo)
   const shoe = who === 'kofi' ? '#FFFFFF' : adult ? '#8E5BA8' : UNI.shoe
-  s += fill(smooth([[-30, -2], [-34, -12], [-22, -20], [-6, -18], [-4, -6], [-12, -1]]), shoe) + fill(smooth([[30, -2], [34, -12], [22, -20], [6, -18], [4, -6], [12, -1]]), shoe)
-  if (who === 'kofi') s += ink('M-28 -8 h16 M28 -8 h-16', 2.2, RISO.red)
+  const legs = LEGS[o.legs || 'stand']
+  if (!o.legs || o.legs === 'stand') {
+    s += limb([[-13, legTop], [-14, -50], [-14, -16]], adult ? 18 : 20, adult ? 14 : 16, legC) + limb([[13, legTop], [14, -50], [14, -16]], adult ? 18 : 20, adult ? 14 : 16, legC)
+    if (shorts) s += fill('M-24 -46 h20 v28 h-20z', UNI.polo) + fill('M4 -46 h20 v28 h-20z', UNI.polo)
+    if (who === 'kofi') s += fill('M4 -32 h20 v16 h-20z', UNI.polo)
+    s += fill(smooth([[-30, -2], [-34, -12], [-22, -20], [-6, -18], [-4, -6], [-12, -1]]), shoe) + fill(smooth([[30, -2], [34, -12], [22, -20], [6, -18], [4, -6], [12, -1]]), shoe)
+    if (who === 'kofi') s += ink('M-28 -8 h16 M28 -8 h-16', 2.2, RISO.red)
+  } else {
+    legs.forEach(([hip, knee, ankle, ang], i) => {
+      const hp = [hip[0], legTop]
+      s += limb([hp, knee, ankle], adult ? 18 : 20, adult ? 14 : 16, legC)
+      if (shorts) s += limb([[(knee[0] + ankle[0]) / 2, (knee[1] + ankle[1]) / 2], [(knee[0] + 3 * ankle[0]) / 4, (knee[1] + 3 * ankle[1]) / 4], ankle], 18, 16, UNI.polo)
+      s += shoeAt(ankle[0], ankle[1] - 6, ang, shoe, i ? 1 : -1)
+    })
+  }
   // bottoms
   if (shorts) s += shaded(smooth([[-36, hem - 10], [-38, -66], [-4, -64], [0, -80], [4, -64], [38, -66], [36, hem - 10]]), UNI.trousers, UNI.trousersShade, 'M10 -130 h40 v80 h-40z')
   if (skirt) s += shaded(smooth([[-34, hem - 12], [-46, -64], [0, -60], [46, -64], [34, hem - 12]]), UNI.trousers, UNI.trousersShade, 'M10 -130 h50 v80 h-50z') + ink('M-18 -92 l-6 26 M0 -92 v30 M18 -92 l6 26', 1.6, UNI.trousersShade)
@@ -245,7 +272,8 @@ function standing (who, o = {}) {
   // neck and head
   s += fill(`M-9 ${top - 14} h18 v14 h-18z`, p.skinShade)
   s += head(who, 0, hy, o.expr || 'happy', o.look || 0)
-  return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) scale(${o.scale || 1})">${s}</g>`
+  const k = o.scale || 1
+  return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) scale(${f(o.flip ? -k : k)} ${f(k)})">${s}</g>`
 }
 
 /** Maisie: in her sports wheelchair, sketchbook on her lap */
@@ -263,15 +291,23 @@ function maisieChair (o = {}) {
   s += fill(`M-18 ${top - 4} L0 ${top + 14} L18 ${top - 4} L10 ${top - 8} L0 ${top + 2} L-10 ${top - 8} Z`, UNI.polo)
   s += fill(blob(24, top + 24, 7, 8), RISO.yellow)
   s += fill(smooth([[-20, -118], [40, -124], [44, -96], [-16, -92]]), '#F3E6C8') + ink('M-6 -108 q10 -10 22 -2 t18 -4', 2, RISO.teal) + fill(blob(8, -102, 6, 4), RISO.pink, 0.7)
-  s += limb([[-36, top + 10], [-44, -128], [-10, -112]], 20, 16, UNI.jumper) + hand(-10, -106, p.skin, -1)
-  s += limb([[36, top + 10], [48, -134], [26, -120]], 20, 16, UNI.jumper) + hand(26, -114, p.skin, 1)
-  s += `<g transform="rotate(30 26 -118)"><rect x="22" y="-146" width="7" height="34" rx="2" fill="${RISO.yellow}"/><path d="M22 -112 l3.5 9 3.5 -9z" fill="#F4D7AE"/></g>`
+  if (o.pose === 'cheer' || o.pose === 'point') {
+    s += limb([[-36, top + 10], [-58, top - 20], [-56, top - 60]], 20, 16, UNI.jumper) + hand(-56, top - 54, p.skin, -1)
+    s += o.pose === 'cheer'
+      ? limb([[36, top + 10], [58, top - 20], [56, top - 60]], 20, 16, UNI.jumper) + hand(56, top - 54, p.skin, 1)
+      : limb([[36, top + 10], [70, top + 8], [100, top - 2]], 20, 16, UNI.jumper) + hand(102, top + 2, p.skin, 1)
+  } else {
+    s += limb([[-36, top + 10], [-44, -128], [-10, -112]], 20, 16, UNI.jumper) + hand(-10, -106, p.skin, -1)
+    s += limb([[36, top + 10], [48, -134], [26, -120]], 20, 16, UNI.jumper) + hand(26, -114, p.skin, 1)
+    s += `<g transform="rotate(30 26 -118)"><rect x="22" y="-146" width="7" height="34" rx="2" fill="${RISO.yellow}"/><path d="M22 -112 l3.5 9 3.5 -9z" fill="#F4D7AE"/></g>`
+  }
   s += fill(`M-9 ${top - 14} h18 v14 h-18z`, p.skinShade)
   s += head('maisie', 0, -238, o.expr || 'happy', o.look || 0)
   s += `<circle cx="-6" cy="-54" r="56" fill="none" stroke="#3A4058" stroke-width="9"/><circle cx="-6" cy="-54" r="46" fill="none" stroke="${RISO.teal}" stroke-width="4"/>`
   for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 + 0.3; s += ink(`M-6 -54 L${f(-6 + Math.cos(a) * 42)} ${f(-54 + Math.sin(a) * 42)}`, 1.6, '#8A90A4') }
   s += `<circle cx="-6" cy="-54" r="7" fill="${RISO.teal}"/>`
-  return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) scale(${o.scale || 1})">${s}</g>`
+  const k = o.scale || 1
+  return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) scale(${f(o.flip ? -k : k)} ${f(k)})">${s}</g>`
 }
 
 // ------------------------------------------------------------------ Margot
@@ -311,10 +347,34 @@ function margot (o = {}) {
   return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) scale(${o.scale || 1})">${g}</g>`
 }
 
+/** Margot running (facing left), optionally with the ball in her mouth */
+function margotRun (o = {}) {
+  let g = `<ellipse cx="0" cy="-2" rx="72" ry="8" fill="${INK}" fill-opacity=".1"/>`
+  g += fill(blob(70, -74, 13, 13, { curl: 0.1, n: 14 }), DOG.fur)
+  g += fill(blob(46, -26, 12, 22, { curl: 0.08, n: 16, rot: 0.6 }), DOG.furShade) + fill(blob(62, -8, 13, 7, { rot: 0.3 }), DOG.furShade)
+  g += fill(blob(-34, -24, 11, 22, { curl: 0.08, n: 16, rot: -0.7 }), DOG.furShade) + fill(blob(-52, -10, 13, 7), DOG.furShade)
+  g += shaded(blob(8, -56, 66, 32, { curl: 0.05, n: 30, rot: -0.08 }), DOG.fur, DOG.furShade, '')
+  g += fill(blob(28, -24, 11, 22, { curl: 0.08, n: 16, rot: 0.4 }), DOG.fur) + fill(blob(-14, -24, 11, 22, { curl: 0.08, n: 16, rot: -0.4 }), DOG.fur)
+  g += fill(smooth([[-46, -86], [-20, -78], [0, -88], [-26, -56]]), RISO.red)
+  // ears flying back
+  g += fill(blob(-26, -110, 30, 12, { curl: 0.08, n: 18, rot: -0.3 }), DOG.ear)
+  g += margotHead(-62, -102, o.mood || 'excited', 0.9)
+  if (o.ball) g += `<circle cx="-62" cy="-74" r="17" fill="#FFFDF8"/>` + fill(smooth(rel(-62, -76, [[0, -6], [6, -2], [4, 5], [-4, 5], [-6, -2]])), INK)
+  // speed lines
+  if (o.speed !== false) g += ink('M90 -96 h40 M96 -70 h50 M88 -44 h36', 3, '#FFFDF8')
+  const k = o.scale || 1
+  return `<g transform="translate(${f(o.x || 0)} ${f(o.y || 0)}) rotate(${o.rotate || 0}) scale(${f(o.flip ? -k : k)} ${f(k)})">${g}</g>`
+}
+
+/** A small paw print: one is hidden on every page */
+function paw (x, y, s = 1, c = RISO.pink) {
+  return `<g transform="translate(${f(x)} ${f(y)}) scale(${s})">${fill(blob(0, 4, 7, 6), c)}${fill(blob(-8, -5, 2.6, 3.2), c)}${fill(blob(-3, -9, 2.6, 3.2), c)}${fill(blob(3, -9, 2.6, 3.2), c)}${fill(blob(8, -5, 2.6, 3.2), c)}</g>`
+}
+
 /** Paper grain and a slight hand-cut wobble, for a page's <defs> */
 function filters () {
   return `<filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter>` +
     `<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.16"/></feComponentTransfer></filter>`
 }
 
-module.exports = { INK, PAPER, RISO, UNI, CAST, DOG, standing, maisieChair, margot, margotHead, head, filters, smooth, blob }
+module.exports = { INK, PAPER, RISO, UNI, CAST, DOG, standing, maisieChair, margot, margotRun, margotHead, head, paw, filters, smooth, blob, fill, ink, shaded }

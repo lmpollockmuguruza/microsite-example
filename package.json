@@ -7,8 +7,9 @@
     "build:js": "cp node_modules/govuk-frontend/dist/govuk/all.bundle.js assets/js/govuk-frontend.js",
     "build:guides": "node tools/build-guides.js",
     "build:sheet": "node tools/build-character-sheet.js",
-    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:sheet",
-    "serve": "python3 -m http.server 8000"
+    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:sheet && npm run build:issue",
+    "serve": "python3 -m http.server 8000",
+    "build:issue": "node tools/build-issue-1.js"
   },
   "devDependencies": {
     "govuk-frontend": "^5.14.0",
