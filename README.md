@@ -69,8 +69,8 @@ The real build's platform and editing workflow are still open (decisions B2 and 
 A 12-issue comic for children aged 8 to 12, with 4 pages per monthly newsletter from May 2027 to April 2028. Five pupils chase Margot, the school dog, into the closed-off old wing of their school, and the adventure lasts "all year". The twist: it was one lunch break.
 
 - **Story bible:** `content/comic-story-bible.md` (characters, issue-by-issue plot, tone and safety rules).
-- **Character sheet (draft 2, for sign-off):** drawn by `tools/margot-kit.js` and `tools/build-character-sheet.js`. Run `npm run build:sheet` to produce:
+- **Character sheet (draft 3, for sign-off; design-first indie style, text in Atkinson Hyperlegible):** drawn by `tools/margot-kit.js` and `tools/build-character-sheet.js`. Run `npm run build:sheet` to produce:
   - `assets/comic/character-sheet.png` (the site) and `assets/comic/character-sheet.svg`
-  - `exports/figma/wheres-margot-character-sheet.svg` (Figma; the lettering in Bangers and Comic Neue stays editable)
+  - `exports/figma/wheres-margot-character-sheet.svg` (Figma; text in Fredoka and Atkinson Hyperlegible stays editable)
   - `exports/comic/wheres-margot-character-sheet.png` (to share)
 - Chapter 1 will be drawn after the characters are approved.

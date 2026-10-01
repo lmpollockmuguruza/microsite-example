@@ -1,9 +1,10 @@
 /*
- * "Where's Margot?" character sheet.
+ * "Where's Margot?" character sheet (draft 3).
  *
- *   assets/comic/character-sheet.svg              for the site (fonts linked)
+ *   assets/comic/character-sheet.png                  the site
+ *   assets/comic/character-sheet.svg                  fonts linked, opens in a browser
  *   exports/figma/wheres-margot-character-sheet.svg   to drop into Figma
- *   exports/comic/wheres-margot-character-sheet.png   2x image, to share
+ *   exports/comic/wheres-margot-character-sheet.png   to share
  *
  * Run: npm run build:sheet
  */
@@ -14,15 +15,12 @@ const K = require('./margot-kit')
 const ROOT = path.resolve(__dirname, '..')
 const out = p => path.join(ROOT, p)
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-const INK = K.LINE
+const { INK, PAPER, RISO } = K
 
 const W = 2400
-const H = 1660
-const CW = 560
-const CH = 660
-const GAP = 26
-const X0 = 40
-const Y0 = 236
+const H = 1600
+const HEAD = 'Fredoka'
+const BODY = 'Atkinson Hyperlegible'
 
 function wrap (s, size, maxW) {
   const words = String(s).split(/\s+/)
@@ -30,152 +28,104 @@ function wrap (s, size, maxW) {
   let line = ''
   for (const w of words) {
     const t = line ? line + ' ' + w : w
-    if (t.length * size * 0.5 > maxW && line) { lines.push(line); line = w } else line = t
+    if (t.length * size * 0.52 > maxW && line) { lines.push(line); line = w } else line = t
   }
   if (line) lines.push(line)
   return lines
 }
-const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-family="${o.font || 'Comic Neue'}" font-size="${o.size || 20}" font-weight="${o.weight || 700}" fill="${o.fill || INK}"${o.anchor ? ` text-anchor="${o.anchor}"` : ''}${o.ls ? ` letter-spacing="${o.ls}"` : ''}${o.stroke ? ` stroke="${o.stroke}" stroke-width="${o.sw || 8}" stroke-linejoin="round" paint-order="stroke"` : ''}>${esc(s)}</text>`
+const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-family="${o.font || BODY}" font-size="${o.size || 20}" font-weight="${o.weight || 400}" fill="${o.fill || INK}"${o.anchor ? ` text-anchor="${o.anchor}"` : ''}>${esc(s)}</text>`
+function chip (x, y, s, bg) {
+  const w = s.length * 9.6 + 26
+  return { svg: `<rect x="${x}" y="${y}" width="${w}" height="30" rx="15" fill="${bg}"/>` + T(x + 13, y + 21, s, { size: 16, weight: 700 }), w }
+}
 
-const cards = [
-  {
-    key: 'margot', name: 'MARGOT', role: 'The school dog (golden cockapoo)', accent: '#D9343F',
-    into: 'Footballs, crisps, chaos',
-    about: 'Brookfield\'s reading dog. Looks innocent. Is not. Starts the whole adventure, then goes missing in the old wing.',
-    figure: (x, y) => K.margot({ x: x - 4, y: y - 10, mood: 'smug', scale: 1.38 }),
-    faces: [['smug', 'Smug'], ['excited', 'Excited'], ['guilty', 'Guilty']]
-  },
-  {
-    key: 'stan', name: 'STAN', role: 'Year 6 · football captain', accent: '#E0A21F',
-    into: 'Football (the ball is his)',
-    about: 'Confident and a bit bossy. Secretly scared of the dark. Learns to share the lead.',
-    figure: (x, y) => K.standing('stan', { x, y, pose: 'ball', prop: 'ball', expr: 'cheeky', scale: 1.1 }),
-    faces: [['cheeky', 'Cheeky'], ['determined', 'In charge'], ['worried', 'In the dark']]
-  },
-  {
-    key: 'maisie', name: 'MAISIE', role: 'Year 6 · future doctor', accent: '#2FA36B',
-    into: 'Medicine, bones, speed',
-    about: 'Calm in a crisis. Knows every bone in the body. Fastest wheels in the school.',
-    figure: (x, y) => K.maisieChair({ x, y, expr: 'laugh', scale: 1.1 }),
-    faces: [['happy', 'Calm'], ['laugh', 'Winning'], ['surprised', 'Spooked']]
-  },
-  {
-    key: 'priya', name: 'PRIYA', role: 'Year 6 · speaks 6 languages', accent: '#D9343F',
-    into: 'English, Gujarati, Hindi, French, Spanish and BSL',
-    about: 'The planner. Dry humour. Her sign language lets the group talk silently.',
-    figure: (x, y) => K.standing('priya', { x, y, pose: 'book', prop: 'notebook', expr: 'happy', look: 1, scale: 1.1 }),
-    faces: [['cheeky', 'Unimpressed'], ['happy', 'Got it'], ['surprised', 'Whoa']]
-  },
-  {
-    key: 'kofi', name: 'KOFI', role: 'Year 5 · class joker', accent: '#3E7BD8',
-    into: 'Football, jokes, memes',
-    about: 'Loud, funny, brave without thinking. Kicked the ball through the window. Wants Stan\'s respect.',
-    figure: (x, y) => K.standing('kofi', { x, y, pose: 'wave', expr: 'laugh', scale: 1.04 }),
-    faces: [['laugh', '+1000 aura'], ['cheeky', 'Up to something'], ['surprised', 'Uh-oh']]
-  },
-  {
-    key: 'tomasz', name: 'TOMASZ', role: 'Year 5 · the artist', accent: '#8A5A36',
-    into: 'Drawing everything',
-    about: 'Quiet and observant. Redraws the 1977 map and keeps it up to date.',
-    figure: (x, y) => K.standing('tomasz', { x, y, pose: 'book', prop: 'sketchbook', expr: 'happy', look: -1, scale: 1.04 }),
-    faces: [['happy', 'Drawing'], ['determined', 'Found it'], ['worried', 'Not again']]
-  },
-  {
-    key: 'hargreaves', name: 'MRS HARGREAVES', role: 'Deputy head', accent: '#8C3F5C',
-    into: 'Rules. Order. Secretly, the 1970s.',
-    about: 'The strictest teacher in Brookfield. The children hide from her all year. Twist: she buried the time capsule.',
-    figure: (x, y) => K.standing('hargreaves', { x, y, pose: 'hips', expr: 'determined', scale: 1.12 }),
-    faces: [['determined', 'Hmm'], ['surprised', 'WHAT?'], ['happy', 'Soft side']]
-  }
+const cast = [
+  { key: 'margot', name: 'Margot', tint: '#FBE3C2', chips: [['School dog', RISO.yellow], ['Cockapoo', '#FFFFFF']], about: 'Brookfield\'s reading dog. Looks innocent. Is not. Starts the whole adventure.', faces: [['smug', 'Smug'], ['excited', 'Ball!'], ['guilty', 'Who, me?']] },
+  { key: 'stan', name: 'Stan', tint: '#FCEBB8', chips: [['Year 6', '#FFFFFF'], ['Football captain', RISO.yellow]], about: 'Confident, a bit bossy, secretly scared of the dark. Learns to share the lead.', faces: [['cheeky', 'Cheeky'], ['determined', 'In charge'], ['worried', 'In the dark']] },
+  { key: 'maisie', name: 'Maisie', tint: '#FFD9CF', chips: [['Year 6', '#FFFFFF'], ['Artist', RISO.pink]], about: 'Draws everything, everywhere. Fastest wheels in school. She redraws the old map.', faces: [['happy', 'Sketching'], ['laugh', 'Winning'], ['surprised', 'Whoa']] },
+  { key: 'priya', name: 'Priya', tint: '#E3DAF7', chips: [['Year 6', '#FFFFFF'], ['6 languages', RISO.lilac]], about: 'English, Gujarati, Hindi, French, Spanish and BSL. The planner, with a dry sense of humour.', faces: [['thinking', 'Planning'], ['happy', 'Got it'], ['surprised', 'Wait...']] },
+  { key: 'kofi', name: 'Kofi', tint: '#D6E2FA', chips: [['Year 5', '#FFFFFF'], ['Football', RISO.sky]], about: 'The class joker. Brave without thinking. Kicked the ball through the window.', faces: [['laugh', '+1000 aura'], ['cheeky', 'Up to something'], ['surprised', 'Uh-oh']] },
+  { key: 'tomasz', name: 'Tomasz', tint: '#CFEFE6', chips: [['Year 5', '#FFFFFF'], ['Future doctor', '#A8E2CF']], about: 'Quiet and careful. Knows every bone in the body. Always has plasters.', faces: [['happy', 'Calm'], ['determined', 'On it'], ['worried', 'Hmm...']] },
+  { key: 'hargreaves', name: 'Mrs Hargreaves', tint: '#EDE4F7', chips: [['Deputy head', '#FFFFFF'], ['Strict, but kind', RISO.lilac]], about: 'Firm on rules, soft on children. Her secret: the 1977 time capsule.', faces: [['thinking', 'Hmm?'], ['kind', 'Proud'], ['surprised', 'Goodness!']] }
 ]
 
+function lineup () {
+  let s = '<g transform="translate(0 -70)">' + `<path d="M40 860 C400 790 800 810 1200 800 C1600 790 2000 812 2360 790 L2360 900 L40 900 Z" fill="#E7DCC4"/>`
+  s += `<circle cx="2180" cy="470" r="80" fill="${RISO.yellow}" fill-opacity=".55"/>`
+  s += `<g filter="url(#rough)">`
+  s += K.standing('hargreaves', { x: 330, y: 840, pose: 'mug', prop: 'mug', expr: 'kind', scale: 1.15 })
+  s += K.standing('priya', { x: 620, y: 846, pose: 'hold', prop: 'notebook', expr: 'happy', look: 1, scale: 1.15 })
+  s += K.standing('stan', { x: 900, y: 846, pose: 'ball', prop: 'ball', expr: 'cheeky', scale: 1.15 })
+  s += K.margot({ x: 1180, y: 850, mood: 'excited', scale: 1.55 })
+  s += K.standing('kofi', { x: 1450, y: 852, pose: 'wave', expr: 'laugh', scale: 1.06 })
+  s += K.standing('tomasz', { x: 1700, y: 852, pose: 'down', expr: 'happy', look: -1, scale: 1.06 })
+  s += K.maisieChair({ x: 1990, y: 850, expr: 'happy', look: -1, scale: 1.12 })
+  s += '</g>'
+  ;[[330, 'Mrs Hargreaves'], [620, 'Priya'], [900, 'Stan'], [1180, 'Margot'], [1450, 'Kofi'], [1700, 'Tomasz'], [1990, 'Maisie']].forEach(([x, n]) => { s += T(x, 892, n, { font: HEAD, size: 28, weight: 600, anchor: 'middle' }) })
+  return s + '</g>'
+}
+
 function card (c, i) {
-  const col = i % 4
-  const row = Math.floor(i / 4)
-  const x = X0 + col * (CW + GAP)
-  const y = Y0 + row * (CH + GAP)
-  let s = `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" rx="22" fill="#FFFFFF" stroke="${INK}" stroke-width="3"/>`
-  s += `<rect x="${x}" y="${y}" width="${CW}" height="12" rx="6" fill="${c.accent}"/>`
-  s += `<rect x="${x + 16}" y="${y + 28}" width="240" height="390" rx="16" fill="#F4EFE4"/>`
-  s += c.figure(x + 136, y + 400)
-  // text column
-  const tx = x + 276
-  s += T(tx, y + 70, c.name, { font: 'Bangers', size: c.name.length > 10 ? 34 : 44, fill: c.accent, ls: 1.5 })
-  s += T(tx, y + 100, c.role, { size: 17, weight: 700 })
-  s += T(tx, y + 140, 'INTO', { size: 13, fill: '#7A7A88', ls: 1.5 })
-  let ty = y + 162
-  wrap(c.into, 17, 250).forEach(l => { s += T(tx, ty, l, { size: 17, weight: 400 }); ty += 22 })
-  ty += 16
-  s += T(tx, ty, 'PERSONALITY', { size: 13, fill: '#7A7A88', ls: 1.5 })
-  ty += 22
-  wrap(c.about, 17, 250).forEach(l => { s += T(tx, ty, l, { size: 17, weight: 400 }); ty += 22 })
-  // expressions
-  s += `<line x1="${x + 20}" y1="${y + 444}" x2="${x + CW - 20}" y2="${y + 444}" stroke="#E2DDD2" stroke-width="2"/>`
-  s += T(x + 24, y + 472, 'EXPRESSIONS', { size: 13, fill: '#7A7A88', ls: 1.5 })
+  const cw = 316
+  const x = 40 + i * (cw + 18)
+  const y = 860
+  const h = 700
+  let s = `<rect x="${x}" y="${y}" width="${cw}" height="${h}" rx="28" fill="${c.tint}"/>`
+  s += T(x + 24, y + 58, c.name, { font: HEAD, size: c.name.length > 8 ? 32 : 40, weight: 700 })
+  let cx = x + 24
+  let cy = y + 78
+  c.chips.forEach(([t, bg]) => {
+    let ch = chip(cx, cy, t, bg)
+    if (cx + ch.w > x + cw - 16) { cx = x + 24; cy += 38; ch = chip(cx, cy, t, bg) }
+    s += ch.svg
+    cx += ch.w + 8
+  })
+  let ty = cy + 74
+  wrap(c.about, 20, cw - 48).forEach(l => { s += T(x + 24, ty, l, { size: 20 }); ty += 28 })
+  const fy0 = y + 290
+  s += T(x + 24, fy0, 'Expressions', { font: HEAD, size: 20, weight: 600, fill: '#5A5E78' })
+  const spots = [[x + 86, fy0 + 92], [x + cw - 86, fy0 + 92], [x + cw / 2, fy0 + 268]]
   c.faces.forEach(([expr, label], k) => {
-    const fx = x + 100 + k * 180
-    const fy = y + 548
-    s += c.key === 'margot'
-      ? K.margotHead(fx, fy - 4, expr, 1.05)
-      : `<g transform="translate(${fx} ${fy}) scale(0.76)">${K.head(c.key, 0, 0, expr, k === 1 ? 1 : 0)}</g>`
-    s += T(fx, y + 646, label, { size: 16, anchor: 'middle' })
+    const [gx, gy] = spots[k]
+    s += `<g filter="url(#rough)">` + (c.key === 'margot'
+      ? K.margotHead(gx, gy, expr, 0.95)
+      : `<g transform="translate(${gx} ${gy}) scale(0.76)">${K.head(c.key, 0, 0, expr, 0)}</g>`) + '</g>'
+    s += T(gx, gy + (c.key === 'priya' ? 112 : 78), label, { size: 17, weight: 700, anchor: 'middle' })
   })
   return s
 }
 
-function styleCard () {
-  const x = X0 + 3 * (CW + GAP)
-  const y = Y0 + CH + GAP
-  let s = `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" rx="22" fill="#26386B" stroke="${INK}" stroke-width="3"/>`
-  s += T(x + 30, y + 64, 'STYLE NOTES', { font: 'Bangers', size: 40, fill: '#F2C230', ls: 1.5 })
-  const notes = [
-    'Clean, even outlines (after Tintin\'s "ligne claire").',
-    'Flat colour with one soft shadow tone. No gradients.',
-    'Dot eyes and small noses for the children; big, droopy-lidded eyes for Margot (after Garfield).',
-    'Same Brookfield uniform for everyone. Props tell them apart: ball, stethoscope, notebook, sketchbook.',
-    'Year 6 drawn slightly taller than Year 5.'
-  ]
-  let ty = y + 108
-  notes.forEach(n => {
-    s += `<circle cx="${x + 38}" cy="${ty - 6}" r="5" fill="#F2C230"/>`
-    wrap(n, 17, 470).forEach(l => { s += T(x + 54, ty, l, { size: 17, weight: 400, fill: '#FFFFFF' }); ty += 22 })
-    ty += 10
-  })
-  ty += 6
-  s += T(x + 30, ty, 'PALETTE', { size: 13, fill: '#C9D3EA', ls: 1.5 })
-  const sw = [['#26386B', 'Jumper'], ['#FFFFFF', 'Polo'], ['#6E7480', 'Trousers'], ['#F2C230', 'Badge'], ['#E2AE62', 'Margot'], ['#D9343F', 'Bandana'], ['#1D8E86', 'Chair']]
-  sw.forEach(([c, l], k) => {
-    const sx = x + 30 + k * 72
-    s += `<rect x="${sx}" y="${ty + 14}" width="56" height="44" rx="10" fill="${c}" stroke="#FFFFFF" stroke-width="2"/>`
-    s += T(sx + 28, ty + 80, l, { size: 13, fill: '#FFFFFF', anchor: 'middle', weight: 400 })
-  })
+function notes () {
+  const items = ['Soft, organic shapes. No outlines, no geometry.', 'Limited risograph palette on warm paper, with a light grain.', 'Dark ink only for faces and small details.', 'Text in Atkinson Hyperlegible, made for readability.', 'Same uniform; props tell them apart.']
+  let s = T(1100, 112, 'Style notes', { font: HEAD, size: 24, weight: 600, fill: '#5A5E78' })
+  items.forEach((it, i) => { s += `<circle cx="1110" cy="${146 + i * 32}" r="5" fill="${RISO.pink}"/>` + T(1126, 153 + i * 32, it, { size: 19 }) })
+  const sw = [RISO.blue, '#FFFDF8', '#5A6275', RISO.yellow, RISO.pink, RISO.teal, RISO.lilac, '#E8B66A', RISO.red]
+  s += T(1700, 112, 'Palette', { font: HEAD, size: 24, weight: 600, fill: '#5A5E78' })
+  sw.forEach((c, i) => { s += `<circle cx="${1722 + (i % 5) * 54}" cy="${152 + Math.floor(i / 5) * 54}" r="21" fill="${c}"/>` })
   return s
 }
 
 function sheet () {
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`
-  s += `<rect width="${W}" height="${H}" fill="#FBF7EE"/>`
-  // header
-  s += `<rect x="${X0}" y="40" width="${W - 2 * X0}" height="170" rx="26" fill="#8FD3FF" stroke="${INK}" stroke-width="3"/>`
-  s += T(X0 + 50, 160, "WHERE'S MARGOT?", { font: 'Bangers', size: 112, fill: '#F2C230', stroke: INK, sw: 12, ls: 3 })
-  s += K.margotHead(X0 + 860, 128, 'smug', 1.25)
-  s += T(X0 + 960, 112, 'Character sheet · draft 2', { size: 34 })
-  s += T(X0 + 960, 152, 'A 12-issue comic for the SMART Study newsletter · 4 pages per issue', { size: 22, weight: 400 })
-  s += T(X0 + 960, 186, 'Style: clean line (after Tintin), expressive eyes for Margot (after Garfield)', { size: 22, weight: 400 })
-  cards.forEach((c, i) => { s += card(c, i) })
-  s += styleCard()
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>${K.filters()}</defs>`
+  s += `<rect width="${W}" height="${H}" fill="${PAPER}"/>`
+  s += T(60, 150, "Where's", { font: HEAD, size: 104, weight: 700 }) + T(470, 150, 'Margot?', { font: HEAD, size: 104, weight: 700, fill: RISO.red })
+  s += `<g filter="url(#rough)">${K.margotHead(935, 108, 'smug', 1.1)}</g>`
+  s += T(64, 206, 'Character sheet · draft 3 · a 12-issue comic for the SMART Study newsletter', { size: 26, weight: 700, fill: '#5A5E78' })
+  s += T(64, 244, 'Five pupils, one school dog, and the longest lunch break in history.', { size: 26 })
+  s += notes() + lineup()
+  cast.forEach((c, i) => { s += card(c, i) })
+  s += `<rect width="${W}" height="${H}" filter="url(#grain)" style="mix-blend-mode:multiply"/>`
   return s + '</svg>'
 }
 
-const FONTS = [['Bangers', 'bangers-latin-400-normal', 400], ['Comic Neue', 'comic-neue-latin-700-normal', 700], ['Comic Neue', 'comic-neue-latin-400-normal', 400]]
+const FONTS = [['Fredoka', 'fredoka-latin-600-normal', 600], ['Fredoka', 'fredoka-latin-700-normal', 700], ['Atkinson Hyperlegible', 'atkinson-hyperlegible-latin-400-normal', 400], ['Atkinson Hyperlegible', 'atkinson-hyperlegible-latin-700-normal', 700]]
 const faces = base => FONTS.map(([n, file, w]) => `@font-face{font-family:'${n}';font-weight:${w};src:url(${base(file)}) format('woff2')}`).join('')
 
 ;(async () => {
   const svg = sheet()
-  fs.mkdirSync(out('exports/figma'), { recursive: true })
-  fs.mkdirSync(out('exports/comic'), { recursive: true })
+  for (const d of ['exports/figma', 'exports/comic', 'assets/comic']) fs.mkdirSync(out(d), { recursive: true })
   fs.writeFileSync(out('exports/figma/wheres-margot-character-sheet.svg'), svg + '\n')
-  fs.writeFileSync(out('assets/comic/character-sheet.svg'), svg.replace('<rect', `<style>${faces(f => `../fonts/${f}.woff2`)}</style><rect`) + '\n')
+  fs.writeFileSync(out('assets/comic/character-sheet.svg'), svg.replace('<defs>', `<style>${faces(f => `../fonts/${f}.woff2`)}</style><defs>`) + '\n')
   let chromium
   try { chromium = require('playwright').chromium } catch (e) { chromium = require(path.join(process.env.PW || '', 'index.js')).chromium }
   const browser = await chromium.launch()
