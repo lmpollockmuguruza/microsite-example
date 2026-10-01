@@ -64,15 +64,13 @@ Screens are drawn by `tools/screens.js` from descriptions like:
 
 The real build's platform and editing workflow are still open (decisions B2 and C1).
 
-## The comic: "The Off-Grid Gang" (Newsletter → Nudges)
+## The comic: "Where's Margot?" (Newsletter → Nudges)
 
-A 12-chapter comic for children aged 8 to 12, read with a parent. Each newsletter unlocks 3 new pages. Chapter 1 (the "rules of the game" opener plus 3 pages) is in **`content/comic.js`**. The characters, scenery and lettering are in `tools/comic-kit.js`. Run `npm run build:comic` to generate:
+A 12-issue comic for children aged 8 to 12, with 4 pages per monthly newsletter from May 2027 to April 2028. Five pupils chase Margot, the school dog, into the closed-off old wing of their school, and the adventure lasts "all year". The twist: it was one lunch break.
 
-| Output | Where |
-| --- | --- |
-| Newsletter page, with the comic reader under "Nudges" | `newsletter.html` |
-| One SVG per page (site and Figma) | `assets/comic/chapter-1/` |
-| One board with all 4 pages, to drop into Figma | `exports/figma/comic-chapter-1.svg` |
-| 2x PNGs, for newsletter emails and printing | `exports/comic/chapter-1/` |
-
-Lettering uses Bangers and Comic Neue (both Google Fonts, built into Figma), so it stays editable. Every page has a text version on the site, for screen readers and reading aloud.
+- **Story bible:** `content/comic-story-bible.md` (characters, issue-by-issue plot, tone and safety rules).
+- **Character sheet (draft 2, for sign-off):** drawn by `tools/margot-kit.js` and `tools/build-character-sheet.js`. Run `npm run build:sheet` to produce:
+  - `assets/comic/character-sheet.png` (the site) and `assets/comic/character-sheet.svg`
+  - `exports/figma/wheres-margot-character-sheet.svg` (Figma; the lettering in Bangers and Comic Neue stays editable)
+  - `exports/comic/wheres-margot-character-sheet.png` (to share)
+- Chapter 1 will be drawn after the characters are approved.

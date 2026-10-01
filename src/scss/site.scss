@@ -814,3 +814,5 @@ html.smart-notes-off .smart-design-note { display: none; }
 .smart-issue__title { @include govuk.govuk-font(19, $weight: bold); }
 
 .smart-comic__zoom { display: inline-block; margin-top: 10px; @include govuk.govuk-font(16, $weight: bold); }
+
+.smart-sheet { margin: 0 0 30px; img { display: block; width: 100%; height: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(18, 38, 63, .16); } figcaption { margin-top: 8px; } }

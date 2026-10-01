@@ -6,8 +6,8 @@
     "build:css": "sass --load-path=node_modules --style=compressed --no-source-map --quiet-deps src/scss/site.scss assets/css/site.css",
     "build:js": "cp node_modules/govuk-frontend/dist/govuk/all.bundle.js assets/js/govuk-frontend.js",
     "build:guides": "node tools/build-guides.js",
-    "build:comic": "node tools/build-comic.js",
-    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:comic",
+    "build:sheet": "node tools/build-character-sheet.js",
+    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:sheet",
     "serve": "python3 -m http.server 8000"
   },
   "devDependencies": {
