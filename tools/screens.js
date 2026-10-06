@@ -13,8 +13,9 @@
  *
  * Android blocks also include 'pin' (a four-digit PIN pad), 'actions'
  * with leftButton: true (an outlined button on the left, leftHl to mark it),
- * and the Family Link parts 'flheader', 'account', 'stat', 'fldevice' and
- * 'navbar'. A 'list' with card: true sits on white cards; a row with
+ * and the Family Link parts 'flheader', 'account', 'stat', 'fldevice',
+ * 'navbar', 'fcard' (a white card with an optional icon, switch, title and
+ * rows), 'footnote' and 'para'. A 'list' with card: true sits on white cards; a row with
  * bubble: colour puts its icon in a tinted circle.
  * iOS blocks also include 'center' (centred icon, title and text) and
  * 'avatars' (a row of people to choose from).
@@ -438,11 +439,22 @@ function andBar (bar, ctx) {
     return { s, y: y + 68 }
   }
   if (bar.back) s += glyph('arrow-left', 18, y + 17, 24, AND.text, 2)
-  if (bar.title) s += text(bar.back ? 62 : 20, y + 36, bar.title, { size: 21, fill: AND.text })
+  if (bar.title && bar.center) s += text(W / 2, y + 36, bar.title, { size: 21, fill: AND.text, anchor: 'middle' })
+  else if (bar.title) s += text(bar.back ? 62 : 20, y + 36, bar.title, { size: 21, fill: AND.text })
   return { s, y: y + 64 }
 }
 
 function andRowHeight (row) { return row.sub ? 72 : 56 }
+
+function andSwitch (rx, cy, on) {
+  return on
+    ? `<rect x="${rx - 52}" y="${cy - 16}" width="52" height="32" rx="16" fill="${AND.blue}"/><circle cx="${rx - 16}" cy="${cy}" r="12" fill="#FFF"/><path d="M${rx - 21} ${cy} l3.5 3.5 7 -7" fill="none" stroke="${AND.blue}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`
+    : `<rect x="${rx - 51}" y="${cy - 15}" width="50" height="30" rx="15" fill="#E1E3E1" stroke="${AND.light}" stroke-width="2"/><circle cx="${rx - 35}" cy="${cy}" r="8" fill="${AND.light}"/>`
+}
+
+function andChevron (rx, cy) {
+  return `<path d="M${rx - 8} ${cy - 6} l6 6 -6 6" fill="none" stroke="${AND.grey}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
+}
 
 function andBlock (b, y, ctx) {
   let s = ''
@@ -490,12 +502,9 @@ function andBlock (b, y, ctx) {
           lx += 52
         }
         let rx = W - 20 - pad
-        if (row.chevron) { s += `<path d="M${rx - 8} ${cy - 6} l6 6 -6 6" fill="none" stroke="${AND.grey}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`; rx -= 22 }
+        if (row.chevron) { s += andChevron(rx, cy); rx -= 22 }
         if (row.switch) {
-          const on = row.switch === 'on'
-          s += on
-            ? `<rect x="${rx - 52}" y="${cy - 16}" width="52" height="32" rx="16" fill="${AND.blue}"/><circle cx="${rx - 16}" cy="${cy}" r="12" fill="#FFF"/><path d="M${rx - 21} ${cy} l3.5 3.5 7 -7" fill="none" stroke="${AND.blue}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`
-            : `<rect x="${rx - 51}" y="${cy - 15}" width="50" height="30" rx="15" fill="#E1E3E1" stroke="${AND.light}" stroke-width="2"/><circle cx="${rx - 35}" cy="${cy}" r="8" fill="${AND.light}"/>`
+          s += andSwitch(rx, cy, row.switch === 'on')
           rx -= 64
         }
         if (row.value) {
@@ -562,6 +571,62 @@ function andBlock (b, y, ctx) {
       s += `<rect x="${r1(W - 20 - tw)}" y="${y + 10}" width="${r1(tw)}" height="40" rx="20" fill="${AND.blue}"/>` + text(W - 20 - tw / 2, y + 35, b.right, { size: 14.5, weight: 600, fill: '#FFF', anchor: 'middle' })
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W - 20 - tw, y: y + 10, w: tw, h: 40 } })
       return { s, y: y + 64 }
+    }
+    case 'fcard': {
+      const x = 16
+      const w = W - 32
+      const rowH = r => r.sub ? 66 : 56
+      let headH = 0
+      let tl = []
+      if (b.title) {
+        tl = b.text ? wrap(b.text, 13.5, 400, w - 40) : []
+        headH = (b.icon ? 78 : 18) + 22 + tl.length * 19 + 16
+      }
+      const rows = b.rows || []
+      const total = headH + rows.reduce((a, r, i) => a + rowH(r) + (i || headH ? 3 : 0), 0)
+      s += `<rect x="${x}" y="${y + 4}" width="${w}" height="${total}" rx="24" fill="#FFF"/>`
+      let cy = y + 4
+      if (b.title) {
+        let ty = cy + 18
+        if (b.icon) {
+          s += `<circle cx="${x + 38}" cy="${cy + 40}" r="22" fill="${b.bubble || ctx.bg}"/>` + glyph(b.icon, x + 27, cy + 29, 22, b.colour || '#0B1D51', 2.2)
+          if (b.switch) s += andSwitch(w + x - 20, cy + 40, b.switch === 'on')
+          if (b.chevron) s += andChevron(w + x - 18, cy + 40)
+          ty = cy + 78
+        }
+        s += text(x + 20, ty + 18, b.title, { size: 16.5, weight: 500, fill: AND.text })
+        tl.forEach((l, i) => { s += text(x + 20, ty + 40 + i * 19, l, { size: 13.5, fill: AND.grey }) })
+        if (b.hl) ctx.hls.push({ hl: b.hl, box: b.hlSwitch ? { x: w + x - 82, y: cy + 18, w: 72, h: 44 } : { x, y: cy, w, h: headH } })
+        cy += headH
+      }
+      rows.forEach((r, i) => {
+        if (i || headH) { s += `<rect x="${x}" y="${cy}" width="${w}" height="3" fill="${ctx.bg}"/>`; cy += 3 }
+        const h = rowH(r)
+        const mid = cy + h / 2
+        let rx = x + w - 20
+        if (r.radio) s += `<circle cx="${x + 30}" cy="${mid}" r="10" fill="none" stroke="${r.radio === 'on' ? AND.blue : AND.grey}" stroke-width="2.2"/>` + (r.radio === 'on' ? `<circle cx="${x + 30}" cy="${mid}" r="5.5" fill="${AND.blue}"/>` : '')
+        const lx = r.radio ? x + 64 : x + 20
+        if (r.chevron) { s += andChevron(rx, mid); rx -= 22 }
+        if (r.apps) r.apps.forEach((a, k) => { s += `<circle cx="${rx - 14 - k * 34}" cy="${mid}" r="13" fill="${a.colour}"/>` + glyph(a.icon, rx - 22 - k * 34, mid - 8, 16, '#FFF', 2.2) })
+        if (r.value) s += text(rx, mid + 5, r.value, { size: 15, fill: AND.text, anchor: 'end' })
+        if (r.sub) s += text(lx, mid - 4, r.label, { size: 15.5, weight: r.bold ? 500 : 400, fill: AND.text }) + text(lx, mid + 17, truncate(r.sub, 13.5, 400, rx - lx - 6), { size: 13.5, fill: AND.grey })
+        else s += text(lx, mid + 5.5, r.label, { size: 15.5, weight: r.bold ? 500 : 400, fill: AND.text })
+        if (r.hl) ctx.hls.push({ hl: r.hl, box: { x, y: cy, w, h } })
+        cy += h
+      })
+      return { s, y: y + 4 + total + 14 }
+    }
+    case 'footnote': {
+      const lines = wrap(b.text, 12.5, 400, W - 72)
+      const h = lines.length * 17 + 24
+      s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="${h}" rx="18" fill="#E2E8F0"/>`
+      lines.forEach((l, i) => { s += text(34, y + 26 + i * 17, l, { size: 12.5, fill: AND.grey }) })
+      return { s, y: y + h + 16 }
+    }
+    case 'para': {
+      const lines = wrap(b.text, 13.5, 400, W - 40)
+      lines.forEach((l, i) => { s += text(20, y + 16 + i * 19, l, { size: 13.5, fill: AND.grey }) })
+      return { s, y: y + lines.length * 19 + 16 }
     }
     case 'flheader': {
       const tw = textWidth(b.name, 17, 400) + 64
