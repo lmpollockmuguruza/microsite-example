@@ -47,7 +47,7 @@ The restrictions guidance lives in **`content/guidance.js`**: the routes (A, B, 
 | Output | Where | Use it for |
 | --- | --- | --- |
 | Guide pages | `guide-iphone-parent.html` (A), `guide-iphone-child.html` (B), `guide-android.html` (C) | The microsite. Don't edit these by hand. |
-| Word document | `exports/SMART-restrictions-guidance.docx` | Review, sign-off, printing. Text is editable. Includes review notes at the end. |
+| Word document | `exports/SMART-restrictions-guidance.docx` | Sharing and printing. Text is editable. |
 | Figma boards | `exports/figma/route-a.svg`, `-b`, `-c` | Drag into Figma: one board per route, text stays editable (Inter). |
 | Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. |
 
