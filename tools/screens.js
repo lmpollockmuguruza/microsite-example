@@ -15,7 +15,8 @@
  * with leftButton: true (an outlined button on the left, leftHl to mark it),
  * and the Family Link parts 'flheader', 'account', 'stat', 'fldevice',
  * 'navbar', 'fcard' (a white card with an optional icon, switch, title and
- * rows), 'footnote' and 'para'. A 'list' with card: true sits on white cards; a row with
+ * rows), 'footnote', 'para', 'weekdays', 'sheet' (dims what's above it and
+ * opens a bottom sheet), 'buttons' (Cancel and Done) and 'addbutton'. A 'list' with card: true sits on white cards; a row with
  * bubble: colour puts its icon in a tinted circle.
  * iOS blocks also include 'center' (centred icon, title and text) and
  * 'avatars' (a row of people to choose from).
@@ -494,6 +495,9 @@ function andBlock (b, y, ctx) {
         } else if (row.app) {
           s += `<circle cx="${lx + 18}" cy="${cy}" r="18" fill="${row.colour || AND.blue}"/>` + glyph(row.icon, lx + 8, cy - 10, 20, '#FFF', 2.2)
           lx += 52
+        } else if (row.tile) {
+          s += `<rect x="${lx}" y="${cy - 18}" width="36" height="36" rx="8" fill="#D3E3FD"/>` + text(lx + 18, cy + 6, row.tile, { size: 15, weight: 700, fill: AND.text, anchor: 'middle' })
+          lx += 52
         } else if (row.bubble) {
           s += `<circle cx="${lx + 20}" cy="${cy}" r="20" fill="${row.bubble}"/>` + glyph(row.icon, lx + 9, cy - 11, 22, row.colour || AND.blue, 2.2)
           lx += 56
@@ -503,6 +507,12 @@ function andBlock (b, y, ctx) {
         }
         let rx = W - 20 - pad
         if (row.chevron) { s += andChevron(rx, cy); rx -= 22 }
+        if (row.remove) { s += glyph('x', rx - 22, cy - 11, 22, AND.text, 2); rx -= 34 }
+        if (row.badge) {
+          s += `<circle cx="${rx - 20}" cy="${cy}" r="20" fill="${ctx.bg}"/>` + glyph(row.badge, rx - 31, cy - 11, 22, AND.text, 2.2)
+          if (row.badgeHl) ctx.hls.push({ hl: row.badgeHl, box: { x: rx - 44, y: cy - 24, w: 48, h: 48 } })
+          rx -= 52
+        }
         if (row.switch) {
           s += andSwitch(rx, cy, row.switch === 'on')
           rx -= 64
@@ -555,8 +565,8 @@ function andBlock (b, y, ctx) {
       return { s, y: y + 116 + lines.length * 21 + 10 }
     }
     case 'afield': {
-      s += `<rect x="20" y="${y + 10}" width="${W - 40}" height="54" rx="6" fill="#FFF" stroke="${b.focus ? AND.blue : AND.light}" stroke-width="${b.focus ? 2 : 1.2}"/>`
-      s += `<rect x="32" y="${y + 3}" width="${textWidth(b.label, 12, 400) + 10}" height="14" fill="${b.bg || AND.bg}"/>` + text(37, y + 14, b.label, { size: 12, fill: b.focus ? AND.blue : AND.grey })
+      s += `<rect x="20" y="${y + 10}" width="${W - 40}" height="54" rx="6" fill="${ctx.bg && ctx.bg !== AND.bg ? ctx.bg : '#FFF'}" stroke="${b.focus ? AND.blue : AND.light}" stroke-width="${b.focus ? 2 : 1.2}"/>`
+      s += `<rect x="32" y="${y + 3}" width="${textWidth(b.label, 12, 400) + 10}" height="14" fill="${b.bg || ctx.bg || AND.bg}"/>` + text(37, y + 14, b.label, { size: 12, fill: b.focus ? AND.blue : AND.grey })
       s += text(36, y + 43, b.value || b.placeholder || '', { size: 16, fill: b.value ? AND.text : AND.light })
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 20, y: y + 10, w: W - 40, h: 54 } })
       return { s, y: y + 78 }
@@ -605,9 +615,11 @@ function andBlock (b, y, ctx) {
         const mid = cy + h / 2
         let rx = x + w - 20
         if (r.radio) s += `<circle cx="${x + 30}" cy="${mid}" r="10" fill="none" stroke="${r.radio === 'on' ? AND.blue : AND.grey}" stroke-width="2.2"/>` + (r.radio === 'on' ? `<circle cx="${x + 30}" cy="${mid}" r="5.5" fill="${AND.blue}"/>` : '')
-        const lx = r.radio ? x + 64 : x + 20
+        if (r.checkbox) s += `<rect x="${x + 20}" y="${mid - 11}" width="22" height="22" rx="4" fill="${r.checkbox === 'on' ? AND.blue : 'none'}" stroke="${r.checkbox === 'on' ? AND.blue : AND.grey}" stroke-width="2"/>` + (r.checkbox === 'on' ? `<path d="M${x + 25} ${mid} l4 4 8 -8" fill="none" stroke="#FFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` : '')
+        const lx = r.radio || r.checkbox ? x + 64 : x + 20
         if (r.chevron) { s += andChevron(rx, mid); rx -= 22 }
         if (r.apps) r.apps.forEach((a, k) => { s += `<circle cx="${rx - 14 - k * 34}" cy="${mid}" r="13" fill="${a.colour}"/>` + glyph(a.icon, rx - 22 - k * 34, mid - 8, 16, '#FFF', 2.2) })
+        if (r.switch) { s += andSwitch(rx, mid, r.switch === 'on'); rx -= 64 }
         if (r.value) s += text(rx, mid + 5, r.value, { size: 15, fill: AND.text, anchor: 'end' })
         if (r.sub) s += text(lx, mid - 4, r.label, { size: 15.5, weight: r.bold ? 500 : 400, fill: AND.text }) + text(lx, mid + 17, truncate(r.sub, 13.5, 400, rx - lx - 6), { size: 13.5, fill: AND.grey })
         else s += text(lx, mid + 5.5, r.label, { size: 15.5, weight: r.bold ? 500 : 400, fill: AND.text })
@@ -615,6 +627,38 @@ function andBlock (b, y, ctx) {
         cy += h
       })
       return { s, y: y + 4 + total + 14 }
+    }
+    case 'weekdays': {
+      b.items.forEach((d, i) => {
+        const ry = y + 4 + i * 62
+        s += `<rect x="16" y="${ry}" width="70" height="56" rx="22" fill="#D3E3FD"/><rect x="62" y="${ry}" width="24" height="56" fill="#D3E3FD"/>`
+        s += `<rect x="89" y="${ry}" width="${W - 105}" height="56" rx="22" fill="#FFF"/><rect x="89" y="${ry}" width="24" height="56" fill="#FFF"/>`
+        s += text(51, ry + 33, d, { size: 15, fill: AND.blue, anchor: 'middle' }) + text(108, ry + 33, b.value, { size: 15, fill: AND.text })
+        if (i === 0 && b.hl) ctx.hls.push({ hl: b.hl, box: { x: 16, y: ry, w: W - 32, h: 56 } })
+      })
+      return { s, y: y + 4 + b.items.length * 62 + 10 }
+    }
+    case 'sheet': {
+      const top = y - (b.overlap || 0)
+      s += `<rect x="0" y="0" width="${W}" height="2000" fill="#000" fill-opacity=".5"/>`
+      s += `<rect x="0" y="${top}" width="${W}" height="2000" rx="28" fill="${b.bg || '#F7F9FC'}"/>`
+      s += text(W / 2, top + 46, b.title, { size: 21, fill: AND.text, anchor: 'middle' })
+      ctx.bg = b.bg || '#F7F9FC'
+      return { s, y: top + 70 }
+    }
+    case 'buttons': {
+      const bw = (W - 48) / 2
+      s += `<rect x="16" y="${y + 8}" width="${bw}" height="44" rx="22" fill="none" stroke="${AND.light}" stroke-width="1.3"/>` + text(16 + bw / 2, y + 35, b.left, { size: 15, fill: AND.blue, anchor: 'middle' })
+      s += `<rect x="${32 + bw}" y="${y + 8}" width="${bw}" height="44" rx="22" fill="${AND.blue}"/>` + text(32 + bw * 1.5, y + 35, b.right, { size: 15, fill: '#FFF', anchor: 'middle' })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 32 + bw, y: y + 8, w: bw, h: 44 } })
+      return { s, y: y + 70 }
+    }
+    case 'addbutton': {
+      s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="50" rx="25" fill="#FFF"/>`
+      const tw = textWidth(b.text, 16, 400)
+      s += glyph('plus', W / 2 - tw / 2 - 18, y + 18, 22, AND.blue, 2.2) + text(W / 2 + 14, y + 35, b.text, { size: 16, fill: AND.blue, anchor: 'middle' })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 16, y: y + 4, w: W - 32, h: 50 } })
+      return { s, y: y + 66 }
     }
     case 'footnote': {
       const lines = wrap(b.text, 12.5, 400, W - 72)

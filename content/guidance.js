@@ -450,14 +450,15 @@ S.flAppLimits = {
   bar: { back: true, title: 'App limits', center: true },
   blocks: [
     { type: 'list', card: true, rows: [
-      { app: true, icon: 'message-square', colour: '#25D366', label: 'WhatsApp', value: 'Unlimited time', hl: 'One app at a time', span: 3 },
-      { app: true, icon: 'message-circle', colour: '#1A73E8', label: 'Messages', value: 'Unlimited time' },
-      { app: true, icon: 'map', colour: '#30B0C7', label: 'Maps', value: 'Unlimited time' },
-      { app: true, icon: 'play', colour: '#FF0000', label: 'YouTube', value: 'No limit set', muted: true }
+      { app: true, icon: 'globe', colour: '#4285F4', label: 'Google Chrome', sub: '0 min', badge: 'infinity', badgeHl: 'Unlimited' },
+      { app: true, icon: 'map', colour: '#34A853', label: 'Google Maps', sub: '0 min', badge: 'infinity' },
+      { app: true, icon: 'message-circle', colour: '#1A73E8', label: 'Google Messages', sub: '0 min', badge: 'infinity' },
+      { app: true, icon: 'play', colour: '#FF0000', label: 'YouTube', sub: '0 min' },
+      { app: true, icon: 'message-square', colour: '#25D366', label: 'WhatsApp', sub: '0 min', badge: 'infinity' }
     ] }
   ],
-  draft: true,
-  alt: 'App limits in Family Link. Tap each app on the list and choose Unlimited time. Apps not on the list are left as they are.'
+  cut: true,
+  alt: 'App limits in Family Link. Each app on the list, and Google Chrome, is set to Unlimited time and shows an infinity sign. Apps not on the list have no sign.'
 }
 
 S.flDowntime = {
@@ -475,19 +476,29 @@ S.flDowntime = {
   alt: 'Schedules in Family Link. Turn on Downtime and set its weekly schedule to 12:00–11:59. Leave School time off.'
 }
 
+const WEEK = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
 S.flSchedule = {
-  id: 'fl-schedule', os: 'android', ...fl,
-  bar: { back: true, title: 'Weekly schedule' },
+  id: 'fl-schedule', os: 'android', ...fl, bg: FL_BG,
+  bar: { back: true, title: 'Weekly schedule', center: true },
+  blocks: [{ type: 'weekdays', items: WEEK, value: '12:00–11:59', hl: 'Tap a day' }],
+  alt: 'The weekly schedule. Once it is set, every day shows 12:00–11:59.'
+}
+
+S.flScheduleDay = {
+  id: 'fl-schedule-day', os: 'android', ...fl, bg: FL_BG,
+  bar: { back: true, title: 'Weekly schedule', center: true },
   blocks: [
-    { type: 'days', items: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], active: 0 },
-    { type: 'list', rows: [
-      { label: 'Start', value: '12:00', hl: 'Set these times', span: 2 },
-      { label: 'End', value: '11:59' }
+    { type: 'weekdays', items: WEEK.slice(0, 3), value: '12:00–11:59' },
+    { type: 'sheet', title: 'Mondays', overlap: 30 },
+    { type: 'fcard', rows: [{ label: 'Downtime ON', bold: true, switch: 'on' }] },
+    { type: 'fcard', rows: [
+      { label: 'Start time', value: '12:00', hl: 'Set these times' },
+      { label: 'End time', value: '11:59' }
     ] },
-    { type: 'mbutton', text: 'Apply to all days of the week', hl: 'Then tap' }
+    { type: 'fcard', rows: [{ label: 'Apply to all days of the week', checkbox: 'on', hl: 'Tick this' }] },
+    { type: 'buttons', left: 'Cancel', right: 'Done', hl: 'Then Done' }
   ],
-  draft: true,
-  alt: 'Downtime weekly schedule: start 12:00, end 11:59, on every day of the week.'
+  alt: 'One day of the weekly schedule. Downtime ON is switched on, start time 12:00, end time 11:59, and Apply to all days of the week is ticked. Then tap Done.'
 }
 
 S.flAllowed = {
@@ -708,18 +719,32 @@ S.andAgree = {
   alt: 'Your child agrees to supervision by entering their own password and tapping Agree.'
 }
 
-S.flAddSite = {
-  id: 'fl-add-site', os: 'android', device: 'Your phone (Family Link)',
-  bar: { back: true, title: 'Approved sites' },
+const SITES = [
+  { tile: '▪▪▪', label: 'bbc.co.uk', remove: true },
+  { tile: 'W', label: 'wikipedia.org', remove: true }
+]
+S.flApprovedSites = {
+  id: 'fl-approved-sites', os: 'android', device: 'Your phone (Family Link)', bg: FL_BG,
+  bar: { back: true, title: 'Approved sites (2)', center: true },
   blocks: [
-    { type: 'list', rows: [
-      { icon: 'globe', label: 'school.example.sch.uk' },
-      { icon: 'globe', label: 'moodle.example.org' }
-    ] },
-    { type: 'dialog', title: 'Add a website', label: 'Website', value: 'bbc.co.uk', hl: 'Main address only', okHl: 'Then Add' }
+    { type: 'addbutton', text: 'Add site', hl: 'Tap' },
+    { type: 'list', card: true, rows: SITES }
   ],
-  draft: true,
-  alt: 'Adding an approved site in Family Link: type the main web address (bbc.co.uk, not bbc.co.uk/bitesize), then tap Add.'
+  alt: 'Approved sites in Family Link, with an Add site button above the sites you have added. The X removes a site.'
+}
+
+S.flAddSite = {
+  id: 'fl-add-site', os: 'android', device: 'Your phone (Family Link)', bg: FL_BG,
+  bar: { back: true, title: 'Approved sites (2)', center: true },
+  blocks: [
+    { type: 'addbutton', text: 'Add site' },
+    { type: 'list', card: true, rows: SITES },
+    { type: 'sheet', title: 'Add site', overlap: -60 },
+    { type: 'afield', label: 'Website', value: 'bbc.co.uk', focus: true, hl: 'Type the address' },
+    { type: 'para', text: 'You can allow the entire domain or a web address.' },
+    { type: 'buttons', left: 'Cancel', right: 'Done', hl: 'Then Done' }
+  ],
+  alt: 'Add site in Family Link: type the web address (here bbc.co.uk), then tap Done.'
 }
 
 // ------------------------------------------------------------------ the shared settings, as steps
@@ -784,13 +809,14 @@ const shared = {
           'Otherwise you\'ll see your child\'s phone, shown by its model name (for example SM-S901B).'
         ] },
         'Tap **Time limits**, then **App limits**. Leave **Daily limit** off.',
-        'Go through **the apps on the list** one at a time: tap each one and choose **Unlimited time**. There\'s no way to do them all at once.',
+        'Go through **the apps on the list** one at a time: tap each one and choose **Unlimited time**. There\'s no way to do them all at once. Apps set to Unlimited time show an infinity sign (**∞**).',
+        'Set **Google Chrome** to **Unlimited time** too. Without it, downtime blocks Chrome and the websites on the list won\'t open.',
         'Go back to **Screen time** and tap **Schedules**. Turn on **Downtime**, and leave **School time** off.',
-        'Tap **Weekly schedule** and set it to start at **12:00** and end at **11:59**, every day, so downtime covers the whole day. It then shows as **Every night, 12:00–11:59**.',
+        'Tap **Weekly schedule**, then **Mon**. Check **Downtime ON** is switched on, set **Start time** to **12:00** and **End time** to **11:59**, tick **Apply to all days of the week** and tap **Done**. Every day should now show **12:00–11:59**, so downtime covers the whole day.',
         'Go back and tap **Allowed apps**. Turn on **Unlimited apps**, so the apps you set to Unlimited time still work during downtime. Calls always work.'
       ],
       after: ['To block one app outright: **Time limits** → **App limits** → tap the app → **Block**. Some system apps can\'t be blocked.'],
-      screens: [S.flHome, S.flTimeLimits, S.flAppLimits, S.flDowntime, S.flSchedule, S.flAllowed]
+      screens: [S.flHome, S.flTimeLimits, S.flAppLimits, S.flDowntime, S.flScheduleDay, S.flSchedule, S.flAllowed]
     },
     {
       key: 'web', title: 'Allow only the websites they need', time: '5 minutes', device: 'your phone, in Family Link',
@@ -798,12 +824,12 @@ const shared = {
       items: [
         'In Family Link, tap **Controls** at the bottom, then **Google Chrome and web**.',
         'Choose **Only allow approved sites**.',
-        'Tap **Approved sites** and add each site on the list. **Use the main web address only**, such as bbc.co.uk. Family Link won\'t accept a page within a site, such as bbc.co.uk/bitesize.',
+        'Tap **Approved sites**, then **Add site**. Type each site on the list and tap **Done**. **Use the main web address**, such as bbc.co.uk: Family Link may not accept a page within a site, such as bbc.co.uk/bitesize.',
         '**If other browsers aren\'t already blocked**, block them: **Screen time** → **Time limits** → **App limits** → tap each browser → **Block**.'
       ],
       after: [`Your child can ask to visit a site that isn't on the list, and the request comes to Family Link on your phone. Only approve sites on the list. For anything else, email ${EMAIL}.`],
       warn: `If a homework site won't load, don't switch the filter off. Email ${EMAIL} and we'll add it to the shared list.`,
-      screens: [S.flControlsChrome, S.flChrome, S.flAddSite]
+      screens: [S.flControlsChrome, S.flChrome, S.flApprovedSites, S.flAddSite]
     },
     {
       key: 'lock', title: 'Lock the settings', time: '3 minutes', device: 'your phone, in Family Link',
@@ -1230,9 +1256,10 @@ const routes = [
 const review = [
   { area: 'Route A, existing accounts', note: 'Tested: signing a child\'s iPhone in through Sign in a child in my Family, and setting restrictions from either phone. Still to test end to end: a child whose existing Apple Account isn\'t in the parent\'s family yet (Invite Others), and what signing out of another account does to the data on the phone.' },
   { area: 'iPhone categories', note: 'Information & Reading and Utilities are now left unticked so the web works. That also leaves every app in those two categories allowed, not just the ones on the list. Check on a test phone which installed apps sit in these categories, and whether any of them shouldn\'t be allowed.' },
-  { area: 'Android, tested on a phone', note: 'Route C was tested on a Samsung Galaxy S22 (SM-S901B), with Family Link on an iPhone. These Family Link screens are now drawn from screenshots: Screen time, Controls, Time limits, Schedules, Allowed apps, Google Chrome and web, and Google Play. Still drawn from notes, and marked as drafts: App limits, the weekly schedule, adding a site, and every screen on the child\'s phone and in account set-up.' },
+  { area: 'Android, tested on a phone', note: 'Route C was tested on a Samsung Galaxy S22 (SM-S901B), with Family Link on an iPhone. Every Family Link settings screen is now drawn from screenshots. Still drawn from notes, and marked as drafts: the screens on the child\'s phone and in account set-up.' },
   { area: 'Android, Samsung account', note: 'On the Samsung, parental controls also asked for a Samsung account (the parent\'s own, with a child account created inside it), plus a card check. It isn\'t clear whether Family Link needs this, or whether other brands ask for something similar. Test on a Pixel and one other brand, then decide whether the Samsung part of Route C step 3 stays.' },
-  { area: 'Android, websites', note: 'Family Link only accepts a whole site (bbc.co.uk), not a page within it (bbc.co.uk/bitesize). Allowing bbc.co.uk also allows the rest of the BBC, including iPlayer. Write the website list as whole sites, and check what else each one opens up.' },
+  { area: 'Android, websites', note: 'In the first test Family Link took bbc.co.uk but not bbc.co.uk/bitesize, yet the Add site box says "You can allow the entire domain or a web address". Retest a full page address (for example https://www.bbc.co.uk/bitesize). If only whole sites work, allowing bbc.co.uk also allows the rest of the BBC, including iPlayer, so write the website list as whole sites and check what else each one opens up.' },
+  { area: 'Android, Chrome', note: 'Google Chrome has to be set to Unlimited time, or downtime blocks it and no website opens. The guide now says so. Decide whether Chrome should also appear on the apps list families see.' },
   { area: 'Android, existing account', note: 'Only the "create a new account" path was tested. Test a child who already has a Google Account, including one with the wrong date of birth.' },
   { area: 'Software versions', note: 'The iPhone screens follow screenshots from iOS 18 and 26. iOS 27 changes parental controls. Check every screen on the version families will have in April 2027.' }
 ]
