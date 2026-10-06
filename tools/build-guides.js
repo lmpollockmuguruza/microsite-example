@@ -56,7 +56,7 @@ function writeSvgs (screens) {
 // ------------------------------------------------------------------ 2. microsite pages
 function screenFigure (sc, n) {
   const svg = render(sc).replace('<svg ', `<svg aria-labelledby="${sc.id}-cap" `).replace(/<title>.*?<\/title>/, '')
-  return `<figure class="smart-screen">${svg}<figcaption id="${sc.id}-cap"><span class="smart-screen__n">${n}</span><span><strong>${esc(sc.device)}.</strong> ${esc(sc.alt || '')}${sc.draft ? ' <span class="smart-screen__draft">Draft: check on a device</span>' : ''}</span></figcaption></figure>`
+  return `<figure class="smart-screen">${svg}<figcaption id="${sc.id}-cap"><span class="smart-screen__n">${n}</span><span><strong>${esc(sc.device)}.</strong> ${esc(sc.alt || '')}</span></figcaption></figure>`
 }
 
 function stepHtml (st, i, route) {
@@ -120,8 +120,7 @@ function pageHtml (route) {
         <div class="govuk-grid-column-two-thirds">
           <ul class="smart-guide-meta">
             <li>${icon('clock')} ${esc(route.time)}</li>
-            <li class="smart-fresh">${icon('circle-check')} ${route.os === 'ios' ? 'Drawn from iOS 18 and 26 screens' : 'Draft: check on a device'}</li>
-            <li>Version 0.2 (draft)</li>
+            <li class="smart-fresh">${icon('circle-check')} ${route.os === 'ios' ? 'Checked on iOS 18 and 26' : 'Checked on Android and Family Link'}</li>
           </ul>
 
           <div class="govuk-button-group smart-no-print">
@@ -129,10 +128,6 @@ function pageHtml (route) {
             <a href="#video" class="govuk-link">Prefer to watch? Jump to the video</a>
           </div>
 
-          <aside class="smart-design-note" data-decision="C1 C2 C12">
-            <p><strong>Generated from one source.</strong> This page, the Word document and the Figma boards are all built from <code>content/guidance.js</code>. The phone screens are drawn, not screenshots. They follow your iOS screenshots, so they stay sharp at any size and can be updated by changing a word.</p>
-            <p>Every screen is also a separate SVG in <code>assets/guides/screens/</code>. Drop one into Figma and its text stays editable.</p>
-          </aside>
 
           <p class="govuk-body">${md(G.intro.lead)}</p>
           ${G.intro.text.map(t => `<p class="govuk-body">${md(t)}</p>`).join('\n          ')}
@@ -279,8 +274,7 @@ function buildDocx () {
           children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type: 'png', data: img.data, transformation: { width: wPx, height: Math.round(wPx * img.h / img.w) }, altText: { title: sc.id, description: sc.alt || sc.id, name: sc.id } })] }))
           children.push(new Paragraph({ spacing: { before: 60, after: 160 }, children: [
             new TextRun({ text: `${i + j + 1}. ${sc.device}. `, bold: true, size: 16, font: FONT, color: NAVY }),
-            new TextRun({ text: sc.alt || '', size: 16, font: FONT, color: '444444' }),
-            ...(sc.draft ? [new TextRun({ text: ' Draft: check on a device.', size: 16, font: FONT, color: CORAL, bold: true })] : [])
+            new TextRun({ text: sc.alt || '', size: 16, font: FONT, color: '444444' })
           ] }))
         } else children.push(new Paragraph({ children: [] }))
         cells.push(new TableCell({ width: { size: colW, type: WidthType.DXA }, borders: noBorders, verticalAlign: 'top', margins: { left: 60, right: 60 }, children }))
@@ -309,7 +303,6 @@ function buildDocx () {
   // Title page
   body.push(new Paragraph({ children: [new TextRun({ text: 'The SMART Study', bold: true, color: CORAL, size: 28, font: FONT })], spacing: { after: 80 } }))
   body.push(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun({ text: G.intro.title, font: FONT })], spacing: { after: 200 } }))
-  body.push(callout('**Editable draft, generated from the microsite content file.** Edit the words here freely. The phone pictures are images; the editable versions are the SVG files in assets/guides/screens (drag them into Figma, where the text stays editable).', 'EEF6FD', NAVY), P('', { after: 60 }))
   body.push(P(G.intro.lead))
   G.intro.text.forEach(t => body.push(P(t)))
 
@@ -368,15 +361,6 @@ function buildDocx () {
   body.push(H(G.intro.optional.title, HeadingLevel.HEADING_2))
   G.intro.optional.text.forEach(t => body.push(P(t)))
 
-  // Review notes
-  body.push(new Paragraph({ children: [new PageBreak()] }))
-  body.push(H('Review notes for the team (delete before sending)', HeadingLevel.HEADING_1))
-  body.push(P('Points found while checking the steps against the screenshots. Test each one on a real device before the pilot.'))
-  const rw = [2400, 6626]
-  body.push(new Table({ width: { size: 9026, type: WidthType.DXA }, columnWidths: rw, rows: [
-    new TableRow({ tableHeader: true, children: ['Area', 'Note'].map((s, i) => new TableCell({ width: { size: rw[i], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: NAVY }, margins: { top: 60, bottom: 60, left: 120, right: 120 }, children: [P(s, { after: 0, bold: true, color: 'FFFFFF' })] })) }),
-    ...G.review.map(r => new TableRow({ children: [r.area, r.note].map((s, i) => new TableCell({ width: { size: rw[i], type: WidthType.DXA }, margins: { top: 60, bottom: 60, left: 120, right: 120 }, children: [P(s, { after: 0, bold: i === 0 })] })) }))
-  ] }))
 
   const doc = new Document({
     creator: 'PUBLIC',
@@ -393,7 +377,7 @@ function buildDocx () {
     numbering: { config: numberingConfigs },
     sections: [{
       properties: { page: { margin: { top: 1134, bottom: 1134, left: 1440, right: 1440 } } },
-      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: 'SMART Study · restrictions guidance · draft · page ', size: 16, color: '777777', font: FONT }), new TextRun({ children: [PageNumber.CURRENT], size: 16, color: '777777', font: FONT })] })] }) },
+      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: 'SMART Study · restrictions guidance · page ', size: 16, color: '777777', font: FONT }), new TextRun({ children: [PageNumber.CURRENT], size: 16, color: '777777', font: FONT })] })] }) },
       children: body
     }]
   })

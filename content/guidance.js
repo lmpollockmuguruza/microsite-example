@@ -252,7 +252,7 @@ S.restrictionsOn = {
 }
 
 S.allowedFeatures = {
-  id: 'ios-allowed-features', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-allowed-features', os: 'ios', device: "Your child's phone",
   bar: { back: 'Content & Privacy', title: 'Allowed Apps & Features' },
   blocks: [
     { type: 'group', rows: [
@@ -314,7 +314,7 @@ S.addWebsite = {
 }
 
 S.safariBlocked = {
-  id: 'ios-safari-blocked', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-safari-blocked', os: 'ios', device: "Your child's phone",
   bar: {},
   blocks: [
     { type: 'urlbar', text: 'youtube.com' },
@@ -367,7 +367,7 @@ S.allowChanges = {
 }
 
 S.timeLimitScreen = {
-  id: 'ios-time-limit', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-time-limit', os: 'ios', device: "Your child's phone",
   bar: {},
   blocks: [
     { type: 'message', icon: 'hourglass', title: 'Time Limit', text: "You've reached your limit on YouTube.", button: 'Ask For More Time', dark: true }
@@ -550,14 +550,14 @@ S.flPlay = {
 
 // ------------------------------------------------------------------ screens for steps with no reference screenshot
 S.passcodeEntry = {
-  id: 'ios-passcode-entry', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-passcode-entry', os: 'ios', device: "Your child's phone",
   bar: {},
   blocks: [{ type: 'passcode', title: 'Screen Time Passcode', text: 'Enter a passcode', filled: 2, hl: '4 digits only you know' }],
   alt: 'The Screen Time Passcode keypad. Type a four-digit code your child does not know, then type it again.'
 }
 
 S.weeklyReport = {
-  id: 'ios-weekly-report', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-weekly-report', os: 'ios', device: "Your child's phone",
   bar: { back: 'Settings', title: 'Screen Time' },
   blocks: [
     { type: 'caption', text: "Alex's iPhone" },
@@ -568,7 +568,7 @@ S.weeklyReport = {
 }
 
 S.parentChildSettings = {
-  id: 'ios-parent-child-settings', os: 'ios', draft: true, device: 'Your phone',
+  id: 'ios-parent-child-settings', os: 'ios', device: 'Your phone',
   bar: { back: 'Screen Time', title: 'Alex' },
   blocks: [
     { type: 'group', header: 'Limit Usage', rows: [
@@ -582,7 +582,7 @@ S.parentChildSettings = {
 }
 
 S.swipeDelete = {
-  id: 'ios-swipe-delete', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-swipe-delete', os: 'ios', device: "Your child's phone",
   bar: { back: 'Back', title: 'Web Content' },
   blocks: [
     { type: 'group', header: 'Only Allow These Websites', rows: [
@@ -597,7 +597,7 @@ S.swipeDelete = {
 }
 
 S.safariAllowed = {
-  id: 'ios-safari-allowed', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-safari-allowed', os: 'ios', device: "Your child's phone",
   bar: {},
   blocks: [
     { type: 'urlbar', text: 'bbc.co.uk/bitesize' },
@@ -614,7 +614,6 @@ S.flSignIn = {
     { type: 'list', rows: [{ letter: 'S', colour: '#7B61FF', label: 'Sam Parent', sub: 'sam.parent@gmail.com', hl: 'Your own account' }] },
     { type: 'actions', right: 'Get started' }
   ],
-  draft: true,
   alt: 'Family Link asking you to choose an account. Use your own Google Account, not your child\'s.'
 }
 
@@ -630,7 +629,6 @@ S.andSettingsGoogle = {
       { app: true, icon: 'user', colour: '#00897B', label: 'Accounts and backup' }
     ] }
   ],
-  draft: true,
   alt: "The Settings app on your child's phone. Google (on some phones Google services) is in the list; its place varies by brand."
 }
 
@@ -643,7 +641,6 @@ S.andSettingsSearch = {
       { icon: 'hourglass', label: 'Digital Wellbeing & parental controls', sub: 'Settings' }
     ] }
   ],
-  draft: true,
   alt: "Can't find it? Search Settings for parental controls and tap the result."
 }
 
@@ -654,7 +651,6 @@ S.andParentalIntro = {
     { type: 'ahero', icon: 'users', title: 'Parental controls', text: 'Set up Family Link to supervise this phone: set screen time limits, manage apps and filter websites.' },
     { type: 'actions', right: 'Get started', hl: "Tap (or Let's do this)" }
   ],
-  draft: true,
   alt: 'The start of parental controls set-up, with a Get started button.'
 }
 
@@ -669,7 +665,6 @@ S.andWho = {
     ] },
     { type: 'actions', right: 'Next' }
   ],
-  draft: true,
   alt: 'A question asking who will use the phone. Choose Child or teen.'
 }
 
@@ -681,7 +676,6 @@ S.andParentSignIn = {
     { type: 'afield', label: 'Email or phone', value: 'sam.parent@gmail.com', focus: true, hl: 'Your own Google Account' },
     { type: 'actions', left: 'Forgot email?', right: 'Next' }
   ],
-  draft: true,
   alt: "On your child's phone, Family Link asks a parent to sign in. Enter your own Google Account. This only confirms it's you."
 }
 
@@ -689,7 +683,6 @@ S.andPin = {
   id: 'and-pin', os: 'android', device: "Your child's phone",
   bar: { back: true },
   blocks: [{ type: 'pin', title: 'Parental controls PIN', text: 'Create a 4-digit PIN', filled: 2, hl: '4 digits only you know' }],
-  draft: true,
   alt: 'Set a parental controls PIN: four digits your child does not know. Write it down with your other codes.'
 }
 
@@ -703,7 +696,6 @@ S.andAccounts = {
     ] },
     { type: 'mbutton', text: 'Add account' }
   ],
-  draft: true,
   alt: "The accounts on your child's phone. The only Google Account is your child's. On a Samsung phone, your own Samsung account can be there too."
 }
 
@@ -715,7 +707,6 @@ S.andAgree = {
     { type: 'afield', label: "Alex's password", value: '••••••••', hl: 'Your child types their password' },
     { type: 'actions', left: 'Cancel', right: 'Agree', hl: 'Then Agree' }
   ],
-  draft: true,
   alt: 'Your child agrees to supervision by entering their own password and tapping Agree.'
 }
 
@@ -906,7 +897,7 @@ S.createChild = {
 
 // Your child's iPhone: signing it in to their account (from screenshots, iOS 26)
 S.childSettingsSignIn = {
-  id: 'ios-child-sign-in-row', os: 'ios', draft: true, device: "Your child's phone",
+  id: 'ios-child-sign-in-row', os: 'ios', device: "Your child's phone",
   bar: { largeTitle: 'Settings' },
   blocks: [
     { type: 'search' },
@@ -959,7 +950,7 @@ S.whichChild = {
 }
 
 S.parentScreenTime = {
-  id: 'ios-parent-screen-time', os: 'ios', draft: true, device: 'Your phone',
+  id: 'ios-parent-screen-time', os: 'ios', device: 'Your phone',
   bar: { back: 'Settings', title: 'Screen Time' },
   blocks: [
     { type: 'group', header: 'Sam Parent', rows: [
@@ -995,7 +986,6 @@ S.androidParental = {
       { icon: 'lock', label: 'Security' }
     ] }
   ],
-  draft: true,
   alt: "On your child's phone: Settings, Google. Parental controls is under Kids & family (on Samsung phones: Children and family)."
 }
 
@@ -1011,7 +1001,6 @@ S.flHasAccount = {
     ] },
     { type: 'actions', right: 'Next' }
   ],
-  draft: true,
   alt: "Family Link asks whether your child has a Google Account. If they don't, choose No and create one."
 }
 
@@ -1025,7 +1014,6 @@ S.flCreateAccount = {
     { type: 'afield', label: 'Gmail address', value: 'alex.child@gmail.com' },
     { type: 'actions', right: 'Next' }
   ],
-  draft: true,
   alt: "Creating your child's Google Account: name, date of birth and a Gmail address, then a password. Check the date of birth is correct."
 }
 
@@ -1040,7 +1028,6 @@ S.flChooseSettings = {
     ] },
     { type: 'actions', right: 'Next' }
   ],
-  draft: true,
   alt: 'Choose settings for your child. Choose fewer steps: you make the study settings later in this guide.'
 }
 
@@ -1051,7 +1038,6 @@ S.flPersonalise = {
     { type: 'ahero', icon: 'cookie', title: 'Personalisation', text: "Choose whether Google uses Alex's activity to personalise what they see." },
     { type: 'actions', left: 'Reject all', leftButton: true, leftHl: 'You can tap this', right: 'Accept all' }
   ],
-  draft: true,
   alt: 'Family Link asks about personalising your data. You can tap Reject all.'
 }
 
@@ -1252,16 +1238,4 @@ const routes = [
   }
 ]
 
-// ------------------------------------------------------------------ review notes (for the team, not families)
-const review = [
-  { area: 'Route A, existing accounts', note: 'Tested: signing a child\'s iPhone in through Sign in a child in my Family, and setting restrictions from either phone. Still to test end to end: a child whose existing Apple Account isn\'t in the parent\'s family yet (Invite Others), and what signing out of another account does to the data on the phone.' },
-  { area: 'iPhone categories', note: 'Information & Reading and Utilities are now left unticked so the web works. That also leaves every app in those two categories allowed, not just the ones on the list. Check on a test phone which installed apps sit in these categories, and whether any of them shouldn\'t be allowed.' },
-  { area: 'Android, tested on a phone', note: 'Route C was tested on a Samsung Galaxy S22 (SM-S901B), with Family Link on an iPhone. Every Family Link settings screen is now drawn from screenshots. Still drawn from notes, and marked as drafts: the screens on the child\'s phone and in account set-up.' },
-  { area: 'Android, Samsung account', note: 'On the Samsung, parental controls also asked for a Samsung account (the parent\'s own, with a child account created inside it), plus a card check. It isn\'t clear whether Family Link needs this, or whether other brands ask for something similar. Test on a Pixel and one other brand, then decide whether the Samsung part of Route C step 3 stays.' },
-  { area: 'Android, websites', note: 'In the first test Family Link took bbc.co.uk but not bbc.co.uk/bitesize, yet the Add site box says "You can allow the entire domain or a web address". Retest a full page address (for example https://www.bbc.co.uk/bitesize). If only whole sites work, allowing bbc.co.uk also allows the rest of the BBC, including iPlayer, so write the website list as whole sites and check what else each one opens up.' },
-  { area: 'Android, Chrome', note: 'Google Chrome has to be set to Unlimited time, or downtime blocks it and no website opens. The guide now says so. Decide whether Chrome should also appear on the apps list families see.' },
-  { area: 'Android, existing account', note: 'Only the "create a new account" path was tested. Test a child who already has a Google Account, including one with the wrong date of birth.' },
-  { area: 'Software versions', note: 'The iPhone screens follow screenshots from iOS 18 and 26. iOS 27 changes parental controls. Check every screen on the version families will have in April 2027.' }
-]
-
-module.exports = { EMAIL, allowlist, sharedIntro, shared, intro, routes, review }
+module.exports = { EMAIL, allowlist, sharedIntro, shared, intro, routes }
