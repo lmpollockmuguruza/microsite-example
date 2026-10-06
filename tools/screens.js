@@ -9,9 +9,15 @@
  *   bar: { back, title, largeTitle, close, right, rightHl, search }
  *   blocks: groups of rows and other parts (see the block types below)
  *   cut: true fades out the bottom, to show the screen continues
+ *   bg: a background colour other than the platform default
  *
- * Android blocks also include 'pin' (a four-digit PIN pad) and 'actions'
- * with leftButton: true (an outlined button on the left, leftHl to mark it).
+ * Android blocks also include 'pin' (a four-digit PIN pad), 'actions'
+ * with leftButton: true (an outlined button on the left, leftHl to mark it),
+ * and the Family Link parts 'flheader', 'account', 'stat', 'fldevice' and
+ * 'navbar'. A 'list' with card: true sits on white cards; a row with
+ * bubble: colour puts its icon in a tinted circle.
+ * iOS blocks also include 'center' (centred icon, title and text) and
+ * 'avatars' (a row of people to choose from).
  *
  * Row fields (iOS groups and Android lists)
  *   label, sub, value, icon + colour, chevron, toggle/switch 'on'|'off',
@@ -262,7 +268,7 @@ function iosBlock (b, y, ctx) {
     case 'profile': {
       const h = 76
       s += `<rect x="${gx}" y="${y}" width="${gw}" height="${h}" rx="12" fill="${IOS.card}"/>`
-      s += `<circle cx="${gx + 42}" cy="${y + h / 2}" r="26" fill="#A8B4C4"/>` + text(gx + 42, y + h / 2 + 7, b.initials, { size: 19, weight: 600, fill: '#FFF', anchor: 'middle' })
+      s += `<circle cx="${gx + 42}" cy="${y + h / 2}" r="26" fill="#A8B4C4"/>` + (b.icon ? glyph(b.icon, gx + 28, y + h / 2 - 14, 28, '#FFF', 2) : text(gx + 42, y + h / 2 + 7, b.initials, { size: 19, weight: 600, fill: '#FFF', anchor: 'middle' }))
       s += text(gx + 80, y + h / 2 - 3, b.name, { size: 18, weight: 600 }) + text(gx + 80, y + h / 2 + 16, b.sub, { size: 12.5, fill: IOS.light })
       s += chevron(gx + gw - 22, y + h / 2)
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: gx, y, w: gw, h } })
@@ -309,7 +315,38 @@ function iosBlock (b, y, ctx) {
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: gx, y, w: gw, h: 46 } })
       return { s, y: y + 58 }
     case 'link':
+      if (b.center) {
+        const tw = textWidth(b.text, 16, 400)
+        if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W / 2 - tw / 2 - 10, y: y - 2, w: tw + 20, h: 28 } })
+        return { s: text(W / 2, y + 17, b.text, { size: 16, fill: IOS.blue, anchor: 'middle' }), y: y + 38 }
+      }
       return { s: text(gx + 4, y + 14, b.text, { size: 14.5, fill: IOS.blue }), y: y + 30 }
+    case 'center': {
+      s += glyph(b.icon, W / 2 - 28, y + 6, 56, b.colour || IOS.blue, 1.8)
+      let ty = y + 98
+      wrap(b.title, 25, 800, gw - 24).forEach(l => { s += text(W / 2, ty, l, { size: 25, weight: 800, anchor: 'middle' }); ty += 30 })
+      ty += 2
+      wrap(b.text, 15, 400, gw - 24).forEach(l => { s += text(W / 2, ty, l, { size: 15, anchor: 'middle' }); ty += 20 })
+      return { s, y: ty + 14 }
+    }
+    case 'avatars': {
+      const n = b.items.length
+      const gap = 120
+      b.items.forEach((it, i) => {
+        const cx = W / 2 + (i - (n - 1) / 2) * gap
+        const cy = y + 46
+        if (it.add) {
+          s += `<circle cx="${cx}" cy="${cy}" r="38" fill="#E9E9EE"/><path d="M${cx - 13} ${cy} h26 M${cx} ${cy - 13} v26" stroke="${IOS.blue}" stroke-width="3" stroke-linecap="round"/>`
+        } else {
+          s += `<circle cx="${cx}" cy="${cy}" r="38" fill="#9AA3AF"/>` + text(cx, cy + 10, it.initials, { size: 28, weight: 800, fill: '#FFF', anchor: 'middle' })
+          if (it.selected) s += `<circle cx="${cx}" cy="${cy}" r="43" fill="none" stroke="${IOS.blue}" stroke-width="3"/>`
+        }
+        s += text(cx, y + 116, it.name, { size: 16, weight: 500, anchor: 'middle' })
+        if (it.sub) s += text(cx, y + 136, it.sub, { size: 14, fill: IOS.light, anchor: 'middle' })
+        if (it.hl) ctx.hls.push({ hl: it.hl, box: { x: cx - 54, y: y - 4, w: 108, h: 148 } })
+      })
+      return { s, y: y + 160 }
+    }
     case 'picker': {
       const h = 190
       const cy = y + h / 2
@@ -395,6 +432,7 @@ function iosBlock (b, y, ctx) {
 function andBar (bar, ctx) {
   let s = ''
   const y = 40
+  if (bar.none) return { s, y: y + 6 }
   if (bar.search) {
     s += `<rect x="16" y="${y + 6}" width="${W - 32}" height="48" rx="24" fill="${AND.surface}"/>` + glyph('arrow-left', 30, y + 18, 22, AND.grey, 2) + text(66, y + 36, bar.search, { size: 16, fill: AND.text }) + glyph('x', W - 54, y + 19, 20, AND.grey, 2)
     return { s, y: y + 68 }
@@ -423,10 +461,17 @@ function andBlock (b, y, ctx) {
     case 'header':
       return { s: text(20, y + 26, b.text, { size: 14, weight: 600, fill: AND.blue }), y: y + 38 }
     case 'list': {
+      const pad = b.card ? 16 : 0
+      if (b.card) {
+        const total = b.rows.map(andRowHeight).reduce((a, c) => a + c, 0)
+        s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="${total}" rx="22" fill="#FFF"/>`
+        y += 4
+      }
       b.rows.forEach((row, i) => {
         const h = andRowHeight(row)
         const cy = y + h / 2
-        let lx = 20
+        if (b.card && i > 0) s += `<rect x="16" y="${y - 1.5}" width="${W - 32}" height="3" fill="${ctx.bg}"/>`
+        let lx = 20 + pad
         if (row.radio) {
           s += `<circle cx="${lx + 10}" cy="${cy}" r="9" fill="none" stroke="${row.radio === 'on' ? AND.blue : AND.grey}" stroke-width="2"/>` + (row.radio === 'on' ? `<circle cx="${lx + 10}" cy="${cy}" r="5" fill="${AND.blue}"/>` : '')
           lx += 44
@@ -437,11 +482,15 @@ function andBlock (b, y, ctx) {
         } else if (row.app) {
           s += `<circle cx="${lx + 18}" cy="${cy}" r="18" fill="${row.colour || AND.blue}"/>` + glyph(row.icon, lx + 8, cy - 10, 20, '#FFF', 2.2)
           lx += 52
+        } else if (row.bubble) {
+          s += `<circle cx="${lx + 20}" cy="${cy}" r="20" fill="${row.bubble}"/>` + glyph(row.icon, lx + 9, cy - 11, 22, row.colour || AND.blue, 2.2)
+          lx += 56
         } else if (row.icon) {
           s += glyph(row.icon, lx, cy - 12, 24, AND.grey, 2)
           lx += 52
         }
-        let rx = W - 20
+        let rx = W - 20 - pad
+        if (row.chevron) { s += `<path d="M${rx - 8} ${cy - 6} l6 6 -6 6" fill="none" stroke="${AND.grey}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`; rx -= 22 }
         if (row.switch) {
           const on = row.switch === 'on'
           s += on
@@ -461,11 +510,11 @@ function andBlock (b, y, ctx) {
         if (row.hl || row.avoid) {
           const n = row.span || 1
           const hh = b.rows.slice(i, i + n).map(andRowHeight).reduce((a, c) => a + c, 0)
-          ctx.hls.push({ hl: row.hl || row.avoid, avoid: !!row.avoid, box: { x: 10, y, w: W - 20, h: hh } })
+          ctx.hls.push({ hl: row.hl || row.avoid, avoid: !!row.avoid, box: { x: 10 + pad, y, w: W - 20 - pad * 2, h: hh } })
         }
         y += h
       })
-      return { s, y: y + 6 }
+      return { s, y: y + (b.card ? 14 : 6) }
     }
     case 'days': {
       const gap = (W - 40) / 7
@@ -513,6 +562,48 @@ function andBlock (b, y, ctx) {
       s += `<rect x="${r1(W - 20 - tw)}" y="${y + 10}" width="${r1(tw)}" height="40" rx="20" fill="${AND.blue}"/>` + text(W - 20 - tw / 2, y + 35, b.right, { size: 14.5, weight: 600, fill: '#FFF', anchor: 'middle' })
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W - 20 - tw, y: y + 10, w: tw, h: 40 } })
       return { s, y: y + 64 }
+    }
+    case 'flheader': {
+      const tw = textWidth(b.name, 17, 400) + 64
+      s += `<rect x="16" y="${y + 4}" width="${r1(tw)}" height="44" rx="22" fill="#FFF"/>` + `<circle cx="40" cy="${y + 26}" r="15" fill="${b.colour || '#FBBC04'}"/>` + text(40, y + 31.5, b.name[0], { size: 15, weight: 700, fill: '#FFF', anchor: 'middle' }) + text(64, y + 32, b.name, { size: 17, fill: AND.text })
+      s += glyph('bell', W - 98, y + 14, 24, AND.text, 2)
+      s += `<circle cx="${W - 38}" cy="${y + 26}" r="18" fill="#E8710A"/>` + text(W - 38, y + 32.5, b.parent || 'S', { size: 17, fill: '#FFF', anchor: 'middle' })
+      return { s, y: y + 62 }
+    }
+    case 'account': {
+      s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="176" rx="26" fill="#FFF"/>`
+      s += `<circle cx="${W / 2}" cy="${y + 52}" r="34" fill="#FBBC04"/>` + text(W / 2, y + 63, b.name[0], { size: 30, weight: 700, fill: '#FFF', anchor: 'middle' })
+      s += text(W / 2, y + 112, b.email, { size: 14.5, fill: AND.text, anchor: 'middle' })
+      s += `<rect x="62" y="${y + 128}" width="${W - 124}" height="38" rx="19" fill="${ctx.bg}"/>` + text(W / 2 + 10, y + 152, 'Account settings', { size: 14.5, fill: AND.text, anchor: 'middle' }) + text(W / 2 - 64, y + 153, 'G', { size: 16, weight: 700, fill: '#4285F4', anchor: 'middle' })
+      return { s, y: y + 194 }
+    }
+    case 'stat': {
+      s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="112" rx="26" fill="#FFF"/>`
+      s += text(36, y + 58, b.value, { size: 30, fill: AND.text }) + text(36, y + 84, b.text, { size: 13.5, fill: AND.text })
+      ;[0, 1, 2].forEach(i => { s += `<circle cx="${W - 140 + i * 42}" cy="${y + 60}" r="18" fill="${ctx.bg}"/>` })
+      return { s, y: y + 128 }
+    }
+    case 'fldevice': {
+      s += `<rect x="16" y="${y + 4}" width="${W - 32}" height="150" rx="26" fill="#FFF"/>`
+      s += `<rect x="38" y="${y + 26}" width="24" height="44" rx="4" fill="#1D1D1F"/>`
+      s += text(84, y + 46, b.name, { size: 18, fill: AND.text }) + text(84, y + 68, b.status, { size: 14, fill: '#B3261E' })
+      s += `<path d="M${W - 42} ${y + 42} l6 6 -6 6" fill="none" stroke="${AND.grey}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
+      s += `<rect x="34" y="${y + 92}" width="${W - 132}" height="46" rx="23" fill="${ctx.bg}"/>` + glyph('clock-plus', 82, y + 104, 20, '#0B3D91', 2) + text(112, y + 120, 'Bonus time', { size: 14.5, fill: '#0B3D91' })
+      s += `<rect x="${W - 90}" y="${y + 92}" width="56" height="46" rx="23" fill="${ctx.bg}"/>` + glyph('lock-open', W - 72, y + 105, 20, '#0B3D91', 2.2)
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: 16, y: y + 4, w: W - 32, h: 84 } })
+      return { s, y: y + 166 }
+    }
+    case 'navbar': {
+      const tw = W / b.items.length
+      s += `<rect x="0" y="${y + 6}" width="${W}" height="84" fill="#E6EBF2"/>`
+      b.items.forEach((it, i) => {
+        const cx = tw * i + tw / 2
+        const on = i === b.active
+        if (on) s += `<rect x="${r1(cx - 30)}" y="${y + 18}" width="60" height="32" rx="16" fill="#9AD7FF"/>`
+        s += glyph(it.icon, cx - 11, y + 23, 22, on ? '#0B3D91' : AND.grey, 2) + text(cx, y + 72, it.label, { size: 12.5, weight: on ? 600 : 400, fill: on ? '#0B57D0' : AND.grey, anchor: 'middle' })
+        if (it.hl) ctx.hls.push({ hl: it.hl, box: { x: cx - tw / 2 + 6, y: y + 12, w: tw - 12, h: 70 } })
+      })
+      return { s, y: y + 90 }
     }
     case 'pin': {
       s += glyph('key-round', W / 2 - 18, y + 4, 36, AND.blue, 2)
@@ -565,7 +656,8 @@ function render (screen, opts = {}) {
   const ctx = { hls: [] }
   const os = screen.os
   const dark = screen.blocks.some(b => b.dark)
-  const bg = dark ? '#000000' : os === 'android' ? AND.bg : IOS.bg
+  const bg = dark ? '#000000' : screen.bg || (os === 'android' ? AND.bg : IOS.bg)
+  ctx.bg = bg
   let body = ''
   const bar = (os === 'android' ? andBar : iosBar)(screen.bar || {}, ctx)
   body += bar.s

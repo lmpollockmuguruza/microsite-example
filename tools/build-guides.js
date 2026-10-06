@@ -137,7 +137,7 @@ function pageHtml (route) {
           <p class="govuk-body">${md(G.intro.lead)}</p>
           ${G.intro.text.map(t => `<p class="govuk-body">${md(t)}</p>`).join('\n          ')}
 
-          <h2 class="govuk-heading-l" id="before">Before you start: three things to have ready</h2>
+          <h2 class="govuk-heading-l" id="before">Before you start: four things to have ready</h2>
           <ul class="govuk-list govuk-list--bullet govuk-list--spaced">${G.intro.before.map(b => `<li>${md(b)}</li>`).join('')}</ul>
           <div class="govuk-warning-text">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -313,7 +313,7 @@ function buildDocx () {
   body.push(P(G.intro.lead))
   G.intro.text.forEach(t => body.push(P(t)))
 
-  body.push(H('Before you start: three things to have ready', HeadingLevel.HEADING_2))
+  body.push(H('Before you start: four things to have ready', HeadingLevel.HEADING_2))
   G.intro.before.forEach(b => body.push(bullet(b)))
   body.push(callout(G.intro.beforeWarn, 'FDE7D3', CORAL), P('', { after: 60 }))
 

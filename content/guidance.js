@@ -172,27 +172,27 @@ S.chooseApps = {
     { type: 'caption', text: 'Most Used Apps, Categories and Websites' },
     { type: 'group', rows: [
       { select: 'off', icon: 'layout-grid', colour: '#5E5CE6', label: 'All Apps & Categories', avoid: "Don't tick" },
-      { select: 'on', icon: 'users-round', colour: '#FF2D55', label: 'Social', value: 'All', chevron: true, hl: 'Tick every category', span: 12 },
+      { select: 'on', icon: 'users-round', colour: '#FF2D55', label: 'Social', value: 'All', chevron: true, hl: 'Tick', span: 6 },
       { select: 'on', icon: 'gamepad-2', colour: '#007AFF', label: 'Games', value: 'All', chevron: true },
       { select: 'on', icon: 'clapperboard', colour: '#FF3B30', label: 'Entertainment', value: 'All', chevron: true },
       { select: 'on', icon: 'palette', colour: '#FF9500', label: 'Creativity', value: 'All', chevron: true },
       { select: 'on', icon: 'briefcase', colour: '#007AFF', label: 'Productivity & Finance', value: 'All', chevron: true },
       { select: 'on', icon: 'graduation-cap', colour: '#34C759', label: 'Education', value: 'All', chevron: true },
-      { select: 'on', icon: 'book-open', colour: '#5AC8FA', label: 'Information & Reading', value: 'All', chevron: true },
-      { select: 'on', icon: 'heart-pulse', colour: '#FF2D55', label: 'Health & Fitness', value: 'All', chevron: true },
-      { select: 'on', icon: 'wrench', colour: '#8E8E93', label: 'Utilities', value: 'All', chevron: true },
-      { select: 'on', icon: 'shopping-cart', colour: '#FF9500', label: 'Shopping & Food', value: 'All', chevron: true },
+      { select: 'off', icon: 'book-open', colour: '#5AC8FA', label: 'Information & Reading', value: 'All', chevron: true, avoid: 'Leave unticked' },
+      { select: 'on', icon: 'heart-pulse', colour: '#FF2D55', label: 'Health & Fitness', value: 'All', chevron: true, hl: 'Tick' },
+      { select: 'off', icon: 'wrench', colour: '#8E8E93', label: 'Utilities', value: 'All', chevron: true, avoid: 'Leave unticked' },
+      { select: 'on', icon: 'shopping-cart', colour: '#FF9500', label: 'Shopping & Food', value: 'All', chevron: true, hl: 'Tick', span: 3 },
       { select: 'on', icon: 'plane', colour: '#34C759', label: 'Travel', value: 'All', chevron: true },
       { select: 'on', icon: 'ellipsis', colour: '#8E8E93', label: 'Other', value: 'All', chevron: true },
       { select: 'off', icon: 'globe', colour: '#8E8E93', label: 'Websites', chevron: true, avoid: "Don't tick" }
     ] }
   ],
-  alt: 'Choose Apps. Every category from Social to Other is ticked. All Apps & Categories at the top and Websites at the bottom are not ticked. Next is at the top right.'
+  alt: 'Choose Apps. Every category from Social to Other is ticked except Information & Reading and Utilities. All Apps & Categories at the top and Websites at the bottom are not ticked either. Next is at the top right.'
 }
 
 S.timePicker = {
   id: 'ios-time-picker', os: 'ios', device: "Your child's phone",
-  bar: { back: 'Choose Apps', title: '12 Categories', right: 'Add' },
+  bar: { back: 'Choose Apps', title: '10 Categories', right: 'Add' },
   blocks: [
     { type: 'group', rows: [{ label: 'Time', value: '0 min, Every Day' }] },
     { type: 'picker', values: ['0 hours', '0 min'], hl: 'Set to 0' }
@@ -202,13 +202,13 @@ S.timePicker = {
 
 S.blockAtEnd = {
   id: 'ios-block-at-end', os: 'ios', device: "Your child's phone",
-  bar: { back: 'App Limits', title: '12 Categories' },
+  bar: { back: 'App Limits', title: '10 Categories' },
   blocks: [
     { type: 'group', rows: [{ label: 'App Limit', toggle: 'on' }] },
     { type: 'group', rows: [{ label: 'Time', value: '0 min, Every Day', chevron: true }] },
     { type: 'group', rows: [{ label: 'Block at End of Limit', toggle: 'on', hl: 'Turn on' }], footer: 'Turn on to block the app when the limit expires.' },
     { type: 'group', header: 'Categories, Apps and Websites', rows: [
-      { icon: 'users-round', colour: '#FF2D55', label: 'Social, Games, Entertainment and 9 more' },
+      { icon: 'users-round', colour: '#FF2D55', label: 'Social, Games, Entertainment and 7 more' },
       { label: 'Edit List', blue: true }
     ] }
   ],
@@ -378,53 +378,76 @@ S.timeLimitScreen = {
 // ------------------------------------------------------------------ shared settings: Android (Family Link)
 const fl = { device: 'Your phone (Family Link)' }
 
-// Family Link on your phone, open at your child. Screen time is on this page.
-S.flHome = {
-  id: 'fl-home', os: 'android', ...fl,
-  bar: { back: true, title: 'Alex' },
-  blocks: [
-    { type: 'device', name: 'SM-S901B', sub: "Your child's phone (model name)" },
-    { type: 'list', rows: [
-      { icon: 'hourglass', label: 'Screen time', sub: 'Schedules, time limits, allowed apps', hl: 'Tap' },
-      { icon: 'shield', label: 'Controls', sub: 'Google Play, Chrome and Web, YouTube' },
-      { icon: 'map-pin', label: 'Location' }
-    ] }
-  ],
-  draft: true,
-  alt: "Family Link on your phone, open at your child. Their phone is shown by its model name (here SM-S901B). Tap Screen time: you don't need to go into Controls."
-}
+// Family Link on your phone (drawn from screenshots of Family Link on an iPhone)
+const FL_BG = '#EEF2F8'
+const flNav = active => ({ type: 'navbar', active, items: [
+  { icon: 'chart-no-axes-column', label: 'Screen time' },
+  { icon: 'user-round', label: 'Controls' },
+  { icon: 'map-pin', label: 'Location' }
+] })
 
-// Controls page in Family Link, with one row highlighted
+// The Screen time tab, where Family Link opens
+function flScreenTime (id, hl, note) {
+  return {
+    id, os: 'android', ...fl, bg: FL_BG,
+    bar: { none: true },
+    blocks: [
+      { type: 'flheader', name: 'Alex', parent: 'S' },
+      { type: 'stat', value: '0 min', text: 'Time spent today' },
+      { type: 'fldevice', name: 'SM-S901B', status: 'Downtime until 11:59', hl: hl.device },
+      { type: 'list', card: true, rows: [
+        { bubble: '#D3E3FD', colour: '#0B57D0', icon: 'hourglass', label: 'Time limits', sub: 'Daily limit off · App limits set' },
+        { bubble: '#F9DEDC', colour: '#B3261E', icon: 'calendar', label: 'Schedules', sub: 'In downtime · School time off', hl: hl.schedules }
+      ] },
+      flNav(0)
+    ],
+    alt: note
+  }
+}
+S.flHome = flScreenTime('fl-home', { schedules: 'Tap' }, "Family Link on your phone opens on Screen time. Your child's phone is shown by its model name (here SM-S901B), with Time limits and Schedules below. Tap Schedules.")
+
+// The Controls tab, with one row highlighted
 function flControlsPage (id, hlRow, note) {
   const rows = [
-    { icon: 'store', label: 'Google Play', sub: 'Download approvals, content ratings' },
-    { icon: 'globe', label: 'Google Chrome and Web', sub: 'Which websites your child can visit' },
-    { icon: 'play', label: 'YouTube', sub: 'Blocked' },
-    { icon: 'search', label: 'Google Search', sub: 'SafeSearch on' }
+    { icon: 'store', label: 'Google Play', sub: 'App approvals and restrictions' },
+    { icon: 'play', label: 'YouTube', sub: 'Tools for parents, children and teens' },
+    { icon: 'globe', label: 'Google Chrome and web', sub: 'Website and browser restrictions' },
+    { icon: 'search', label: 'Google search', sub: 'SafeSearch and personalisation' }
   ]
   rows.forEach(r => { if (r.label === hlRow) r.hl = 'Tap' })
-  return { id, os: 'android', ...fl, bar: { back: true, title: 'Controls' }, blocks: [{ type: 'list', rows }], draft: true, alt: note }
+  const nav = flNav(1)
+  nav.items[1].hl = 'Controls'
+  return {
+    id, os: 'android', ...fl, bg: FL_BG,
+    bar: { none: true },
+    blocks: [
+      { type: 'flheader', name: 'Alex', parent: 'S' },
+      { type: 'account', name: 'Alex', email: 'alex.child@gmail.com' },
+      { type: 'list', card: true, rows },
+      nav
+    ],
+    alt: note
+  }
 }
-S.flControlsChrome = flControlsPage('fl-controls-chrome', 'Google Chrome and Web', 'Controls in Family Link. Google Chrome and Web is in the list straight away, with no Content restrictions page in between.')
-S.flControlsPlay = flControlsPage('fl-controls-play', 'Google Play', 'Controls in Family Link, with Google Play highlighted.')
+S.flControlsChrome = flControlsPage('fl-controls-chrome', 'Google Chrome and web', 'The Controls tab in Family Link (at the bottom). Google Chrome and web is the third option.')
+S.flControlsPlay = flControlsPage('fl-controls-play', 'Google Play', 'The Controls tab in Family Link (at the bottom). Google Play is the first option.')
 
 S.flDowntime = {
-  id: 'fl-downtime', os: 'android', ...fl,
-  bar: { back: true, title: 'Screen time' },
+  id: 'fl-downtime', os: 'android', ...fl, bg: FL_BG,
+  bar: { back: true, title: 'Schedules' },
   blocks: [
-    { type: 'header', text: 'Schedules' },
-    { type: 'list', rows: [
-      { icon: 'moon', label: 'Downtime', sub: 'Every day, all day', switch: 'on', hl: 'Turn on Downtime' },
-      { icon: 'school', label: 'School time', sub: 'Off', switch: 'off' }
+    { type: 'list', card: true, rows: [
+      { bubble: '#E8DEF8', colour: '#4A4458', icon: 'moon', label: 'Downtime', sub: 'Every day, all day', switch: 'on', hl: 'Turn on Downtime' },
+      { bubble: '#D3E3FD', colour: '#0B57D0', icon: 'school', label: 'School time', sub: 'Off', switch: 'off' }
     ] },
-    { type: 'header', text: 'Limits' },
-    { type: 'list', rows: [
-      { icon: 'timer', label: 'Time limits', sub: 'Daily limit and limits for each app' },
-      { icon: 'circle-check', label: 'Allowed apps', sub: 'Apps that work during downtime' }
+    { type: 'header', text: 'Downtime' },
+    { type: 'list', card: true, rows: [
+      { label: 'Weekly schedule', sub: 'Every day, 12:00 AM to 11:59 PM', chevron: true },
+      { label: 'Allowed apps', sub: 'Apps that work during downtime', chevron: true }
     ] }
   ],
   draft: true,
-  alt: 'Screen time in Family Link. Under Schedules there are two: Downtime and School time. Turn on Downtime.'
+  alt: 'Schedules in Family Link. There are two: Downtime and School time. Turn on Downtime.'
 }
 
 S.flSchedule = {
@@ -463,7 +486,7 @@ S.flAllowed = {
 
 S.flChrome = {
   id: 'fl-chrome', os: 'android', ...fl,
-  bar: { back: true, title: 'Google Chrome and Web' },
+  bar: { back: true, title: 'Google Chrome and web' },
   blocks: [
     { type: 'list', rows: [
       { radio: 'off', label: 'Allow all sites' },
@@ -477,7 +500,7 @@ S.flChrome = {
     ] }
   ],
   draft: true,
-  alt: 'Google Chrome and Web in Family Link, set to Only allow approved sites.'
+  alt: 'Google Chrome and web in Family Link, set to Only allow approved sites.'
 }
 
 S.flPlay = {
@@ -520,7 +543,7 @@ S.parentChildSettings = {
   blocks: [
     { type: 'group', header: 'Limit Usage', rows: [
       { ...ios.downtime, label: 'Downtime', sub: 'Off', chevron: true },
-      { ...ios.appLimits, label: 'App Limits', sub: '12 categories, 0 min', chevron: true, hl: 'The settings you made', span: 3 },
+      { ...ios.appLimits, label: 'App Limits', sub: '10 categories, 0 min', chevron: true, hl: 'The settings you made', span: 3 },
       { ...ios.alwaysAllowed, label: 'Always Allowed', sub: 'Phone, Messages, WhatsApp and 5 more', chevron: true },
       { ...ios.restrictions, label: 'Content & Privacy Restrictions', sub: 'On', chevron: true }
     ] }
@@ -696,7 +719,8 @@ const shared = {
       key: 'apps', title: 'Allow only the apps on the list', time: '10 minutes', device: "your child's phone",
       items: [
         'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
-        'Tick **every category in the list, one by one**: Social, Games, Entertainment, Creativity, Productivity & Finance, Education, Information & Reading, Health & Fitness, Utilities, Shopping & Food, Travel and Other. **Do not tick Websites.** Work down the list so you don\'t miss one.',
+        'Tick these categories **one by one**: Social, Games, Entertainment, Creativity, Productivity & Finance, Education, Health & Fitness, Shopping & Food, Travel and Other. Work down the list so you don\'t miss one.',
+        '**Leave Information & Reading and Utilities unticked**, and don\'t tick **Websites**. Your child\'s phone needs these two for getting on the web at all. The websites step then limits the web to the sites on the list.',
         '**Do not tick "All Apps & Categories"** at the top. It looks like a shortcut, but it also cuts off web access, which undoes the websites step.',
         'Tap **Next** and set the limit to **0 minutes**.',
         'Turn on **Block at End of Limit**. Without it there\'s an "Ignore Limit" button and nothing holds.',
@@ -736,11 +760,11 @@ const shared = {
     {
       key: 'apps', title: 'Allow only the apps on the list', time: '10 minutes', device: 'your phone, in Family Link',
       items: [
-        { text: 'Open **Family Link** and tap **Screen time**. You don\'t need to go into Controls.', sub: [
+        { text: 'Open **Family Link**. It opens on **Screen time** (bottom left).', sub: [
           'If it asks you to **Add device**, your child\'s phone isn\'t linked yet. Follow the instructions it shows: they\'re the same as in **Link your child\'s phone**.',
           'Otherwise you\'ll see your child\'s phone, shown by its model name (for example SM-S901B).'
         ] },
-        'Under **Schedules** there are two options, **Downtime** and **School time**. Turn on **Downtime**.',
+        'Tap **Schedules**. There are two: **Downtime** and **School time**. Turn on **Downtime**.',
         'Tap **Weekly schedule** → choose a day → **Start 12:00 AM**, **End 11:59 PM** → **Apply to all days of the week**.',
         'Tap **Allowed apps**. There\'s no switch to allow them all at once, so go through **the apps on the list** one at a time and set each one to **Unlimited time**.'
       ],
@@ -751,7 +775,7 @@ const shared = {
       key: 'web', title: 'Allow only the websites they need', time: '5 minutes', device: 'your phone, in Family Link',
       intro: 'Blocking an app doesn\'t block its website. This step makes the web work the same way as the apps: only what\'s on the list.',
       items: [
-        'In Family Link, go to **Controls** → **Google Chrome and Web**.',
+        'In Family Link, tap **Controls** at the bottom, then **Google Chrome and web**.',
         'Choose **Only allow approved sites**.',
         'Tap **Approved sites** and add each site on the list. **Use the main web address only**, such as bbc.co.uk. Family Link won\'t accept a page within a site, such as bbc.co.uk/bitesize.',
         '**If other browsers aren\'t already blocked**, block them: **Screen time** → **Time limits** → tap each browser → turn **Allowed** off.'
@@ -762,7 +786,7 @@ const shared = {
     {
       key: 'lock', title: 'Lock the settings', time: '3 minutes', device: 'your phone, in Family Link',
       items: [
-        'In Family Link, go to **Controls** → **Google Play**.',
+        'In Family Link, tap **Controls** at the bottom, then **Google Play**.',
         'Under download approvals, choose **All content**, so nothing new can be installed without your approval.'
       ],
       screens: [S.flControlsPlay, S.flPlay]
@@ -830,6 +854,60 @@ S.createChild = {
     { type: 'note', text: "Your child's date of birth is used to set up age-appropriate services and parental controls." }
   ],
   alt: 'Create a Child Account, with fields for first name, last name and date of birth.'
+}
+
+// Your child's iPhone: signing it in to their account (from screenshots, iOS 26)
+S.childSettingsSignIn = {
+  id: 'ios-child-sign-in-row', os: 'ios', draft: true, device: "Your child's phone",
+  bar: { largeTitle: 'Settings' },
+  blocks: [
+    { type: 'search' },
+    { type: 'profile', icon: 'user', name: 'Sign in to your iPhone', sub: 'Set up iCloud, the App Store and more.', hl: 'Tap' },
+    { type: 'group', rows: [
+      { ...ios.notifications, label: 'Notifications', chevron: true },
+      { ...ios.screenTime, label: 'Screen Time', chevron: true }
+    ] }
+  ],
+  cut: true,
+  alt: 'Settings on your child\'s iPhone, before it is signed in. Sign in to your iPhone is at the top.'
+}
+
+S.childAppleSignIn = {
+  id: 'ios-child-apple-account', os: 'ios', device: "Your child's phone", bg: '#FFFFFF',
+  bar: { back: true },
+  blocks: [
+    { type: 'center', icon: 'cloud', title: 'Apple Account', text: 'Sign in with an email or phone number to use iCloud, the App Store, Messages or other Apple services.' },
+    { type: 'field', placeholder: 'Email or Phone Number' },
+    { type: 'link', center: true, text: 'Forgot password?' },
+    { type: 'link', center: true, text: 'Sign in a child in my Family', hl: 'Tap this' },
+    { type: 'button', text: 'Continue', style: 'grey' }
+  ],
+  alt: 'Apple Account sign-in on your child\'s iPhone. Don\'t type in an account: tap Sign in a child in my Family.'
+}
+
+S.guardianSignIn = {
+  id: 'ios-guardian-sign-in', os: 'ios', device: "Your child's phone", bg: '#FFFFFF',
+  bar: { back: 'Back' },
+  blocks: [
+    { type: 'center', icon: 'users', title: 'Parent or Guardian Sign-In', text: 'Sign in to your Apple Account to set up this device for a child aged 12 or younger.' },
+    { type: 'field', placeholder: 'Email or Phone Number', hl: 'Your own Apple Account' },
+    { type: 'button', text: 'Continue', style: 'grey' }
+  ],
+  alt: 'Parent or Guardian Sign-In. Sign in with your own Apple Account.'
+}
+
+S.whichChild = {
+  id: 'ios-which-child', os: 'ios', device: "Your child's phone", bg: '#FFFFFF',
+  bar: { back: 'Back' },
+  blocks: [
+    { type: 'center', icon: 'users', title: 'Which child will use this iPhone?', text: 'You can sign into an existing account or create a new one for a child under 13 years old.' },
+    { type: 'avatars', items: [
+      { initials: 'AL', name: 'Alex', sub: 'Child', selected: true, hl: 'Your child' },
+      { add: true, name: 'Add Child' }
+    ] },
+    { type: 'button', text: 'Continue', style: 'filled' }
+  ],
+  alt: 'Which child will use this iPhone? Choose your child, or Add Child if they don\'t have an account yet, then Continue.'
 }
 
 S.parentScreenTime = {
@@ -929,19 +1007,7 @@ S.flPersonalise = {
   alt: 'Family Link asks about personalising your data. You can tap Reject all.'
 }
 
-S.flProfile = {
-  id: 'fl-profile', os: 'android', device: 'Your phone (Family Link)',
-  bar: { back: true, title: 'Alex' },
-  blocks: [
-    { type: 'device', name: 'SM-S901B', sub: 'Last active 5 minutes ago', hl: 'This means it worked' },
-    { type: 'list', rows: [
-      { icon: 'hourglass', label: 'Screen time today', value: '1 hr 4 min' },
-      { icon: 'phone', label: 'Most used', value: 'Phone, Messages' }
-    ] }
-  ],
-  draft: true,
-  alt: "Your child's profile in Family Link, showing their phone and recent activity."
-}
+S.flProfile = flScreenTime('fl-profile', { device: 'This means it worked' }, "Screen time in Family Link, showing your child's phone and what it's doing now, such as Downtime until 11:59.")
 
 // ------------------------------------------------------------------ before you start, routes
 const intro = {
@@ -954,7 +1020,8 @@ const intro = {
   before: [
     '**Your child\'s phone, physically in your hands.** You\'ll need it for part of this, even if you manage it from your own phone afterwards.',
     '**The password for the account on your child\'s phone**: their Apple Account password (iPhone) or their Google Account password (Android). If your child set the phone up themselves, they will know it and you may not. Ask for it now rather than halfway through.',
-    '**Somewhere to write down a new passcode.** You are about to create a four-digit code that locks these settings. If you forget it, you may need to erase the phone completely. Write it where you keep other passwords, not in a note on your child\'s phone.'
+    '**Somewhere to write down a new passcode.** You are about to create a four-digit code that locks these settings. If you forget it, you may need to erase the phone completely. Write it where you keep other passwords, not in a note on your child\'s phone.',
+    '**A credit card, if your child doesn\'t have an account yet.** To create a child account, Apple and Google may ask for one to check you\'re over 18. It\'s only an ID check and you won\'t be charged, but without a credit card they won\'t let you create the account.'
   ],
   beforeWarn: '**Don\'t use your child\'s birthday, your PIN, or a code your child already knows.** The settings only hold if the code does.',
   moreDevices: `**If your child has more than one device**, such as an old or second phone, do the main phone first and tell us about the others at ${EMAIL}.`,
@@ -973,8 +1040,8 @@ const routes = [
     id: 'A', slug: 'guide-iphone-parent', os: 'ios', illus: 'guide-iphone.svg', hero: '',
     title: 'Your child has an iPhone, and you have an iPhone or iPad',
     short: 'iPhone, managed from your iPhone or iPad',
-    lead: 'This is the fullest version. You set the restrictions once, then you can see and change them from your own phone without asking for theirs.',
-    time: 'About 30 minutes',
+    lead: 'This is the fullest version. You set the restrictions once, then you can see and change them from your own phone without asking for theirs. Being in one family group also gives you other things, such as sharing your locations.',
+    time: 'About 35 minutes',
     steps: [
       {
         title: 'Put your child in your family group', time: '5 minutes', device: 'your phone',
@@ -987,10 +1054,24 @@ const routes = [
             'If they don\'t have one, choose **Create Child Account**.'
           ] },
           '**Check the date of birth is correct.** The phone uses your child\'s age to decide which protections apply automatically. A wrong birth year quietly switches off protections you think you have.',
-          'To confirm you\'re an adult, you\'ll be asked for the security code (CVV) of the card on your Apple Account. **You won\'t be charged.** If that card has expired, update it first in **Settings** → your name → **Payment & Shipping**.'
+          'To check you\'re over 18, you may be asked for a **credit card**, or the security code (CVV) of the card on your Apple Account. It\'s only an ID check and **you won\'t be charged**, but without a credit card Apple won\'t let you create a child account.'
         ],
         after: ['If your child\'s Apple Account was set up with an adult\'s age, you can now correct it and convert it to a child account from this same screen. It\'s worth doing.'],
         screens: [S.parentSettingsRoot, S.appleAccount, S.inviteFamily, S.createChild]
+      },
+      {
+        title: 'Sign your child\'s iPhone in to their account', time: '5 minutes', device: "your child's phone",
+        intro: 'Skip this step if your child\'s iPhone is already signed in to the account in your family group: their name shows at the top of **Settings**.',
+        items: [
+          'If their iPhone is signed in to someone else\'s account, such as yours or an old one, sign out of it first: **Settings** → the name at the top → **Sign Out**.',
+          'On your **child\'s** iPhone, open **Settings** and tap **Sign in to your iPhone** at the top.',
+          'Don\'t type in an account. Tap **Sign in a child in my Family**.',
+          'At **Parent or Guardian Sign-In**, sign in with **your own** Apple Account.',
+          'At **Which child will use this iPhone?**, choose your child and tap **Continue**. If they don\'t have an account yet, tap **Add Child** to create one.',
+          'Follow the rest of the prompts.'
+        ],
+        after: ['From now on you can make the Screen Time settings in the next steps on your child\'s iPhone, or from your own phone: **Settings** → **Screen Time** → your child\'s name. They\'re the same settings either way.'],
+        screens: [S.childSettingsSignIn, S.childAppleSignIn, S.guardianSignIn, S.whichChild]
       },
       {
         title: 'Turn on Screen Time and set your code', time: '5 minutes', device: "your child's phone",
@@ -1079,7 +1160,7 @@ const routes = [
           ] },
           '**If they already have one**, choose **Yes** and follow the prompts. Check the date of birth on their account is correct too.',
           'After you set the password, read what Google shows you and tap to agree.',
-          'Google then checks it\'s you. You may get a code by text message, and you may be asked for a card\'s details to confirm you\'re over 18. **You won\'t be charged.**',
+          'Google then checks it\'s you. You may get a code by text message, and you may be asked for a credit card to confirm you\'re over 18. **You won\'t be charged.**',
           'Family Link shows you what it can do. Tap through to the end.',
           'At **Choose settings for** your child, choose **fewer steps**. You\'ll make the study\'s settings later in this guide.',
           'When asked about personalising your data, you can tap **Reject all**.'
@@ -1113,8 +1194,8 @@ const routes = [
       {
         title: 'Check it worked', time: '2 minutes', device: 'your phone',
         items: [
-          'In Family Link, open your child\'s profile.',
-          'If it shows their phone and recent activity, the link is live.',
+          'Open Family Link on **Screen time**.',
+          'If it shows your child\'s phone and what it\'s doing now (such as **Downtime until 11:59**), the link is live.',
           'If it shows nothing after a few hours, check the phone is switched on, connected, and signed into the supervised account.'
         ],
         screens: [S.flProfile]
@@ -1125,16 +1206,14 @@ const routes = [
 
 // ------------------------------------------------------------------ review notes (for the team, not families)
 const review = [
-  { area: 'Route A, where to set it up', note: 'When a child is in Family Sharing, their Screen Time is usually managed from the parent\'s phone (Settings, Screen Time, the child\'s name), and the passcode recovery screen may not appear. Test whether steps 2 to 5 of Route A should happen on the parent\'s phone instead. That would also make Route A simpler.' },
-  { area: 'Route A, linking the new account', note: 'Creating a child account on your phone doesn\'t sign your child\'s iPhone into it, and the passcode recovery step may also lead on to linking the child\'s account. The guide needs a step for signing their iPhone in, and an answer for a child whose iPhone already uses another account: sign out and start again, or carry on if it is already a child account in your family. Test on an iPhone, with screenshots from the child\'s phone.' },
-  { area: 'Route A, card check', note: 'Creating a child account asks for the CVV of the card on the parent\'s Apple Account. This is now in step 1. Not yet tested to the end, because the test account\'s card had expired.' },
-  { area: 'iPhone categories', note: 'Review suggestion: tell parents to leave unticked any category they want their child to use, in an app or on the web, such as Education or Information & Reading. That would allow every app in that category, not just the ones on the list, so it changes what we\'re asking. Decide before changing the guide.' },
-  { area: 'Android, tested on a phone', note: 'Route C was tested on a Samsung Galaxy S22 (SM-S901B) with a new test child account, and the guide now follows those notes: creating the child\'s account in Family Link, Settings, Google (not All services), Children and family on Samsung, the parental controls PIN, Screen time without Controls, Schedules (Downtime or School time), Time limits (not App limits), Google Chrome and Web, and Google Play straight from Controls. The screens are redrawn from the notes, not from screenshots, so they stay marked as drafts. Take screenshots on the next test.' },
+  { area: 'Route A, existing accounts', note: 'Tested: signing a child\'s iPhone in through Sign in a child in my Family, and setting restrictions from either phone. Still to test end to end: a child whose existing Apple Account isn\'t in the parent\'s family yet (Invite Others), and what signing out of another account does to the data on the phone.' },
+  { area: 'iPhone categories', note: 'Information & Reading and Utilities are now left unticked so the web works. That also leaves every app in those two categories allowed, not just the ones on the list. Check on a test phone which installed apps sit in these categories, and whether any of them shouldn\'t be allowed.' },
+  { area: 'Android, tested on a phone', note: 'Route C was tested on a Samsung Galaxy S22 (SM-S901B), with Family Link on an iPhone. The Screen time and Controls tabs in Family Link are now drawn from screenshots. The other Android screens are drawn from the test notes, so they stay marked as drafts until there are screenshots of them.' },
   { area: 'Android, Samsung account', note: 'On the Samsung, parental controls also asked for a Samsung account (the parent\'s own, with a child account created inside it), plus a card check. It isn\'t clear whether Family Link needs this, or whether other brands ask for something similar. Test on a Pixel and one other brand, then decide whether the Samsung part of Route C step 3 stays.' },
   { area: 'Android, websites', note: 'Family Link only accepts a whole site (bbc.co.uk), not a page within it (bbc.co.uk/bitesize). Allowing bbc.co.uk also allows the rest of the BBC, including iPlayer. Write the website list as whole sites, and check what else each one opens up.' },
   { area: 'Android, allowed apps', note: 'Apps are allowed one at a time. The test note said "Go to allowlist": check the exact label Family Link uses on this screen and update the step and the drawing.' },
   { area: 'Android, existing account', note: 'Only the "create a new account" path was tested. Test a child who already has a Google Account, including one with the wrong date of birth.' },
-  { area: 'Software versions', note: 'All iPhone screens follow your screenshots (iOS 18 and 26). iOS 27 changes parental controls. Check every screen on the version families will have in April 2027.' }
+  { area: 'Software versions', note: 'The iPhone screens follow screenshots from iOS 18 and 26. iOS 27 changes parental controls. Check every screen on the version families will have in April 2027.' }
 ]
 
 module.exports = { EMAIL, allowlist, sharedIntro, shared, intro, routes, review }
