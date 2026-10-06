@@ -51,6 +51,8 @@ The restrictions guidance lives in **`content/guidance.js`**: the routes (A, B, 
 | Figma boards | `exports/figma/route-a.svg`, `-b`, `-c` | Drag into Figma: one board per route, text stays editable (Inter). |
 | Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. |
 
+The PNG and Word steps use Playwright's Chromium. To use a browser that's already installed, set `CHROMIUM` to its path, for example `CHROMIUM=/opt/pw-browsers/chromium npm run build:guides`. Screens removed from the content file are deleted from both folders on the next build.
+
 Screens are drawn by `tools/screens.js` from descriptions like:
 
 ```js

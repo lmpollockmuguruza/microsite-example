@@ -10,6 +10,9 @@
  *   blocks: groups of rows and other parts (see the block types below)
  *   cut: true fades out the bottom, to show the screen continues
  *
+ * Android blocks also include 'pin' (a four-digit PIN pad) and 'actions'
+ * with leftButton: true (an outlined button on the left, leftHl to mark it).
+ *
  * Row fields (iOS groups and Android lists)
  *   label, sub, value, icon + colour, chevron, toggle/switch 'on'|'off',
  *   check, select 'on'|'off', radio 'on'|'off', minus, plus, blue, muted,
@@ -486,7 +489,9 @@ function andBlock (b, y, ctx) {
     }
     case 'ahero': {
       s += glyph(b.icon, 22, y + 8, 40, AND.blue, 2)
-      s += text(22, y + 88, b.title, { size: 24, fill: AND.text })
+      const tl = wrap(b.title, 24, 400, W - 44)
+      tl.forEach((l, i) => { s += text(22, y + 88 + i * 30, l, { size: 24, fill: AND.text }) })
+      y += (tl.length - 1) * 30
       const lines = wrap(b.text, 15, 400, W - 44)
       lines.forEach((l, i) => { s += text(22, y + 116 + i * 21, l, { size: 15, fill: AND.grey }) })
       return { s, y: y + 116 + lines.length * 21 + 10 }
@@ -499,11 +504,34 @@ function andBlock (b, y, ctx) {
       return { s, y: y + 78 }
     }
     case 'actions': {
-      if (b.left) s += text(36, y + 34, b.left, { size: 14.5, weight: 600, fill: AND.blue })
+      if (b.left && b.leftButton) {
+        const lw = textWidth(b.left, 14.5, 600) + 44
+        s += `<rect x="20" y="${y + 10}" width="${r1(lw)}" height="40" rx="20" fill="#FFF" stroke="${AND.light}" stroke-width="1.2"/>` + text(20 + lw / 2, y + 35, b.left, { size: 14.5, weight: 600, fill: AND.blue, anchor: 'middle' })
+        if (b.leftHl) ctx.hls.push({ hl: b.leftHl, box: { x: 20, y: y + 10, w: lw, h: 40 } })
+      } else if (b.left) s += text(36, y + 34, b.left, { size: 14.5, weight: 600, fill: AND.blue })
       const tw = textWidth(b.right, 14.5, 600) + 44
       s += `<rect x="${r1(W - 20 - tw)}" y="${y + 10}" width="${r1(tw)}" height="40" rx="20" fill="${AND.blue}"/>` + text(W - 20 - tw / 2, y + 35, b.right, { size: 14.5, weight: 600, fill: '#FFF', anchor: 'middle' })
       if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W - 20 - tw, y: y + 10, w: tw, h: 40 } })
       return { s, y: y + 64 }
+    }
+    case 'pin': {
+      s += glyph('key-round', W / 2 - 18, y + 4, 36, AND.blue, 2)
+      s += text(W / 2, y + 74, b.title, { size: 22, fill: AND.text, anchor: 'middle' })
+      s += text(W / 2, y + 100, b.text, { size: 14.5, fill: AND.grey, anchor: 'middle' })
+      const filled = b.filled || 0
+      ;[0, 1, 2, 3].forEach(i => {
+        const cx = W / 2 - 51 + i * 34
+        s += i < filled ? `<circle cx="${cx}" cy="${y + 136}" r="7" fill="${AND.text}"/>` : `<circle cx="${cx}" cy="${y + 136}" r="7" fill="none" stroke="${AND.grey}" stroke-width="1.4"/>`
+      })
+      if (b.hl) ctx.hls.push({ hl: b.hl, box: { x: W / 2 - 70, y: y + 120, w: 140, h: 32 }, pos: 'below' })
+      const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', null, '0', null]
+      keys.forEach((k, i) => {
+        if (!k) return
+        const cx = W / 2 + ((i % 3) - 1) * 100
+        const cy = y + 214 + Math.floor(i / 3) * 62
+        s += `<rect x="${cx - 44}" y="${cy - 25}" width="88" height="50" rx="25" fill="${AND.surface}"/>` + text(cx, cy + 9, k, { size: 24, fill: AND.text, anchor: 'middle' })
+      })
+      return { s, y: y + 214 + 3 * 62 + 40 }
     }
     case 'dialog': {
       s += `<rect x="0" y="${y - 400}" width="${W}" height="1200" fill="#000" fill-opacity=".32"/>`

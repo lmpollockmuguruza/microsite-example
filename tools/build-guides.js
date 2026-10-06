@@ -42,8 +42,14 @@ function allScreens () {
 }
 
 // ------------------------------------------------------------------ 1. SVG files
+// Remove screens that are no longer in the content file
+function prune (dir, ext, screens) {
+  for (const f of fs.readdirSync(out(dir))) if (f.endsWith(ext) && !screens.has(f.slice(0, -ext.length))) fs.unlinkSync(out(`${dir}/${f}`))
+}
+
 function writeSvgs (screens) {
   mkdir('assets/guides/screens')
+  prune('assets/guides/screens', '.svg', screens)
   for (const [id, sc] of screens) fs.writeFileSync(out(`assets/guides/screens/${id}.svg`), render(sc) + '\n')
 }
 
@@ -196,9 +202,10 @@ function pageHtml (route) {
 // ------------------------------------------------------------------ 3. PNGs (for Word)
 async function writePngs (screens) {
   mkdir('exports/png')
+  prune('exports/png', '.png', screens)
   let chromium
   try { chromium = require('playwright').chromium } catch (e) { chromium = require(path.join(process.env.PW || '', 'index.js')).chromium }
-  const browser = await chromium.launch()
+  const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {})
   const page = await browser.newPage({ deviceScaleFactor: 3 })
   const faces = [400, 500, 600, 700].map(w => `@font-face{font-family:Inter;font-weight:${w};src:url(data:font/woff2;base64,${fs.readFileSync(out(`assets/fonts/inter-latin-${w}-normal.woff2`)).toString('base64')}) format('woff2')}`).join('')
   for (const [id, sc] of screens) {
