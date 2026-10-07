@@ -63,7 +63,18 @@
     location.replace('start.html')
     return
   }
+  // School leaders have their own page, and don't see the family pages.
+  var isSchool = session.group === 'school'
+  if (access === 'school' && !isSchool) {
+    location.replace('sign-in.html?next=' + encodeURIComponent(location.pathname.split('/').pop()))
+    return
+  }
+  if (access === 'member' && isSchool) {
+    location.replace('schools.html')
+    return
+  }
   var signedIn = !!session.group
+  var home = isSchool ? 'schools.html' : 'start.html'
 
   // ------------------------------------------------------------------ helpers
   function el (html) {
@@ -92,6 +103,9 @@
       '<span class="smart-logo__tagline">' + SITE.tagline + '</span></span></a>'
   }
 
+  var schoolNav = [
+    { href: 'schools.html', text: 'School resources', key: 'schools', icon: 'school' }
+  ]
   var navItems = [
     { href: 'start.html', text: 'Start here', key: 'start', icon: 'house' },
     { href: 'guides.html', text: 'Guides', key: 'guides', icon: 'book-open' },
@@ -109,14 +123,14 @@
     '<a class="govuk-link" href="decisions.html">See the open decisions</a>.' +
     '</div></div>' +
     '<header class="smart-header" role="banner"><div class="govuk-width-container smart-header__inner">' +
-    logo(signedIn ? 'start.html' : 'index.html') +
+    logo(signedIn ? home : 'index.html') +
     (signedIn
       ? '<a class="smart-header__signout" href="index.html" data-signout>' + icon('log-out') + 'Sign out</a>'
       : '') +
     '</div></header>' +
     (signedIn
       ? '<nav class="smart-nav" aria-label="Main"><div class="govuk-width-container"><ul class="smart-nav__list">' +
-        navItems.filter(function (i) { return !i.group || i.group === session.group }).map(function (i) {
+        (isSchool ? schoolNav : navItems).filter(function (i) { return !i.group || i.group === session.group }).map(function (i) {
           return '<li class="smart-nav__item"><a href="' + i.href + '"' + (i.key === page ? ' aria-current="page"' : '') + '>' + icon(i.icon) + i.text + '</a></li>'
         }).join('') +
         '</ul></div></nav>'
@@ -136,7 +150,7 @@
   ]
   var footer = el(
     '<footer class="smart-footer" role="contentinfo"><div class="govuk-width-container">' +
-    '<div class="smart-footer__top">' + logo(signedIn ? 'start.html' : 'index.html') + '</div>' +
+    '<div class="smart-footer__top">' + logo(signedIn ? home : 'index.html') + '</div>' +
     '<p class="smart-footer__label">This study is run by</p>' +
     '<ul class="smart-partners">' + partners.map(function (p) {
       return '<li class="smart-partner"><span>[' + p[0] + ' logo]<small>' + p[1] + '</small></span></li>'
@@ -146,7 +160,7 @@
     '<li><a href="privacy.html">Privacy notice</a></li>' +
     '<li><a href="privacy.html#cookies">Cookies</a></li>' +
     '<li><a href="accessibility.html">Accessibility statement</a></li>' +
-    '<li><a href="' + (signedIn ? 'help.html' : 'index.html#contact') + '">Contact us</a></li>' +
+    '<li><a href="' + (isSchool ? 'schools.html#contact' : signedIn ? 'help.html' : 'index.html#contact') + '">Contact us</a></li>' +
     '<li><a href="decisions.html">Mock-up: open decisions</a></li>' +
     '</ul>' +
     '</div></footer>'
@@ -207,7 +221,8 @@
     (signedIn
       ? '<div class="smart-toolbar__row" role="group" aria-label="View as group">View as:' +
         '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="restrict" aria-pressed="' + (session.group === 'restrict') + '">Restrict</button>' +
-        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="delay" aria-pressed="' + (session.group === 'delay') + '">Delay</button></div>'
+        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="delay" aria-pressed="' + (session.group === 'delay') + '">Delay</button>' +
+        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="school" aria-pressed="' + isSchool + '">School</button></div>'
       : '') +
     '</div></div>'
   )
@@ -229,9 +244,10 @@
       set('localStorage', 'smart_toolbar', collapsed ? 'collapsed' : 'open')
     } else if (tool === 'group') {
       var g = b.getAttribute('data-group')
-      var id = (session.id || 'SMART-X-0000').replace(/-[RD]-/, g === 'restrict' ? '-R-' : '-D-')
+      var id = (session.id || 'SMART-X-0000').replace(/-[RDS]-/, g === 'restrict' ? '-R-' : g === 'school' ? '-S-' : '-D-')
       window.SMART.signIn(id, g)
-      if (onlyFor && onlyFor !== g) location.href = 'start.html'
+      if (g === 'school') location.href = 'schools.html'
+      else if (isSchool || (onlyFor && onlyFor !== g)) location.href = 'start.html'
       else location.reload()
     }
   })

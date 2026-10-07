@@ -765,3 +765,17 @@ html.smart-notes-off .smart-design-note { display: none; }
   .smart-screen { width: 30%; break-inside: avoid; svg { filter: none; } }
   .smart-step__done { display: none; }
 }
+
+// ------------------------------------------------------------------ school resources: e-posters
+.smart-posters { display: grid; gap: 20px; margin: 0 0 30px; padding: 0; list-style: none; }
+.smart-poster {
+  display: grid; grid-template-columns: 140px 1fr; gap: 20px; align-items: start;
+  padding: 20px; border-radius: $radius; background: #fff; box-shadow: $shadow;
+  img { display: block; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 0 0 1px $line; }
+  @media (max-width: 480px) { grid-template-columns: 96px 1fr; gap: 14px; padding: 16px; }
+}
+.smart-downloads {
+  margin-bottom: 0;
+  li { margin-bottom: 6px; }
+  .smart-icon { width: 16px; height: 16px; margin-right: 6px; vertical-align: -3px; }
+}
