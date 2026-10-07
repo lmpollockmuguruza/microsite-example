@@ -180,7 +180,7 @@ function posterSvg (p, spare = 0, tight = false) {
     s += rect(b.px, y, pw, ph, 16, TINT[b.pl.colour]) + `<circle cx="${b.px + 30}" cy="${y + 26}" r="14" fill="#FFFFFF"/>` + glyph(b.pl.icon, b.px + 21, y + 17, 18, C.navy) + b.ti.svg + b.tx.svg
   })
   y += ph + 8
-  t = rich(M, y, p.noPlan, { size: 10.5, maxW: W, fill: C.grey }); s += t.svg; y += t.h + 18 + gap
+  y += 18 + gap
 
   // steps + QR
   const qr = 104
@@ -339,7 +339,7 @@ function posterDocx (p, logo) {
     cells.push(cell([P(pl.title, { size: 33, bold: true, color: C.navy, after: 100 }), P(pl.text, { size: 25, after: 0 })], { w: pw, fill: TINT[pl.colour], pad: 280, padX: 260 }))
   })
   ch.push(table(n === 1 ? [TW] : [pw, gap, pw], [new TableRow({ children: cells })]))
-  ch.push(P(p.noPlan, { size: 20, color: C.grey, before: 120, after: 400 }))
+  ch.push(spacer(400))
   const qrW = 2300
   const lw = TW - qrW - 200
   ch.push(table([lw, 200, qrW], [new TableRow({ children: [

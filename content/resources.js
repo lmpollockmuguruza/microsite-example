@@ -13,7 +13,7 @@
  */
 
 const EMAIL = 'smartphonestudy@public.io'
-const RUN_BY = 'Run by IFF Research and the University of Cambridge for the Department for Education.'
+const RUN_BY = 'Run by IFF Research, PUBLIC and the University of Cambridge for the Department for Education.'
 
 // ------------------------------------------------------------------ delay group guide (one page)
 const delay = {
@@ -86,24 +86,21 @@ const posters = [
     use: 'For a school where some families are waiting and some are setting up phones.',
     headline: 'We\'re finding out what\'s best for children and phones',
     plansTitle: 'Families taking part follow one of two plans. Your welcome pack says which is yours:',
-    plans: [plans.delay, plans.restrict],
-    noPlan: 'No plan in your pack? You don\'t need to do anything.'
+    plans: [plans.delay, plans.restrict]
   },
   {
     id: 'delay', name: 'Waiting for a first smartphone',
     use: 'For a school where families are waiting for a first smartphone.',
     headline: 'Together, we\'re waiting a little longer for smartphones',
     plansTitle: 'What we\'re asking families taking part:',
-    plans: [plans.delay],
-    noPlan: 'No plan in your pack? You don\'t need to do anything.'
+    plans: [plans.delay]
   },
   {
     id: 'restrict', name: 'Setting up the phone together',
     use: 'For a school where families are setting up their child\'s phone.',
     headline: 'Together, we\'re giving children a safer start with phones',
     plansTitle: 'What we\'re asking families taking part:',
-    plans: [plans.restrict],
-    noPlan: 'No plan in your pack? You don\'t need to do anything.'
+    plans: [plans.restrict]
   }
 ].map(p => ({ ...posterCommon, ...p }))
 
