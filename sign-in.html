@@ -24,11 +24,11 @@
           </div>
 
           <h1 class="govuk-heading-xl">Sign in</h1>
-          <p class="govuk-body">Use the family ID and password from the letter or email we sent you.</p>
+          <p class="govuk-body">Use the family or school ID and password from the letter or email we sent you.</p>
 
           <form id="sign-in" class="smart-box" novalidate>
             <div class="govuk-form-group" id="family-id-group">
-              <label class="govuk-label govuk-label--s" for="family-id">Family ID</label>
+              <label class="govuk-label govuk-label--s" for="family-id">Family or school ID</label>
               <div class="govuk-hint" id="family-id-hint">For example, SMART-R-4821</div>
               <p class="govuk-error-message smart-hide" id="family-id-error"><span class="govuk-visually-hidden">Error:</span> <span></span></p>
               <input class="govuk-input govuk-input--width-20" id="family-id" name="familyId" type="text" autocomplete="username" spellcheck="false" autocapitalize="characters" aria-describedby="family-id-hint">
@@ -55,6 +55,7 @@
             <ul>
               <li><strong>SMART-R-4821</strong> (any ID with <strong>-R-</strong>) signs in as a <strong>restrict</strong> family: their child has a phone and they set up restrictions.</li>
               <li><strong>SMART-D-1093</strong> (any ID with <strong>-D-</strong>) signs in as a <strong>delay</strong> family: their child has no phone yet.</li>
+              <li><strong>SMART-S-2041</strong> (any ID with <strong>-S-</strong>) signs in as a <strong>school leader</strong>, who only sees the school resources page.</li>
             </ul>
             <p>In a real build the ID wouldn't show the group. Here it does, so reviewers can switch between them.</p>
             <p><strong>Decisions to make:</strong> an ID with a password, or a sign-in link sent by email (no password to forget, but it needs an email address)? Who creates the IDs (IFF, at randomisation?) and how do they reach families?</p>
@@ -96,14 +97,16 @@
         e.preventDefault()
         var id = form.familyId.value.trim().toUpperCase()
         var errors = {}
-        if (!id) errors['family-id'] = 'Enter your family ID'
-        else if (!/^SMART-[RD]-\d{4}$/.test(id)) errors['family-id'] = 'Enter your family ID in the right format, like SMART-R-4821'
+        if (!id) errors['family-id'] = 'Enter your family or school ID'
+        else if (!/^SMART-[RDS]-\d{4}$/.test(id)) errors['family-id'] = 'Enter your ID in the right format, like SMART-R-4821'
         if (!form.password.value) errors.password = 'Enter your password'
         showErrors(errors)
         if (Object.keys(errors).length) return
-        window.SMART.signIn(id, id.charAt(6) === 'R' ? 'restrict' : 'delay')
+        var group = { R: 'restrict', D: 'delay', S: 'school' }[id.charAt(6)]
+        window.SMART.signIn(id, group)
         var next = new URLSearchParams(location.search).get('next')
-        location.href = next && /^[\w-]+\.html/.test(next) ? next : 'start.html'
+        var home = group === 'school' ? 'schools.html' : 'start.html'
+        location.href = next && /^[\w-]+\.html/.test(next) && (group === 'school') === (next.indexOf('schools.html') === 0) ? next : home
       })
     })()
   </script>

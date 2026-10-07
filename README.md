@@ -10,6 +10,7 @@ To see the signed-in pages, sign in with any password as:
 
 - **SMART-R-4821**: a restrict family (their child has a phone)
 - **SMART-D-1093**: a delay family (their child has no phone yet)
+- **SMART-S-2041**: a school leader, who only sees the school resources page
 
 The **Review tools** box (bottom right) turns the purple design notes on and off, and switches between the two groups.
 
@@ -22,7 +23,8 @@ The **Review tools** box (bottom right) turns the purple design notes on and off
 | `start.html` | Signed-in families. Task list, what's new. |
 | `guides.html` | Signed-in. Two questions choose the right guide. |
 | `guide-iphone-parent.html`, `guide-iphone-child.html`, `guide-android.html` | Restrict group. Step-by-step guides with pictures, progress ticks and video. |
-| `guide-delay.html` | Delay group |
+| `guide-delay.html` | Delay group. Generated: see below. |
+| `schools.html` | School leaders only. Onboarding pack and e-posters. Generated: see below. |
 | `videos.html` | Signed-in. Webinar recording (Vimeo) with chapters, children's video. |
 | `share-screen-time.html` | Restrict group. Screenshot upload with checks. |
 | `help.html` | Signed-in. FAQs, request an app, report a problem with a guide. |
@@ -65,3 +67,17 @@ Screens are drawn by `tools/screens.js` from descriptions like:
 `hl` draws the coral "tap here" outline with a label; `avoid` draws a red dashed "don't" outline; `span` stretches either over several rows. After a software update, changing a label means changing a word and rebuilding.
 
 The real build's platform and editing workflow are still open (decisions B2 and C1).
+
+## The delay guide and the school e-posters
+
+These live in **`content/resources.js`**. Run `npm run build:resources` to generate:
+
+| Output | Where | Use it for |
+| --- | --- | --- |
+| Delay guide page | `guide-delay.html` | The microsite (delay group). Don't edit by hand. |
+| Delay guide, one page | `exports/SMART-delay-guide.docx`, `exports/figma/delay-guide.svg` | Word to share and print; an A4 frame for Figma. |
+| E-posters | `exports/posters/SMART-poster-{both,delay,restrict}.{docx,pdf,png}`, `exports/figma/poster-*.svg` | Schools: Word to add their details, PDF to print, PNG for screens and newsletters; A4 frames for Figma. |
+| School resources page | `schools.html` | The page school leaders see, listing the posters. |
+
+There are three posters, each with one ask: one for schools with both groups, one for waiting, one for setting up phones. Words in [square brackets] are for the school to fill in.
+

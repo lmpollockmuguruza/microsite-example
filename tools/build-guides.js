@@ -23,7 +23,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 function md (s) {
   return esc(s)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/([\w.+-]+@[\w-]+\.[\w.]+)/g, '<a class="govuk-link" href="mailto:$1">$1</a>')
+    .replace(/([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g, '<a class="govuk-link" href="mailto:$1">$1</a>')
 }
 const plain = s => String(s).replace(/\*\*/g, '')
 const icon = n => `<svg class="smart-icon" aria-hidden="true"><use href="#i-${n}"></use></svg>`
