@@ -81,3 +81,7 @@ These live in **`content/resources.js`**. Run `npm run build:resources` to gener
 
 There are three posters, each with one ask: one for schools with both groups, one for waiting, one for setting up phones. Words in [square brackets] are for the school to fill in.
 
+
+## The design system board
+
+`npm run build:design-system` draws the whole look and feel as one Figma board, `exports/figma/design-system.svg`: colours (read from `src/scss/site.scss`), type styles, spacing, radii, shadows, every icon, the logo, the illustrations and the main components with their states. Drag it into Figma, or copy it and paste onto the canvas. Each swatch, style and component is a named layer ("Colours / Accents / sun", "Components / Button / Primary"), so reviewers can comment on each piece. Text stays editable in Nunito.
