@@ -7,7 +7,8 @@
     "build:js": "cp node_modules/govuk-frontend/dist/govuk/all.bundle.js assets/js/govuk-frontend.js",
     "build:guides": "node tools/build-guides.js",
     "build:resources": "node tools/build-resources.js",
-    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:resources",
+    "build:design-system": "node tools/build-design-system.js",
+    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:resources && npm run build:design-system",
     "serve": "python3 -m http.server 8000"
   },
   "devDependencies": {
