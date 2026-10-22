@@ -85,3 +85,15 @@ There are three posters, each with one ask: one for schools with both groups, on
 ## The design system board
 
 `npm run build:design-system` draws the whole look and feel as one Figma board, `exports/figma/design-system.svg`: colours (read from `src/scss/site.scss`), type styles, spacing, radii, shadows, every icon, the logo, the illustrations and the main components with their states. Drag it into Figma, or copy it and paste onto the canvas. Each swatch, style and component is a named layer ("Colours / Accents / sun", "Components / Button / Primary"), so reviewers can comment on each piece. Text stays editable in Nunito.
+
+## The slide template
+
+`npm run build:deck` builds a slide template in the study's style from `tools/build-deck.js`, where each layout is described once:
+
+| Output | Use it for |
+| --- | --- |
+| `exports/SMART-deck-template.pptx` | Google Slides: upload it to Drive and open it with Google Slides, or in an existing deck use Slide > Change theme > Import theme. PowerPoint opens it directly. Eight layouts (title, section, title and body, text and picture, title only, big number, quote, closing) and a nine-slide example. |
+| `exports/figma/deck-template.svg` | Figma: every layout and example slide as a named 1920 × 1080 group, text editable. |
+| `exports/png/deck/*.png` | The logo, icons and illustrations the deck uses, as PNGs (Google Slides can't place SVG). |
+
+Text is Nunito, which Google Slides has built in; PowerPoint users need it installed from Google Fonts. Titles use Nunito Bold, as slide tools can't pick the website's Black weight reliably.
