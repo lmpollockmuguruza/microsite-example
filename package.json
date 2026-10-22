@@ -8,15 +8,18 @@
     "build:guides": "node tools/build-guides.js",
     "build:resources": "node tools/build-resources.js",
     "build:design-system": "node tools/build-design-system.js",
-    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:resources && npm run build:design-system",
+    "build:deck": "node tools/build-deck.js",
+    "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:resources && npm run build:design-system && npm run build:deck",
     "serve": "python3 -m http.server 8000"
   },
   "devDependencies": {
-    "govuk-frontend": "^5.14.0",
-    "sass": "^1.80.0",
     "@fontsource/nunito": "^5.0.0",
-    "lucide-static": "^1.48.0",
     "docx": "^9.8.1",
-    "playwright": "^1.56.1"
+    "govuk-frontend": "^5.14.0",
+    "lucide-static": "^1.48.0",
+    "playwright": "^1.56.1",
+    "pptxgenjs": "^3.12.0",
+    "sass": "^1.80.0",
+    "sharp": "^0.33.5"
   }
 }
