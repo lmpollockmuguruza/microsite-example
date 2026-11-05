@@ -33,9 +33,10 @@
   var body = document.body
   var access = body.getAttribute('data-access') || 'public'
   var page = body.getAttribute('data-page') || ''
-  var onlyFor = body.getAttribute('data-only-for')
 
   // ------------------------------------------------------------------ session
+  // There are two kinds of account: a family or a school. Every family sees
+  // the same pages, because we don't know whether a child has a phone.
   var session = {
     id: get('localStorage', 'smart_id'),
     group: get('localStorage', 'smart_group')
@@ -56,10 +57,6 @@
   if (access === 'member' && !session.group) {
     var next = encodeURIComponent(location.pathname.split('/').pop() + location.search + location.hash)
     location.replace('sign-in.html?next=' + next)
-    return
-  }
-  if (access === 'member' && onlyFor && onlyFor !== session.group) {
-    location.replace('start.html')
     return
   }
   // School leaders have their own page, and don't see the family pages.
@@ -108,8 +105,8 @@
   var navItems = [
     { href: 'start.html', text: 'Start here', key: 'start', icon: 'house' },
     { href: 'guides.html', text: 'Guides', key: 'guides', icon: 'book-open' },
-    { href: 'videos.html', text: 'Videos and webinars', key: 'videos', icon: 'circle-play' },
-    { href: 'share-screen-time.html', text: 'Share screen time', key: 'share', icon: 'upload', group: 'restrict' },
+    { href: 'videos.html', text: 'Videos', key: 'videos', icon: 'circle-play' },
+    { href: 'share-screen-time.html', text: 'Share screen time', key: 'share', icon: 'upload' },
     { href: 'help.html', text: 'Get help', key: 'help', icon: 'life-buoy' }
   ]
 
@@ -128,7 +125,7 @@
     '</div></header>' +
     (signedIn
       ? '<nav class="smart-nav" aria-label="Main"><div class="govuk-width-container"><ul class="smart-nav__list">' +
-        (isSchool ? schoolNav : navItems).filter(function (i) { return !i.group || i.group === session.group }).map(function (i) {
+        (isSchool ? schoolNav : navItems).map(function (i) {
           return '<li class="smart-nav__item"><a href="' + i.href + '"' + (i.key === page ? ' aria-current="page"' : '') + '>' + icon(i.icon) + i.text + '</a></li>'
         }).join('') +
         '</ul></div></nav>'
@@ -193,15 +190,8 @@
     if (e.target.closest('[data-signout]')) window.SMART.signOut()
   })
 
-  // ------------------------------------------------------------------ group-specific content
-  // Anything marked data-show-for="restrict" or "delay" only shows for that group.
-  function applyGroup () {
-    document.querySelectorAll('[data-show-for]').forEach(function (n) {
-      n.classList.toggle('smart-hide', n.getAttribute('data-show-for') !== session.group)
-    })
-    document.querySelectorAll('[data-family-id]').forEach(function (n) { n.textContent = session.id || '' })
-  }
-  applyGroup()
+  // ------------------------------------------------------------------ family ID
+  document.querySelectorAll('[data-family-id]').forEach(function (n) { n.textContent = session.id || '' })
 
   // ------------------------------------------------------------------ mock phone screens
   // <div data-phone="ios" data-title="Screen Time" data-back="Settings"

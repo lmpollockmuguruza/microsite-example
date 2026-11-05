@@ -87,21 +87,21 @@ const posterCommon = {
 const posters = [
   {
     id: 'both', name: 'Both plans',
-    use: 'For a school where some families are waiting and some are setting up phones.',
+    use: 'The one most schools need: it covers families whose child has a smartphone and families whose child doesn\'t.',
     headline: 'We\'re finding out what\'s best for children and phones',
-    plansTitle: 'Families taking part follow one of two plans. Your welcome pack says which is yours:',
+    plansTitle: 'Families taking part follow one of two plans, depending on whether their child has a smartphone:',
     plans: [plans.delay, plans.restrict]
   },
   {
     id: 'delay', name: 'Waiting for a first smartphone',
-    use: 'For a school where families are waiting for a first smartphone.',
+    use: 'To focus on families whose child doesn\'t have a smartphone yet, for example before birthdays.',
     headline: 'Together, we\'re waiting a little longer for smartphones',
     plansTitle: 'What we\'re asking families taking part:',
     plans: [plans.delay]
   },
   {
     id: 'restrict', name: 'Setting up the phone together',
-    use: 'For a school where families are setting up their child\'s phone.',
+    use: 'To focus on families whose child already has a smartphone.',
     headline: 'Together, we\'re giving children a safer start with phones',
     plansTitle: 'What we\'re asking families taking part:',
     plans: [plans.restrict]

@@ -344,6 +344,56 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
 }
 .smart-task__hint { @include govuk.govuk-font(16); color: #4a5b70; margin: 0; }
 
+// ---------------------------------------------------------------- Two paths (no phone yet / has a phone)
+// Every family sees both, in this order. The tints match the e-posters' plans.
+.smart-path {
+  margin: 0 0 24px;
+  padding: 24px 24px 10px;
+  border-radius: 24px;
+  background: $lemon;
+  scroll-margin-top: 20px;
+  .govuk-body-l { margin-bottom: 18px; }
+  .smart-tasks { margin-bottom: 14px; }
+  .smart-task { box-shadow: none; }
+}
+.smart-path--mint { background: $mint-light; }
+.smart-path__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  .govuk-heading-m, .govuk-heading-l { margin: 0; }
+}
+.smart-path__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  color: $navy;
+  .smart-icon { width: 26px; height: 26px; }
+}
+
+// A single highlighted link with a picture (the study video)
+.smart-feature {
+  position: relative;
+  display: block;
+  margin: 0 0 30px;
+  padding: 0 0 18px;
+  border-radius: $radius;
+  background: $lilac-light;
+  overflow: hidden;
+  text-decoration: none;
+  &:link, &:visited { color: $ink; }
+  &:hover .smart-feature__title { text-decoration: underline; }
+  &:focus { outline: 3px solid govuk.$govuk-focus-colour; outline-offset: 2px; box-shadow: none; background: $lilac-light; }
+  img { display: block; width: 100%; height: 150px; object-fit: contain; margin-bottom: 12px; }
+}
+.smart-feature__title { display: block; padding: 0 18px; margin-bottom: 4px; @include govuk.govuk-font(19, $weight: bold); font-weight: 900; color: $navy; }
+.smart-feature__hint { display: block; padding: 0 18px; @include govuk.govuk-font(16); color: #4a5b70; }
+
 // ---------------------------------------------------------------- Chips (allowed apps)
 .smart-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 20px; padding: 0; list-style: none; }
 .smart-chip {

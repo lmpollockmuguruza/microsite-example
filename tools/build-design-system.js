@@ -397,7 +397,7 @@ function components () {
   row += g('Choice tiles', text(0, 0, 'What phone does your child have?', { size: 24, weight: 800, fill: c('navy') }) +
     g('Tile / Selected', `<rect y="24" width="480" height="58" rx="16" fill="${c('sky-light')}" stroke="${c('navy')}" stroke-width="2"/>` + `<circle cx="32" cy="53" r="14" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/><circle cx="32" cy="53" r="7" fill="${c('ink')}"/>` + text(58, 60, 'An iPhone', { size: 19, weight: 800 })) +
     g('Tile', `<rect y="96" width="480" height="58" rx="16" fill="#ffffff" ${SHADOW}/>` + `<circle cx="32" cy="125" r="14" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(58, 132, 'An Android phone', { size: 19, weight: 800 })) +
-    g('Input', text(0, 200, 'Family ID', { size: 19, weight: 800 }) + `<rect y="214" width="240" height="40" rx="10" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(10, 241, 'SMART-R-4821', { size: 19 })), [1220, 92])
+    g('Input', text(0, 200, 'Family ID', { size: 19, weight: 800 }) + `<rect y="214" width="240" height="40" rx="10" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(10, 241, 'SMART-F-4821', { size: 19 })), [1220, 92])
   s += g('Guide step', row, [0, y]); y += 450
 
   // News, chapters, partners

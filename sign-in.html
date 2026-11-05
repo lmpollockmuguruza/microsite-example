@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
 </head>
 <body class="govuk-template__body" data-access="public" data-page="sign-in">
 
@@ -29,7 +29,7 @@
           <form id="sign-in" class="smart-box" novalidate>
             <div class="govuk-form-group" id="family-id-group">
               <label class="govuk-label govuk-label--s" for="family-id">Family or school ID</label>
-              <div class="govuk-hint" id="family-id-hint">For example, SMART-R-4821</div>
+              <div class="govuk-hint" id="family-id-hint">For example, SMART-F-4821</div>
               <p class="govuk-error-message smart-hide" id="family-id-error"><span class="govuk-visually-hidden">Error:</span> <span></span></p>
               <input class="govuk-input govuk-input--width-20" id="family-id" name="familyId" type="text" autocomplete="username" spellcheck="false" autocapitalize="characters" aria-describedby="family-id-hint">
             </div>
@@ -43,10 +43,14 @@
             <button type="submit" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button">Sign in</button>
           </form>
 
+          <div class="govuk-inset-text smart-inset-friendly">
+            <strong>Trying out the mock-up?</strong> Sign in as a family with <strong>SMART-F-4821</strong>, or as a school with <strong>SMART-S-2041</strong>. Any password works.
+          </div>
+
           <details class="govuk-details">
             <summary class="govuk-details__summary"><span class="govuk-details__summary-text">I cannot find my sign-in details</span></summary>
             <div class="govuk-details__text">
-              Email <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a> with your name and your child's school. We'll reply within 5 working days. [TBC: self-service reset, see decision A1]
+              Email <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a> with your name and your child's school. We'll reply within 5 working days.
             </div>
           </details>
 
@@ -59,9 +63,9 @@
     </main>
   </div>
 
-  <script src="assets/js/govuk-frontend.js?v=3"></script>
-  <script src="assets/js/icons.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/govuk-frontend.js?v=4"></script>
+  <script src="assets/js/icons.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
   <script>
     (function () {
       var form = document.getElementById('sign-in')
@@ -88,11 +92,11 @@
         var id = form.familyId.value.trim().toUpperCase()
         var errors = {}
         if (!id) errors['family-id'] = 'Enter your family or school ID'
-        else if (!/^SMART-[RDS]-\d{4}$/.test(id)) errors['family-id'] = 'Enter your ID in the right format, like SMART-R-4821'
+        else if (!/^SMART-[FS]-\d{4}$/.test(id)) errors['family-id'] = 'Enter your ID in the right format, like SMART-F-4821'
         if (!form.password.value) errors.password = 'Enter your password'
         showErrors(errors)
         if (Object.keys(errors).length) return
-        var group = { R: 'restrict', D: 'delay', S: 'school' }[id.charAt(6)]
+        var group = id.charAt(6) === 'S' ? 'school' : 'family'
         window.SMART.signIn(id, group)
         var next = new URLSearchParams(location.search).get('next')
         var home = group === 'school' ? 'schools.html' : 'start.html'

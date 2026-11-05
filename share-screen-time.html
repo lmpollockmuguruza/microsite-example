@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
 </head>
-<body class="govuk-template__body" data-access="member" data-page="share" data-only-for="restrict">
+<body class="govuk-template__body" data-access="member" data-page="share">
 
   <div class="govuk-width-container">
     <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
@@ -37,7 +37,8 @@
               <div>
                 <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg> Once a month · about 2 minutes</span>
                 <h1 class="govuk-heading-xl">Share your child's screen time</h1>
-                <p class="govuk-body-l">Take a screenshot of the weekly screen time report and upload it here. It helps us see how the restrictions are working. It's not a test, and there are no wrong answers.</p>
+                <p class="govuk-body-l">If your child has a smartphone, take a screenshot of the weekly screen time report and upload it here. It helps us see how the restrictions are working. It's not a test, and there are no wrong answers.</p>
+                <p class="govuk-body">If your child doesn't have a smartphone, you don't need to do this.</p>
               </div>
               <img src="assets/images/illustrations/upload.svg" alt="">
             </div>
@@ -81,8 +82,8 @@
                   <div class="govuk-hint" id="week-hint">Usually the week that has just finished.</div>
                   <p class="govuk-error-message smart-hide" id="week-error"><span class="govuk-visually-hidden">Error:</span> Select which week the screenshot shows</p>
                   <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-last" name="week" type="radio" value="last"><label class="govuk-label govuk-radios__label" for="week-last">Last week (16 to 22 November 2026)</label></div>
-                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-before" name="week" type="radio" value="before"><label class="govuk-label govuk-radios__label" for="week-before">The week before (9 to 15 November 2026)</label></div>
+                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-last" name="week" type="radio" value="last"><label class="govuk-label govuk-radios__label" for="week-last">Last week (15 to 21 November 2027)</label></div>
+                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-before" name="week" type="radio" value="before"><label class="govuk-label govuk-radios__label" for="week-before">The week before (8 to 14 November 2027)</label></div>
                     <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-unsure" name="week" type="radio" value="unsure"><label class="govuk-label govuk-radios__label" for="week-unsure">I'm not sure</label></div>
                   </div>
                 </fieldset>
@@ -135,7 +136,7 @@
               <caption class="govuk-table__caption govuk-visually-hidden">Your past screenshots</caption>
               <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">Week</th><th scope="col" class="govuk-table__header">Sent</th><th scope="col" class="govuk-table__header">Status</th></tr></thead>
               <tbody class="govuk-table__body">
-                <tr class="govuk-table__row"><td class="govuk-table__cell">12 to 18 October 2026</td><td class="govuk-table__cell">19 October 2026</td><td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--green">Received</strong></td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">11 to 17 October 2027</td><td class="govuk-table__cell">18 October 2027</td><td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--green">Received</strong></td></tr>
               </tbody>
             </table>
           </div>
@@ -144,9 +145,9 @@
     </main>
   </div>
 
-  <script src="assets/js/govuk-frontend.js?v=3"></script>
-  <script src="assets/js/icons.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/govuk-frontend.js?v=4"></script>
+  <script src="assets/js/icons.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
   <script>
     (function () {
       var form = document.getElementById('upload')
@@ -199,8 +200,8 @@
         summary.classList.toggle('smart-hide', !html)
         if (html) { document.title = 'Error: Share your child\'s screen time – The SMART Study'; summary.focus(); return }
 
-        var id = (window.SMART.session.id || 'SMART-R-0000')
-        document.getElementById('ref').textContent = id + '-2026-11'
+        var id = (window.SMART.session.id || 'SMART-F-0000')
+        document.getElementById('ref').textContent = id + '-2027-11'
         document.getElementById('form-page').classList.add('smart-hide')
         var done = document.getElementById('done')
         done.classList.remove('smart-hide')
