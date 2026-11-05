@@ -23,9 +23,6 @@
             </div>
             <p class="govuk-body">We'll ask you for the next one in about a month. You don't need to do anything else.</p>
             <p class="govuk-body"><a class="govuk-link" href="start.html">Back to Start here</a></p>
-            <aside class="smart-design-note" data-decision="S4">
-              <p>Should we also send a confirmation email? It reassures parents, but it's another message on top of the newsletter and IFF's contact.</p>
-            </aside>
           </div>
 
           <div id="form-page">
@@ -74,9 +71,6 @@
               </div>
             </div>
 
-            <aside class="smart-design-note" data-decision="S1">
-              <p><strong>Which screen?</strong> We need one screen that shows the most in one picture (the weekly average, most-used apps, pickups) and looks the same for every family. That makes the automatic reading much more reliable. Test in the pilot which screen works best on each platform.</p>
-            </aside>
 
             <h2 class="govuk-heading-l smart-numbered" data-n="2">Upload it</h2>
             <form id="upload" class="smart-box" novalidate>
@@ -119,9 +113,6 @@
                     <label class="govuk-label govuk-label--s" for="pickups">Pickups per day (if shown)</label>
                     <input class="govuk-input govuk-input--width-3" id="pickups" type="text" inputmode="numeric">
                   </div>
-                  <aside class="smart-design-note" data-decision="S2">
-                    <p>The research layer doc also mentions step count and sleep score from a smartwatch. Leave these out of the first version to keep the form short? They can be added later as optional fields.</p>
-                  </aside>
                 </div>
               </details>
 
@@ -138,16 +129,6 @@
               <button type="submit" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg> Send</button>
             </form>
 
-            <aside class="smart-design-note" data-decision="S3 A1">
-              <p><strong>What happens to the screenshot</strong> (not built in this mock-up):</p>
-              <ul>
-                <li>It's saved under the family ID the parent signed in with, so they never have to type an ID.</li>
-                <li>It's stored on UK-hosted storage, and the location data and other metadata in the image file are removed when it's uploaded.</li>
-                <li>A separate process reads the numbers from it (Gemini API on PUBLIC's paid terms, or open-source OCR), and a sample is checked by hand.</li>
-                <li>The image is deleted after [TBC] months. Only the numbers are kept.</li>
-              </ul>
-              <p><strong>Build or buy?</strong> We could build our own form (as shown here), or embed a Qualtrics/Tally form. An embedded form looks less joined-up, and the family ID has to be passed in the link.</p>
-            </aside>
 
             <h2 class="govuk-heading-m govuk-!-margin-top-6">What you've sent before</h2>
             <table class="govuk-table">

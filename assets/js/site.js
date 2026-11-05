@@ -2,13 +2,12 @@
  * SMART Study microsite – shared layout and behaviour (MOCK-UP)
  *
  * Every page only holds its own <main> content. This script adds the header,
- * navigation, footer, cookie banner and the design-notes toolbar, so those
- * live in one place.
+ * navigation, footer and cookie banner, so those live in one place.
  *
  * The sign-in here is fake. It keeps a pretend session in the browser so the
  * mock-up can be clicked through. A real build must check access on the
- * server (see decision A1), because anything done in the browser can be
- * bypassed by anyone who has a link.
+ * server, because anything done in the browser can be bypassed by anyone
+ * who has a link.
  */
 (function () {
   'use strict'
@@ -95,7 +94,7 @@
   window.SMART.icon = icon
 
   // The logo mark (a sun, a parent and a child) deliberately shows no phone,
-  // because the public page is seen by the control group (decision A4).
+  // because the public page is seen by the control group.
   function logo (href) {
     return '<a class="smart-logo" href="' + href + '">' +
       '<img src="assets/images/logo-mark.svg" alt="">' +
@@ -119,8 +118,7 @@
     '<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>' +
     '<div class="smart-mock-banner"><div class="govuk-width-container">' +
     '<strong class="govuk-tag govuk-tag--yellow">Mock-up</strong>' +
-    'This is a prototype for review. It is not a live service and nothing you enter is saved or sent. ' +
-    '<a class="govuk-link" href="decisions.html">See the open decisions</a>.' +
+    'This is a prototype. It is not a live service, and nothing you enter is saved or sent.' +
     '</div></div>' +
     '<header class="smart-header" role="banner"><div class="govuk-width-container smart-header__inner">' +
     logo(signedIn ? home : 'index.html') +
@@ -141,7 +139,7 @@
 
   // ------------------------------------------------------------------ footer
   // Partner logos are placeholders: each organisation's logo needs their
-  // permission and brand guidelines (decision B5).
+  // permission and brand guidelines.
   var partners = [
     ['Department for Education', 'Commissioned by'],
     ['IFF Research', 'Lead partner'],
@@ -161,7 +159,6 @@
     '<li><a href="privacy.html#cookies">Cookies</a></li>' +
     '<li><a href="accessibility.html">Accessibility statement</a></li>' +
     '<li><a href="' + (isSchool ? 'schools.html#contact' : signedIn ? 'help.html' : 'index.html#contact') + '">Contact us</a></li>' +
-    '<li><a href="decisions.html">Mock-up: open decisions</a></li>' +
     '</ul>' +
     '</div></footer>'
   )
@@ -206,63 +203,6 @@
   }
   applyGroup()
 
-  // ------------------------------------------------------------------ design-notes toolbar (mock-up only)
-  var notesOff = get('localStorage', 'smart_notes') === 'off'
-  document.documentElement.classList.toggle('smart-notes-off', notesOff)
-  var toolbarPref = get('localStorage', 'smart_toolbar')
-  var collapsed = toolbarPref ? toolbarPref === 'collapsed' : window.innerWidth < 640
-  var toolbar = el(
-    '<div class="smart-toolbar smart-no-print' + (collapsed ? ' smart-toolbar--collapsed' : '') + '" role="region" aria-label="Mock-up review tools">' +
-    '<div class="smart-toolbar__row"><p class="smart-toolbar__title">Review tools</p>' +
-    '<button type="button" class="smart-toolbar__btn" data-tool="collapse" aria-expanded="' + !collapsed + '">' + (collapsed ? 'Show' : 'Hide') + '</button></div>' +
-    '<div class="smart-toolbar__body"><div class="smart-toolbar__row">' +
-    '<button type="button" class="smart-toolbar__btn" data-tool="notes" aria-pressed="' + !notesOff + '">Design notes</button>' +
-    '<a class="govuk-link" href="decisions.html">All decisions</a></div>' +
-    (signedIn
-      ? '<div class="smart-toolbar__row" role="group" aria-label="View as group">View as:' +
-        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="restrict" aria-pressed="' + (session.group === 'restrict') + '">Restrict</button>' +
-        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="delay" aria-pressed="' + (session.group === 'delay') + '">Delay</button>' +
-        '<button type="button" class="smart-toolbar__btn" data-tool="group" data-group="school" aria-pressed="' + isSchool + '">School</button></div>'
-      : '') +
-    '</div></div>'
-  )
-  body.appendChild(toolbar)
-  toolbar.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-tool]')
-    if (!b) return
-    var tool = b.getAttribute('data-tool')
-    if (tool === 'notes') {
-      notesOff = !notesOff
-      document.documentElement.classList.toggle('smart-notes-off', notesOff)
-      b.setAttribute('aria-pressed', String(!notesOff))
-      set('localStorage', 'smart_notes', notesOff ? 'off' : 'on')
-    } else if (tool === 'collapse') {
-      collapsed = !toolbar.classList.contains('smart-toolbar--collapsed')
-      toolbar.classList.toggle('smart-toolbar--collapsed', collapsed)
-      b.textContent = collapsed ? 'Show' : 'Hide'
-      b.setAttribute('aria-expanded', String(!collapsed))
-      set('localStorage', 'smart_toolbar', collapsed ? 'collapsed' : 'open')
-    } else if (tool === 'group') {
-      var g = b.getAttribute('data-group')
-      var id = (session.id || 'SMART-X-0000').replace(/-[RDS]-/, g === 'restrict' ? '-R-' : g === 'school' ? '-S-' : '-D-')
-      window.SMART.signIn(id, g)
-      if (g === 'school') location.href = 'schools.html'
-      else if (isSchool || (onlyFor && onlyFor !== g)) location.href = 'start.html'
-      else location.reload()
-    }
-  })
-
-  // ------------------------------------------------------------------ design-note labels
-  // <aside class="smart-design-note" data-decision="C2"> gets a label linking to the register.
-  document.querySelectorAll('.smart-design-note').forEach(function (n) {
-    var ids = (n.getAttribute('data-decision') || '').split(/\s+/).filter(Boolean)
-    var label = 'Design note' + (ids.length ? ' · ' + ids.map(function (id) {
-      return '<a href="decisions.html#' + id + '">' + id + '</a>'
-    }).join(', ') : '')
-    n.insertBefore(el('<p class="smart-design-note__label">' + label + '</p>'), n.firstChild)
-    if (!n.hasAttribute('aria-label')) n.setAttribute('aria-label', 'Design note for reviewers')
-  })
-
   // ------------------------------------------------------------------ mock phone screens
   // <div data-phone="ios" data-title="Screen Time" data-back="Settings"
   //      data-rows="App Limits|Downtime*|Always Allowed~on" data-caption="..."></div>
@@ -298,7 +238,7 @@
 
   // ------------------------------------------------------------------ guide progress ("I've done this step")
   // Saved in this browser only. In a real build this could also be sent as an
-  // engagement signal (see decision D2).
+  // engagement signal.
   var guide = body.getAttribute('data-guide')
   if (guide) {
     var key = 'smart_guide_' + guide

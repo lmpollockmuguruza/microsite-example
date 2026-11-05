@@ -49,8 +49,6 @@ const lit = {
   focus: '#ffdd00',
   'focus-ink': '#0b0c0c',
   error: '#d4351c',
-  review: '#4c2c92',
-  'review-light': '#f4f0fa',
   'mock-banner': '#fff0b3'
 }
 const c = name => pal[name] || lit[name]
@@ -104,7 +102,7 @@ const COLOURS = [
   ['GOV.UK and footer', [
     ['link', 'Links'], ['focus', 'Focus ground and outline'], ['focus-ink', 'Text on focus'], ['error', 'Errors, tap-here outline'], ['footer-muted', 'Labels on the navy footer']]],
   ['Mock-up only (not for the live service)', [
-    ['review', 'Design notes, review tools'], ['review-light', 'Design-note ground'], ['mock-banner', 'Mock-up banner']]]
+    ['mock-banner', 'Mock-up banner']]]
 ]
 function colours () {
   let y = 0
