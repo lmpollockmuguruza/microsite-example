@@ -10,18 +10,21 @@
  *   exports/figma/poster-*.svg                each e-poster as an A4 frame
  *   exports/invitations/SMART-invitation-*.docx|pdf|png   each invitation to take part
  *   exports/figma/invitation-*.svg            each invitation as an A4 frame
+ *   exports/SMART-onboarding-pack-schools.docx|pdf   the schools' onboarding pack (content/onboarding.js)
+ *   exports/figma/onboarding-pack-schools.svg  its A4 pages side by side
  *
  * Run: npm run build:resources
  */
 const fs = require('fs')
 const path = require('path')
 const R = require('../content/resources')
+const PACKS = [require('../content/onboarding')]
 
 const ROOT = path.resolve(__dirname, '..')
 const out = p => path.join(ROOT, p)
 const mkdir = p => fs.mkdirSync(out(p), { recursive: true })
 
-const C = { navy: '#003A69', ink: '#12263F', grey: '#4A5B70', coral: '#C4412A', sun: '#FFC845', lemon: '#FFF1C9', mint: '#E6F7F1', mintDark: '#0B7A67', sky: '#EEF6FD', cream: '#FFFAF3', line: '#DFE5EC' }
+const C = { navy: '#003A69', ink: '#12263F', grey: '#4A5B70', coral: '#C4412A', sun: '#FFC845', lemon: '#FFF1C9', mint: '#E6F7F1', mintDark: '#0B7A67', sky: '#EEF6FD', cream: '#FFFAF3', line: '#DFE5EC', link: '#1A5C9E' }
 const TINT = { lemon: C.lemon, mint: C.mint }
 
 // ------------------------------------------------------------------ helpers
@@ -55,10 +58,11 @@ function rich (x, y, s, o) {
   // words; a word that follows a bold run with no space between (like "2028**.") is glued on
   const words = []
   let spaceBefore = true
-  String(s).split(/(\*\*.+?\*\*)/).filter(Boolean).forEach(part => {
+  String(s).split(/(\*\*.+?\*\*|\[[^\]]+\]\(https?:[^)]+\))/).filter(Boolean).forEach(part => {
     const b = /^\*\*.+\*\*$/.test(part)
-    const txt = b ? part.slice(2, -2) : part
-    txt.split(/\s+/).filter(Boolean).forEach((w, i) => words.push({ w, b: b || !!o.bold, glue: i === 0 && !spaceBefore && !/^\s/.test(txt) }))
+    const link = !b && /^\[[^\]]+\]\(https?:/.test(part)
+    const txt = b ? part.slice(2, -2) : link ? part.slice(1, part.indexOf('](')) : part
+    txt.split(/\s+/).filter(Boolean).forEach((w, i) => words.push({ w, b: b || !!o.bold, l: link, glue: i === 0 && !spaceBefore && !/^\s/.test(txt) }))
     spaceBefore = /\s$/.test(txt)
   })
   const lines = [[]]
@@ -80,11 +84,16 @@ function rich (x, y, s, o) {
     line.forEach((wd, j) => {
       const last = spans[spans.length - 1]
       const t = (j && !wd.glue ? ' ' : '') + wd.w
-      if (last && last.b === wd.b) last.t += t
-      else spans.push({ b: wd.b, t })
+      if (last && last.b === wd.b && last.l === wd.l) last.t += t
+      else if (wd.l && t[0] === ' ') {
+        // keep the space before a link out of its underline
+        if (last && !last.l) last.t += ' '
+        else spans.push({ b: false, l: false, t: ' ' })
+        spans.push({ b: wd.b, l: true, t: t.slice(1) })
+      } else spans.push({ b: wd.b, l: wd.l, t })
     })
     svg += `<text x="${x}" y="${(y + size + i * lh).toFixed(1)}" font-family="${font}" font-size="${size}" font-weight="${weight}" fill="${o.fill || C.ink}"${o.italic ? ' font-style="italic"' : ''}${anchor} xml:space="preserve">` +
-      spans.map(sp => sp.b && weight < 700 ? `<tspan font-weight="700">${esc(sp.t)}</tspan>` : esc(sp.t)).join('') + '</text>'
+      spans.map(sp => sp.l ? `<tspan fill="${C.link}" text-decoration="underline">${esc(sp.t)}</tspan>` : sp.b && weight < 700 ? `<tspan font-weight="700">${esc(sp.t)}</tspan>` : esc(sp.t)).join('') + '</text>'
   })
   return { svg, h: lines.length * lh }
 }
@@ -300,6 +309,153 @@ function fitInvitation (v) {
   return invitationSvg(v, Math.min(Math.max(0, limit - first.used), 120))
 }
 
+// ------------------------------------------------------------------ onboarding pack: A4 pages
+// The pack is a list of blocks. Each block becomes one or more "atoms" that
+// are placed down the page; an atom that doesn't fit starts a new page.
+// Headings stay with the atom after them, and table rows repeat the header.
+const PACK = { M: 44, top: 70, bottom: A4.h - 52 }
+PACK.W = A4.w - PACK.M * 2
+
+function packAtoms (pack) {
+  const { M, W } = PACK
+  const atoms = []
+  const add = (draw, o = {}) => atoms.push({ draw, gap: o.gap ?? 10, keep: !!o.keep, header: o.header })
+  const TINT = { mint: C.mint, peach: '#FDE7D3' }
+
+  // page 1 title
+  add(y => {
+    let s = ''
+    let t = rich(M, y, pack.title, { size: 28, font: 'Nunito', weight: 900, fill: C.navy, maxW: W, lh: 32 }); s += t.svg; let h = t.h + 6
+    t = rich(M, y + h, pack.lead, { size: 11.5, maxW: W, fill: C.grey, lh: 16 }); s += t.svg; h += t.h
+    return { svg: s, h }
+  }, { gap: 16 })
+
+  for (const b of pack.blocks) {
+    if (b.type === 'h2') {
+      add(y => { const t = rich(M, y + 8, b.text, { size: 15, font: 'Nunito', weight: 900, fill: C.navy, maxW: W }); return { svg: t.svg, h: t.h + 8 } }, { gap: 6, keep: true })
+    } else if (b.type === 'p') {
+      add(y => { const t = rich(M, y, b.text, { size: 10.5, maxW: W, lh: 15 }); return t }, { gap: 8 })
+    } else if (b.type === 'ask') {
+      add(y => {
+        const X = M + 18
+        const IW = W - 36
+        let s = ''
+        let h = 16
+        let t = rich(X, y + h, b.title, { size: 15, font: 'Nunito', weight: 900, fill: C.navy, maxW: IW }); s += t.svg; h += t.h + 4
+        t = rich(X, y + h, b.intro, { size: 11.5, maxW: IW }); s += t.svg; h += t.h + 8
+        b.items.forEach((it, i) => {
+          s += `<circle cx="${X + 9}" cy="${(y + h + 8).toFixed(1)}" r="9" fill="${C.sun}"/><text x="${X + 9}" y="${(y + h + 11.5).toFixed(1)}" font-family="Nunito" font-size="10" font-weight="900" fill="${C.navy}" text-anchor="middle">${i + 1}</text>`
+          t = rich(X + 26, y + h, `**${it.title}** ${it.text}`, { size: 10.5, maxW: IW - 26, lh: 14.5 }); s += t.svg; h += t.h + 6
+        })
+        t = rich(X, y + h + 2, b.outro, { size: 10, maxW: IW, fill: C.grey }); s += t.svg; h += t.h + 18
+        return { svg: rect(M, y, W, h, 14, C.lemon) + s, h }
+      }, { gap: 14 })
+    } else if (b.type === 'stats') {
+      add(y => {
+        const n = b.items.length
+        const tw = (W - (n - 1) * 10) / n
+        let s = ''
+        b.items.forEach((it, i) => {
+          const x = M + i * (tw + 10)
+          s += rect(x, y, tw, 60, 12, C.sky) +
+            `<text x="${x + tw / 2}" y="${y + 30}" font-family="Nunito" font-size="22" font-weight="900" fill="${C.navy}" text-anchor="middle">${esc(it.n)}</text>` +
+            `<text x="${x + tw / 2}" y="${y + 47}" font-family="Inter" font-size="9.5" fill="${C.grey}" text-anchor="middle">${esc(it.label)}</text>`
+        })
+        return { svg: s, h: 60 }
+      }, { gap: 12 })
+    } else if (b.type === 'table') {
+      const xs = []
+      let acc = 0
+      b.widths.forEach(f => { xs.push(M + acc * W); acc += f })
+      const header = y => {
+        let s = rect(M, y, W, 24, 6, C.navy)
+        b.cols.forEach((c, i) => { s += `<text x="${xs[i] + 10}" y="${y + 15.5}" font-family="Inter" font-size="9.5" font-weight="700" fill="#FFFFFF">${esc(c)}</text>` })
+        return { svg: s, h: 24 }
+      }
+      add(header, { gap: 0, keep: true })
+      b.rows.forEach((row, r) => {
+        add(y => {
+          const cells = row.map((txt, i) => rich(xs[i] + 10, y + 8, txt, { size: 9.5, maxW: b.widths[i] * W - 20, lh: 13, bold: i === 0, fill: i === 0 ? C.navy : C.ink }))
+          const h = Math.max(...cells.map(c => c.h)) + 16
+          return { svg: rect(M, y, W, h, 0, r % 2 ? '#FFFFFF' : C.cream) + `<rect x="${M}" y="${(y + h - 1).toFixed(1)}" width="${W}" height="1" fill="${C.line}"/>` + cells.map(c => c.svg).join(''), h }
+        }, { gap: r === b.rows.length - 1 ? 12 : 0, header })
+      })
+    } else if (b.type === 'bullets' || b.type === 'steps') {
+      b.items.forEach((it, i) => {
+        add(y => {
+          const marker = b.type === 'steps'
+            ? `<circle cx="${M + 9}" cy="${(y + 8).toFixed(1)}" r="9" fill="${C.sun}"/><text x="${M + 9}" y="${(y + 11.5).toFixed(1)}" font-family="Nunito" font-size="10" font-weight="900" fill="${C.navy}" text-anchor="middle">${i + 1}</text>`
+            : `<circle cx="${M + 5}" cy="${(y + 7.5).toFixed(1)}" r="3" fill="${C.coral}"/>`
+          const indent = b.type === 'steps' ? 26 : 16
+          const t = rich(M + indent, y, it, { size: 10.5, maxW: W - indent, lh: 14.5 })
+          return { svg: marker + t.svg, h: Math.max(t.h, 18) }
+        }, { gap: i === b.items.length - 1 ? 10 : 5 })
+      })
+    } else if (b.type === 'boxes') {
+      add(y => {
+        const n = b.items.length
+        const bw = (W - (n - 1) * 12) / n
+        const parts = b.items.map((it, i) => {
+          const x = M + i * (bw + 12)
+          const ti = rich(x + 14, y + 12, it.title, { size: 11, maxW: bw - 28, bold: true, fill: C.navy, lh: 14 })
+          const tx = rich(x + 14, y + 12 + ti.h + 3, it.text, { size: 10, maxW: bw - 28, lh: 14 })
+          return { x, it, svg: ti.svg + tx.svg, h: ti.h + tx.h + 30 }
+        })
+        const h = Math.max(...parts.map(p => p.h))
+        return { svg: parts.map(p => rect(p.x, y, bw, h, 12, TINT[p.it.tint]) + p.svg).join(''), h }
+      }, { gap: 14 })
+    }
+  }
+  // closing line
+  add(y => { const t = rich(M, y + 6, `${pack.footer} ${R.RUN_BY}`, { size: 9.5, maxW: W, fill: C.grey }); return { svg: t.svg, h: t.h + 6 } }, { gap: 0 })
+  return atoms
+}
+
+// Place the atoms on pages. Returns one SVG per page.
+function packPages (pack) {
+  const { M, W, top, bottom } = PACK
+  const atoms = packAtoms(pack)
+  const pages = [[]]
+  const firstTop = 92
+  let y = firstTop
+  const pageTop = () => pages.length === 1 ? firstTop : top
+  for (let i = 0; i < atoms.length; i++) {
+    const a = atoms[i]
+    // a heading or table header needs room for what it's kept with
+    let need = a.draw(y).h
+    for (let j = i; atoms[j].keep && atoms[j + 1]; j++) need += atoms[j].gap + atoms[j + 1].draw(y).h
+    if (y + need > bottom && y > pageTop()) {
+      pages.push([])
+      y = top
+      if (a.header) { const hd = a.header(y); pages[pages.length - 1].push(hd.svg); y += hd.h }
+    }
+    const r = a.draw(y)
+    pages[pages.length - 1].push(r.svg)
+    y += r.h + a.gap
+  }
+  const n = pages.length
+  return pages.map((body, i) => {
+    let s = ''
+    if (i === 0) {
+      s += logoAt(M, 36, 30) + `<text x="${M + 40}" y="${56}" font-family="Inter" font-size="10" font-weight="700" fill="${C.coral}" letter-spacing=".6">THE SMART STUDY · ${esc(pack.eyebrow.toUpperCase())}</text>`
+    } else {
+      s += logoAt(M, 26, 20) + `<text x="${M + 28}" y="${40}" font-family="Inter" font-size="8.5" font-weight="700" fill="${C.coral}" letter-spacing=".6">THE SMART STUDY · ${esc(pack.eyebrow.toUpperCase())}</text>`
+    }
+    s += body.join('')
+    s += `<rect x="${M}" y="${A4.h - 38}" width="${W}" height="1" fill="${C.line}"/>` +
+      `<text x="${A4.w - M}" y="${A4.h - 24}" font-family="Inter" font-size="8.5" fill="${C.grey}" text-anchor="end">Page ${i + 1} of ${n}</text>`
+    return svgDoc(A4.w, A4.h, s, '#FFFFFF')
+  })
+}
+
+// All the pages side by side, for Figma: one named group per page
+function packBoard (pages) {
+  const GAP = 40
+  const w = pages.length * A4.w + (pages.length - 1) * GAP
+  const body = pages.map((p, i) => `<g id="Page ${i + 1}" transform="translate(${i * (A4.w + GAP)} 0)">${p.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')}</g>`).join('')
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${A4.h}" width="${w}" height="${A4.h}">${body}</svg>\n`
+}
+
 // Lucide glyphs for the poster (from the site's icon sprite)
 const sprite = fs.readFileSync(out('assets/js/icons.js'), 'utf8')
 function glyph (name, x, y, size, colour) {
@@ -328,6 +484,11 @@ async function renderAll (jobs) {
       await page.evaluate(() => document.fonts.ready)
       await page.pdf({ path: job.pdf, format: 'A4', printBackground: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } })
     }
+    if (job.pages) {
+      await page.setContent(`<html><head><style>${faces} @page{size:A4;margin:0} html,body{margin:0;padding:0} svg{display:block;width:210mm;height:297mm;break-after:page}</style></head><body>${job.pages.join('')}</body></html>`, { waitUntil: 'load' })
+      await page.evaluate(() => document.fonts.ready)
+      await page.pdf({ path: job.pagesPdf, format: 'A4', printBackground: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } })
+    }
   }
   await browser.close()
   return results
@@ -335,13 +496,15 @@ async function renderAll (jobs) {
 
 // ------------------------------------------------------------------ Word
 const d = require('docx')
-const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, BorderStyle, ImageRun, AlignmentType, ShadingType, LevelFormat, VerticalAlign, Tab, TabStopType } = d
+const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, BorderStyle, ImageRun, AlignmentType, ShadingType, LevelFormat, VerticalAlign, Tab, TabStopType, ExternalHyperlink, Footer, PageNumber } = d
 const FONT = 'Arial'
 const hex = c => c.replace('#', '')
 const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
 const noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none }
-const runs = (s, o = {}) => String(s).split(/(\*\*.+?\*\*)/).filter(Boolean).map(part => {
+const runs = (s, o = {}) => String(s).split(/(\*\*.+?\*\*|\[[^\]]+\]\(https?:[^)]+\))/).filter(Boolean).map(part => {
   const b = /^\*\*.+\*\*$/.test(part)
+  const link = !b && part.match(/^\[([^\]]+)\]\((https?:[^)]+)\)$/)
+  if (link) return new ExternalHyperlink({ link: link[2], children: [new TextRun({ text: link[1], color: hex(C.link), underline: {}, size: o.size, font: o.font || FONT })] })
   return new TextRun({ text: b ? part.slice(2, -2) : part, bold: b || o.bold, color: o.color ? hex(o.color) : undefined, size: o.size, italics: o.italics, font: o.font || FONT })
 })
 const P = (s, o = {}) => new Paragraph({ children: runs(s, o), spacing: { before: o.before || 0, after: o.after ?? 80, line: o.line }, alignment: o.align, keepNext: o.keepNext })
@@ -494,6 +657,85 @@ function invitationDocx (v, logo) {
   return Packer.toBuffer(docFor(ch, MG))
 }
 
+// The onboarding pack in Word. Word does the page breaks; headings keep
+// with what follows, and table header rows repeat on a new page.
+function packDocx (pack, logo) {
+  const MG = 850
+  const TW = 11906 - 2 * MG
+  const ch = []
+  const TINT = { mint: C.mint, peach: '#FDE7D3' }
+  ch.push(new Paragraph({ children: [logoRun(logo, 26), new TextRun({ text: '  THE SMART STUDY · ' + pack.eyebrow.toUpperCase(), bold: true, color: hex(C.coral), size: 18, font: FONT })], spacing: { after: 160 } }))
+  ch.push(P(pack.title, { size: 52, bold: true, color: C.navy, after: 80 }))
+  ch.push(P(pack.lead, { size: 23, color: C.grey, after: 240 }))
+  const line = { style: BorderStyle.SINGLE, size: 4, color: hex(C.line) }
+  for (const b of pack.blocks) {
+    if (b.type === 'h2') ch.push(P(b.text, { size: 29, bold: true, color: C.navy, before: 200, after: 80, keepNext: true }))
+    else if (b.type === 'p') ch.push(P(b.text, { size: 21, after: 140 }))
+    else if (b.type === 'ask') {
+      ch.push(table([TW], [new TableRow({ cantSplit: true, children: [cell([
+        P(b.title, { size: 29, bold: true, color: C.navy, after: 60 }),
+        P(b.intro, { size: 23, after: 100 }),
+        ...b.items.map(it => new Paragraph({ children: [...runs(`**${it.title}** `, { size: 21 }), ...runs(it.text, { size: 21 })], numbering: { reference: 'tips', level: 0 }, spacing: { after: 80 } })),
+        P(b.outro, { size: 20, color: C.grey, before: 60, after: 0 })
+      ], { w: TW, fill: C.lemon, pad: 220, padX: 260 })] })]))
+      ch.push(spacer(200))
+    } else if (b.type === 'stats') {
+      const g = 160
+      const w = Math.floor((TW - g * (b.items.length - 1)) / b.items.length)
+      const widths = []
+      const cells = []
+      b.items.forEach((it, i) => {
+        if (i) { widths.push(g); cells.push(cell([P('')], { w: g, padX: 0 })) }
+        widths.push(w)
+        cells.push(cell([P(it.n, { size: 40, bold: true, color: C.navy, align: AlignmentType.CENTER, after: 20 }), P(it.label, { size: 18, color: C.grey, align: AlignmentType.CENTER, after: 0 })], { w, fill: C.sky, pad: 160, padX: 120 }))
+      })
+      ch.push(table(widths, [new TableRow({ children: cells })]))
+      ch.push(spacer(160))
+    } else if (b.type === 'table') {
+      const widths = b.widths.map(f => Math.round(f * TW))
+      ch.push(table(widths, [
+        new TableRow({ tableHeader: true, cantSplit: true, children: b.cols.map((c, i) => cell([P(c, { size: 19, bold: true, color: '#FFFFFF', after: 0 })], { w: widths[i], fill: C.navy, pad: 90, padX: 140 })) }),
+        ...b.rows.map((row, r) => new TableRow({ cantSplit: true, children: row.map((txt, i) => cell([P(txt, { size: 19, bold: i === 0, color: i === 0 ? C.navy : undefined, after: 0 })], { w: widths[i], fill: r % 2 ? '#FFFFFF' : C.cream, pad: 100, padX: 140, borders: { top: none, left: none, right: none, bottom: line } })) }))
+      ]))
+      ch.push(spacer(160))
+    } else if (b.type === 'bullets') {
+      b.items.forEach((it, i) => ch.push(new Paragraph({ children: runs(it, { size: 21 }), numbering: { reference: 'bullets', level: 0 }, spacing: { after: i === b.items.length - 1 ? 140 : 70 } })))
+    } else if (b.type === 'steps') {
+      b.items.forEach((it, i) => ch.push(new Paragraph({ children: runs(it, { size: 21 }), numbering: { reference: 'steps', level: 0 }, spacing: { after: i === b.items.length - 1 ? 140 : 70 } })))
+    } else if (b.type === 'boxes') {
+      const g = 200
+      const w = Math.floor((TW - g * (b.items.length - 1)) / b.items.length)
+      const widths = []
+      const cells = []
+      b.items.forEach((it, i) => {
+        if (i) { widths.push(g); cells.push(cell([P('')], { w: g, padX: 0 })) }
+        widths.push(w)
+        cells.push(cell([P(it.title, { size: 22, bold: true, color: C.navy, after: 60 }), P(it.text, { size: 20, after: 0 })], { w, fill: TINT[it.tint], pad: 180, padX: 200 }))
+      })
+      ch.push(spacer(80))
+      ch.push(table(widths, [new TableRow({ cantSplit: true, children: cells })]))
+      ch.push(spacer(120))
+    }
+  }
+  ch.push(P(`${pack.footer} ${R.RUN_BY}`, { size: 18, color: C.grey, before: 200, after: 0 }))
+  const doc = new Document({
+    creator: 'PUBLIC',
+    title: `SMART Study: ${pack.eyebrow.toLowerCase()}`,
+    styles: { default: { document: { run: { font: FONT, size: 20 } } } },
+    numbering: { config: [
+      { reference: 'tips', levels: [{ level: 0, format: LevelFormat.DECIMAL, text: '%1.', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 360, hanging: 300 } }, run: { bold: true, color: hex(C.coral) } } }] },
+      { reference: 'steps', levels: [{ level: 0, format: LevelFormat.DECIMAL, text: '%1.', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 360, hanging: 300 } }, run: { bold: true, color: hex(C.coral) } } }] },
+      { reference: 'bullets', levels: [{ level: 0, format: LevelFormat.BULLET, text: '•', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 360, hanging: 260 } }, run: { color: hex(C.coral) } } }] }
+    ] },
+    sections: [{
+      properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: MG, bottom: MG, left: MG, right: MG } } },
+      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `The SMART Study · ${pack.eyebrow} · page `, size: 16, color: hex(C.grey), font: FONT }), new TextRun({ children: [PageNumber.CURRENT], size: 16, color: hex(C.grey), font: FONT })] })] }) },
+      children: ch
+    }]
+  })
+  return Packer.toBuffer(doc)
+}
+
 // ------------------------------------------------------------------ microsite pages
 function shell ({ title, access, page, body }) {
   return `<!DOCTYPE html>
@@ -575,7 +817,9 @@ function delayPage () {
 ` })
 }
 
-function schoolsPage () {
+function schoolsPage (pages) {
+  const pack = PACKS[0]
+  const ask = pack.blocks.find(b => b.type === 'ask')
   const cards = R.posters.map(p => `
             <li class="smart-poster">
               <a href="exports/posters/SMART-poster-${p.id}.pdf"><img src="exports/posters/SMART-poster-${p.id}.png" alt="E-poster: ${esc(plain(p.headline))}" loading="lazy"></a>
@@ -604,9 +848,13 @@ function schoolsPage () {
         <div class="govuk-grid-column-two-thirds">
           <h2 class="govuk-heading-l" id="onboarding">Onboarding pack</h2>
           <div class="smart-box">
-            <p class="govuk-body"><strong>School onboarding pack</strong></p>
-            <p class="govuk-body">What the study involves, the key dates, and what we'll ask of you and your staff.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><strong class="govuk-tag govuk-tag--grey">Coming soon</strong> We'll email you when it's ready to download.</p>
+            <p class="govuk-body"><strong>${esc(pack.eyebrow)}</strong></p>
+            <p class="govuk-body">What the study involves, the key dates, what we'll ask of you and your staff, and what your school receives.</p>
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-2">${esc(ask.title)}, at a glance</h3>
+            <ol class="govuk-list govuk-list--number">${ask.items.map(it => `<li><strong>${md(it.title.replace(/[.,]$/, ''))}</strong></li>`).join('')}</ol>
+            <ul class="govuk-list govuk-body-s smart-downloads govuk-!-margin-bottom-0">
+              <li><a class="govuk-link" href="exports/SMART-onboarding-pack-${pack.id}.pdf" download>${icon('printer')} Download the pack (PDF, ${pages} pages)</a></li>
+            </ul>
           </div>
 
           <h2 class="govuk-heading-l" id="posters">E-posters</h2>
@@ -654,17 +902,24 @@ function schoolsPage () {
     fs.writeFileSync(out(`exports/figma/invitation-${v.id}.svg`), r.svg)
     return { v, svg: r.svg }
   })
+  const packs = PACKS.map(pack => {
+    const pages = packPages(pack)
+    fs.writeFileSync(out(`exports/figma/onboarding-pack-${pack.id}.svg`), packBoard(pages))
+    return { pack, pages }
+  })
   fs.writeFileSync(out('guide-delay.html'), delayPage())
-  fs.writeFileSync(out('schools.html'), schoolsPage())
-  console.log(`delay guide, ${posterSvgs.length} posters, ${invitationSvgs.length} invitations, 2 pages`)
+  fs.writeFileSync(out('schools.html'), schoolsPage(packs[0].pages.length))
+  console.log(`delay guide, ${posterSvgs.length} posters, ${invitationSvgs.length} invitations, onboarding pack (${packs.map(p => p.pages.length + ' pages').join(', ')}), 2 site pages`)
   if (process.argv.includes('--no-export')) return
   const r = await renderAll([
     { key: 'logo', svg: logoSvg.replace('width="48" height="48"', 'width="192" height="192"'), w: 192, h: 192, buffer: true },
     ...posterSvgs.map(({ p, svg }) => ({ svg, png: out(`exports/posters/SMART-poster-${p.id}.png`), pdf: out(`exports/posters/SMART-poster-${p.id}.pdf`) })),
-    ...invitationSvgs.map(({ v, svg }) => ({ svg, png: out(`exports/invitations/SMART-invitation-${v.id}.png`), pdf: out(`exports/invitations/SMART-invitation-${v.id}.pdf`) }))
+    ...invitationSvgs.map(({ v, svg }) => ({ svg, png: out(`exports/invitations/SMART-invitation-${v.id}.png`), pdf: out(`exports/invitations/SMART-invitation-${v.id}.pdf`) })),
+    ...packs.map(({ pack, pages }) => ({ pages, pagesPdf: out(`exports/SMART-onboarding-pack-${pack.id}.pdf`) }))
   ])
   fs.writeFileSync(out('exports/SMART-delay-guide.docx'), await delayDocx(r.logo))
   for (const { p } of posterSvgs) fs.writeFileSync(out(`exports/posters/SMART-poster-${p.id}.docx`), await posterDocx(p, r.logo))
+  for (const { pack } of packs) fs.writeFileSync(out(`exports/SMART-onboarding-pack-${pack.id}.docx`), await packDocx(pack, r.logo))
   for (const { v } of invitationSvgs) fs.writeFileSync(out(`exports/invitations/SMART-invitation-${v.id}.docx`), await invitationDocx(v, r.logo))
   console.log('Word documents, PDFs and PNGs written')
 })().catch(e => { console.error(e); process.exit(1) })

@@ -88,7 +88,19 @@ The first thing school leaders and parents get from us, also in **`content/resou
 | PDF and PNG | `exports/invitations/SMART-invitation-{schools,parents}.{pdf,png}` | Printing, emailing, newsletters. |
 | Figma | `exports/figma/invitation-{schools,parents}.svg` | An A4 frame each, text editable. |
 
-Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey count and length) are still to be confirmed. The build warns if a page gets too full for A4.
+Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey length) are still to be confirmed. The build warns if a page gets too full for A4.
+
+## The onboarding pack for schools
+
+The welcome pack for schools in the group trying the family plan lives in **`content/onboarding.js`**, as a list of blocks (headings, paragraphs, tables, lists, boxes). It's adapted from the April 2027 draft to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, and the study video and how-to videos in place of webinars. `npm run build:resources` builds:
+
+| Output | Where | Use it for |
+| --- | --- | --- |
+| Word | `exports/SMART-onboarding-pack-schools.docx` | Editing. Word does its own page breaks (about 3 pages). |
+| PDF | `exports/SMART-onboarding-pack-schools.pdf` | The download on the school resources page (4 pages). |
+| Figma | `exports/figma/onboarding-pack-schools.svg` | Every A4 page side by side, one named group per page, text editable. |
+
+Text can use **bold** and [links](https://example.com). In the PDF and Figma pages, a block that doesn't fit starts a new page, headings stay with what follows, and tables repeat their header row. The school resources page lists the pack's four asks and links to the PDF.
 
 
 ## The design system board
