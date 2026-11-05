@@ -3,7 +3,9 @@
  *
  *   assets/guides/screens/*.svg   one vector file per phone screen
  *   guide-*.html                  the three route pages on the microsite
- *   exports/png/*.png             sharp (3x) images of each screen, for Word
+ *   exports/png/*.png             sharp (3x) images of each screen, for Word,
+ *                                 numbered in the order the Word document
+ *                                 places them (01-ios-settings-account.png)
  *   exports/SMART-restrictions-guidance.docx   the editable Word version
  *   exports/figma/*.svg           one board per route, to drop into Figma
  *
@@ -41,10 +43,24 @@ function allScreens () {
   return m
 }
 
+// PNG file names, numbered in the order the Word document places the screens:
+// routes A, B and C, then the shared iPhone and Android settings. A screen used
+// in more than one place takes the number of the first.
+function pngNames () {
+  const ids = []
+  const add = sc => { if (!ids.includes(sc.id)) ids.push(sc.id) }
+  G.routes.forEach(r => r.steps.forEach(st => (st.screens || []).forEach(add)))
+  ;['ios', 'android'].forEach(os => G.shared[os].forEach(st => st.screens.forEach(add)))
+  const width = Math.max(2, String(ids.length).length)
+  return new Map(ids.map((id, i) => [id, `${String(i + 1).padStart(width, '0')}-${id}`]))
+}
+const PNG = pngNames()
+const pngFile = id => `exports/png/${PNG.get(id)}.png`
+
 // ------------------------------------------------------------------ 1. SVG files
-// Remove screens that are no longer in the content file
-function prune (dir, ext, screens) {
-  for (const f of fs.readdirSync(out(dir))) if (f.endsWith(ext) && !screens.has(f.slice(0, -ext.length))) fs.unlinkSync(out(`${dir}/${f}`))
+// Remove files whose names are no longer in the set (screens dropped from the content file, or renumbered)
+function prune (dir, ext, names) {
+  for (const f of fs.readdirSync(out(dir))) if (f.endsWith(ext) && !names.has(f.slice(0, -ext.length))) fs.unlinkSync(out(`${dir}/${f}`))
 }
 
 function writeSvgs (screens) {
@@ -197,7 +213,7 @@ function pageHtml (route) {
 // ------------------------------------------------------------------ 3. PNGs (for Word)
 async function writePngs (screens) {
   mkdir('exports/png')
-  prune('exports/png', '.png', screens)
+  prune('exports/png', '.png', new Set(PNG.values()))
   let chromium
   try { chromium = require('playwright').chromium } catch (e) { chromium = require(path.join(process.env.PW || '', 'index.js')).chromium }
   const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {})
@@ -207,7 +223,7 @@ async function writePngs (screens) {
     await page.setContent(`<html><head><style>${faces} body{margin:0;background:transparent}</style></head><body>${render(sc, { title: false })}</body></html>`, { waitUntil: 'load' })
     await page.evaluate(() => document.fonts.ready)
     const el = await page.$('svg')
-    await el.screenshot({ path: out(`exports/png/${id}.png`), omitBackground: true })
+    await el.screenshot({ path: out(pngFile(id)), omitBackground: true })
   }
   await browser.close()
 }
@@ -269,7 +285,7 @@ function buildDocx () {
         const sc = screens[i + j]
         const children = []
         if (sc) {
-          const img = pngSize(out(`exports/png/${sc.id}.png`))
+          const img = pngSize(out(pngFile(sc.id)))
           const wPx = 170
           children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type: 'png', data: img.data, transformation: { width: wPx, height: Math.round(wPx * img.h / img.w) }, altText: { title: sc.id, description: sc.alt || sc.id, name: sc.id } })] }))
           children.push(new Paragraph({ spacing: { before: 60, after: 160 }, children: [
