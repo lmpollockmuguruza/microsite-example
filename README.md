@@ -50,9 +50,9 @@ The restrictions guidance lives in **`content/guidance.js`**: the routes (A, B, 
 | Guide pages | `guide-iphone-parent.html` (A), `guide-iphone-child.html` (B), `guide-android.html` (C) | The microsite. Don't edit these by hand. |
 | Word document | `exports/SMART-restrictions-guidance.docx` | Sharing and printing. Text is editable. |
 | Figma boards | `exports/figma/route-a.svg`, `-b`, `-c` | Drag into Figma: one board per route, text stays editable (Inter). |
-| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. |
+| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. The PNGs are numbered in the order the Word document places them (`01-ios-settings-account.png` onwards): routes A, B and C, then the shared iPhone and Android settings. A screen used twice keeps the number of its first use. |
 
-The PNG and Word steps use Playwright's Chromium. To use a browser that's already installed, set `CHROMIUM` to its path, for example `CHROMIUM=/opt/pw-browsers/chromium npm run build:guides`. Screens removed from the content file are deleted from both folders on the next build.
+The PNG and Word steps use Playwright's Chromium. To use a browser that's already installed, set `CHROMIUM` to its path, for example `CHROMIUM=/opt/pw-browsers/chromium npm run build:guides`. Screens removed from the content file are deleted from both folders on the next build, and PNGs are renumbered if the order changes.
 
 Screens are drawn by `tools/screens.js` from descriptions like:
 
