@@ -49,8 +49,6 @@ const lit = {
   focus: '#ffdd00',
   'focus-ink': '#0b0c0c',
   error: '#d4351c',
-  review: '#4c2c92',
-  'review-light': '#f4f0fa',
   'mock-banner': '#fff0b3'
 }
 const c = name => pal[name] || lit[name]
@@ -104,7 +102,7 @@ const COLOURS = [
   ['GOV.UK and footer', [
     ['link', 'Links'], ['focus', 'Focus ground and outline'], ['focus-ink', 'Text on focus'], ['error', 'Errors, tap-here outline'], ['footer-muted', 'Labels on the navy footer']]],
   ['Mock-up only (not for the live service)', [
-    ['review', 'Design notes, review tools'], ['review-light', 'Design-note ground'], ['mock-banner', 'Mock-up banner']]]
+    ['mock-banner', 'Mock-up banner']]]
 ]
 function colours () {
   let y = 0
@@ -335,7 +333,7 @@ function components () {
   row += g('Hero / Sky', rect(0, 0, 1200, 340, c('sky-light'), 32) +
     pill('Eyebrow', 40, 50, 'Around 80 primary schools in England', { bg: '#ffffff', fill: c('navy'), icon: 'school', size: 15, weight: 800, h: 30, padX: 12 })[0] +
     g('Heading', text(40, 140, 'Welcome to the SMART Study', { size: 48, weight: 900, fill: c('navy'), ls: '-0.48' })) +
-    g('Lead', text(40, 190, 'A research study with primary schools and families,', { size: 24, fill: c('ink') }) + text(40, 220, 'running from April 2027 to April 2028.', { size: 24, fill: c('ink') })) +
+    g('Lead', text(40, 190, 'A research study with primary schools and families,', { size: 24, fill: c('ink') }) + text(40, 220, 'running from September 2027 to September 2028.', { size: 24, fill: c('ink') })) +
     g('Illustration', `<g transform="translate(${1200 - 40 - hw * hk} 40) scale(${hk.toFixed(4)})">${inner(hero)}</g>`), [0, 40])
   x = 1240
   for (const [n, t] of [['Sky (default)', 'sky-light'], ['Peach', 'peach'], ['Mint', 'mint-light'], ['Lemon', 'lemon'], ['Lilac', 'lilac-light']]) {
@@ -345,7 +343,7 @@ function components () {
 
   // Cards
   row = label('Card', 20)
-  ;[['Set-up guides', 'Step-by-step, with pictures.', 'book-open', 'sky', 'Default'], ['Videos', 'The webinar and a video for children.', 'circle-play', 'peach', 'Coral'], ['Get help', 'Common questions, or ask us.', 'life-buoy', 'mint-light', 'Mint'], ['Posters', 'Print or share with parents.', 'printer', 'lemon', 'Sun'], ['Talk to your child', 'Ideas for what to say.', 'message-circle', 'lilac-light', 'Lilac']].forEach(([t, d, ic, acc, v], i) => {
+  ;[['Set-up guides', 'Step-by-step, with pictures.', 'book-open', 'sky', 'Default'], ['Videos', 'The study video, and how-to videos.', 'circle-play', 'peach', 'Coral'], ['Get help', 'Common questions, or ask us.', 'life-buoy', 'mint-light', 'Mint'], ['Posters', 'Print or share with parents.', 'printer', 'lemon', 'Sun'], ['Talk to your child', 'Ideas for what to say.', 'message-circle', 'lilac-light', 'Lilac']].forEach(([t, d, ic, acc, v], i) => {
     row += g(`Card / ${v}`,
       g('Surface', `<rect width="300" height="190" rx="20" fill="#ffffff" ${SHADOW}/>`) +
       g('Icon tile', rect(22, 22, 52, 52, c(acc), 16) + icon(ic, 35, 35, 26, c('navy'))) +
@@ -356,9 +354,9 @@ function components () {
 
   // Task list
   row = label('Task', 20)
-  ;[['Watch the welcome webinar', 'About 40 minutes. Watch the recording whenever suits you.', 'circle-play', 'lilac-light', 'Recommended', 'purple'],
+  ;[['Watch the study video with your child', 'About 3 minutes. Why the study matters, and their part in it.', 'circle-play', 'lilac-light', 'Recommended', 'purple'],
     ["Set up your child's phone", "About 30 to 40 minutes. We'll help you pick the right guide.", 'shield-check', 'sky-light', 'Not started', 'blue'],
-    ['Share a screen time screenshot', 'About 2 minutes, once a month. Next one by 30 November 2026.', 'upload', 'mint-light', 'Due soon', 'yellow']].forEach(([t, h, ic, acc, tag, tc], i) => {
+    ['Share a screen time screenshot', 'About 2 minutes, once a month. Next one by 30 November 2027.', 'upload', 'mint-light', 'Due soon', 'yellow']].forEach(([t, h, ic, acc, tag, tc], i) => {
     const tw = Math.round(textW(tag, 16, 800) + 28)
     row += g(`Task / ${t}`,
       g('Surface', `<rect width="900" height="92" rx="20" fill="#ffffff" ${SHADOW}/>`) +
@@ -399,15 +397,15 @@ function components () {
   row += g('Choice tiles', text(0, 0, 'What phone does your child have?', { size: 24, weight: 800, fill: c('navy') }) +
     g('Tile / Selected', `<rect y="24" width="480" height="58" rx="16" fill="${c('sky-light')}" stroke="${c('navy')}" stroke-width="2"/>` + `<circle cx="32" cy="53" r="14" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/><circle cx="32" cy="53" r="7" fill="${c('ink')}"/>` + text(58, 60, 'An iPhone', { size: 19, weight: 800 })) +
     g('Tile', `<rect y="96" width="480" height="58" rx="16" fill="#ffffff" ${SHADOW}/>` + `<circle cx="32" cy="125" r="14" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(58, 132, 'An Android phone', { size: 19, weight: 800 })) +
-    g('Input', text(0, 200, 'Family ID', { size: 19, weight: 800 }) + `<rect y="214" width="240" height="40" rx="10" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(10, 241, 'SMART-R-4821', { size: 19 })), [1220, 92])
+    g('Input', text(0, 200, 'Family ID', { size: 19, weight: 800 }) + `<rect y="214" width="240" height="40" rx="10" fill="#ffffff" stroke="${c('ink')}" stroke-width="2"/>` + text(10, 241, 'SMART-F-4821', { size: 19 })), [1220, 92])
   s += g('Guide step', row, [0, y]); y += 450
 
   // News, chapters, partners
   row = label("What's new, chapters, partners", 20)
-  ;[['4 November 2026', 'The welcome webinar recording is online.', 'video'], ['2 November 2026', 'The iPhone guides now match iOS 26.1.', 'refresh-cw']].forEach(([d, t, ic], i) => {
+  ;[['4 November 2027', 'The study video for children is online.', 'video'], ['2 November 2027', 'The iPhone guides now match the latest iOS.', 'refresh-cw']].forEach(([d, t, ic], i) => {
     row += g(`News item / ${d}`, rect(0, 0, 44, 44, c('lemon'), 14) + icon(ic, 11, 11, 22, c('navy')) + text(58, 18, d, { size: 16, weight: 800, fill: c('navy') }) + text(58, 40, t, { size: 16 }) + rect(0, 60, 420, 1, c('line')), [0, 44 + i * 76])
   })
-  ;[['0:00', 'Welcome and who we are'], ['6:40', 'Why delay or restrict phones'], ['18:15', 'Setting up the phone']].forEach(([t, l], i) => {
+  ;[['0:00', 'A big question about phones'], ['0:40', 'Around 80 schools are helping'], ['2:20', 'Why your part counts']].forEach(([t, l], i) => {
     row += g(`Chapter / ${t}`, `<rect width="420" height="44" rx="14" fill="#ffffff" ${SHADOW}/>` + rect(14, 10, 58, 24, c('lemon'), 12) + text(43, 27, t, { size: 15, weight: 700, fill: c('navy'), anchor: 'middle' }) + text(86, 28, l, { size: 16, weight: 700, fill: c('navy') }), [480, 44 + i * 52])
   })
   ;[['[DfE logo]', 'Commissioned by'], ['[IFF Research logo]', 'Lead partner'], ['[PUBLIC logo]', 'Delivery partner']].forEach(([n, r], i) => {

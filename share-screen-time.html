@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
 </head>
-<body class="govuk-template__body" data-access="member" data-page="share" data-only-for="restrict">
+<body class="govuk-template__body" data-access="member" data-page="share">
 
   <div class="govuk-width-container">
     <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
@@ -23,9 +23,6 @@
             </div>
             <p class="govuk-body">We'll ask you for the next one in about a month. You don't need to do anything else.</p>
             <p class="govuk-body"><a class="govuk-link" href="start.html">Back to Start here</a></p>
-            <aside class="smart-design-note" data-decision="S4">
-              <p>Should we also send a confirmation email? It reassures parents, but it's another message on top of the newsletter and IFF's contact.</p>
-            </aside>
           </div>
 
           <div id="form-page">
@@ -40,7 +37,8 @@
               <div>
                 <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg> Once a month · about 2 minutes</span>
                 <h1 class="govuk-heading-xl">Share your child's screen time</h1>
-                <p class="govuk-body-l">Take a screenshot of the weekly screen time report and upload it here. It helps us see how the restrictions are working. It's not a test, and there are no wrong answers.</p>
+                <p class="govuk-body-l">If your child has a smartphone, take a screenshot of the weekly screen time report and upload it here. It helps us see how the restrictions are working. It's not a test, and there are no wrong answers.</p>
+                <p class="govuk-body">If your child doesn't have a smartphone, you don't need to do this.</p>
               </div>
               <img src="assets/images/illustrations/upload.svg" alt="">
             </div>
@@ -74,9 +72,6 @@
               </div>
             </div>
 
-            <aside class="smart-design-note" data-decision="S1">
-              <p><strong>Which screen?</strong> We need one screen that shows the most in one picture (the weekly average, most-used apps, pickups) and looks the same for every family. That makes the automatic reading much more reliable. Test in the pilot which screen works best on each platform.</p>
-            </aside>
 
             <h2 class="govuk-heading-l smart-numbered" data-n="2">Upload it</h2>
             <form id="upload" class="smart-box" novalidate>
@@ -87,8 +82,8 @@
                   <div class="govuk-hint" id="week-hint">Usually the week that has just finished.</div>
                   <p class="govuk-error-message smart-hide" id="week-error"><span class="govuk-visually-hidden">Error:</span> Select which week the screenshot shows</p>
                   <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-last" name="week" type="radio" value="last"><label class="govuk-label govuk-radios__label" for="week-last">Last week (16 to 22 November 2026)</label></div>
-                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-before" name="week" type="radio" value="before"><label class="govuk-label govuk-radios__label" for="week-before">The week before (9 to 15 November 2026)</label></div>
+                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-last" name="week" type="radio" value="last"><label class="govuk-label govuk-radios__label" for="week-last">Last week (15 to 21 November 2027)</label></div>
+                    <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-before" name="week" type="radio" value="before"><label class="govuk-label govuk-radios__label" for="week-before">The week before (8 to 14 November 2027)</label></div>
                     <div class="govuk-radios__item"><input class="govuk-radios__input" id="week-unsure" name="week" type="radio" value="unsure"><label class="govuk-label govuk-radios__label" for="week-unsure">I'm not sure</label></div>
                   </div>
                 </fieldset>
@@ -119,9 +114,6 @@
                     <label class="govuk-label govuk-label--s" for="pickups">Pickups per day (if shown)</label>
                     <input class="govuk-input govuk-input--width-3" id="pickups" type="text" inputmode="numeric">
                   </div>
-                  <aside class="smart-design-note" data-decision="S2">
-                    <p>The research layer doc also mentions step count and sleep score from a smartwatch. Leave these out of the first version to keep the form short? They can be added later as optional fields.</p>
-                  </aside>
                 </div>
               </details>
 
@@ -138,23 +130,13 @@
               <button type="submit" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg> Send</button>
             </form>
 
-            <aside class="smart-design-note" data-decision="S3 A1">
-              <p><strong>What happens to the screenshot</strong> (not built in this mock-up):</p>
-              <ul>
-                <li>It's saved under the family ID the parent signed in with, so they never have to type an ID.</li>
-                <li>It's stored on UK-hosted storage, and the location data and other metadata in the image file are removed when it's uploaded.</li>
-                <li>A separate process reads the numbers from it (Gemini API on PUBLIC's paid terms, or open-source OCR), and a sample is checked by hand.</li>
-                <li>The image is deleted after [TBC] months. Only the numbers are kept.</li>
-              </ul>
-              <p><strong>Build or buy?</strong> We could build our own form (as shown here), or embed a Qualtrics/Tally form. An embedded form looks less joined-up, and the family ID has to be passed in the link.</p>
-            </aside>
 
             <h2 class="govuk-heading-m govuk-!-margin-top-6">What you've sent before</h2>
             <table class="govuk-table">
               <caption class="govuk-table__caption govuk-visually-hidden">Your past screenshots</caption>
               <thead class="govuk-table__head"><tr class="govuk-table__row"><th scope="col" class="govuk-table__header">Week</th><th scope="col" class="govuk-table__header">Sent</th><th scope="col" class="govuk-table__header">Status</th></tr></thead>
               <tbody class="govuk-table__body">
-                <tr class="govuk-table__row"><td class="govuk-table__cell">12 to 18 October 2026</td><td class="govuk-table__cell">19 October 2026</td><td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--green">Received</strong></td></tr>
+                <tr class="govuk-table__row"><td class="govuk-table__cell">11 to 17 October 2027</td><td class="govuk-table__cell">18 October 2027</td><td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--green">Received</strong></td></tr>
               </tbody>
             </table>
           </div>
@@ -163,9 +145,9 @@
     </main>
   </div>
 
-  <script src="assets/js/govuk-frontend.js?v=3"></script>
-  <script src="assets/js/icons.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/govuk-frontend.js?v=4"></script>
+  <script src="assets/js/icons.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
   <script>
     (function () {
       var form = document.getElementById('upload')
@@ -218,8 +200,8 @@
         summary.classList.toggle('smart-hide', !html)
         if (html) { document.title = 'Error: Share your child\'s screen time – The SMART Study'; summary.focus(); return }
 
-        var id = (window.SMART.session.id || 'SMART-R-0000')
-        document.getElementById('ref').textContent = id + '-2026-11'
+        var id = (window.SMART.session.id || 'SMART-F-0000')
+        document.getElementById('ref').textContent = id + '-2027-11'
         document.getElementById('form-page').classList.add('smart-hide')
         var done = document.getElementById('done')
         done.classList.remove('smart-hide')

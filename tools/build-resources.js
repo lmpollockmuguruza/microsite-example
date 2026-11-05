@@ -2,12 +2,14 @@
  * Builds the delay guide, the school e-posters and the schools page from
  * content/resources.js:
  *
- *   guide-delay.html                          the delay group's guide
+ *   guide-delay.html                          the guide for families whose child has no phone yet
  *   schools.html                              the school leaders' page
  *   exports/SMART-delay-guide.docx            one-page Word guide
  *   exports/figma/delay-guide.svg             A4 frame for Figma
  *   exports/posters/SMART-poster-*.docx|pdf|png   each e-poster
  *   exports/figma/poster-*.svg                each e-poster as an A4 frame
+ *   exports/invitations/SMART-invitation-*.docx|pdf|png   each invitation to take part
+ *   exports/figma/invitation-*.svg            each invitation as an A4 frame
  *
  * Run: npm run build:resources
  */
@@ -216,6 +218,88 @@ function fitPoster (p) {
   return posterSvg(p, Math.min(Math.max(0, limit - first.used), 160), tight)
 }
 
+// An invitation to take part as an A4 frame. `spare` is shared out between
+// the sections once we know how much room is left.
+const TILE_TINTS = [C.mint, '#FDE7D3', '#EFEAFD', C.lemon]
+function invitationSvg (v, spare = 0) {
+  const gap = spare / 5
+  const M = 40
+  const W = A4.w - M * 2
+  let s = ''
+  // header band
+  s += rect(0, 0, A4.w, 64, 0, C.navy)
+  s += `<circle cx="${M + 18}" cy="32" r="20" fill="#FFFFFF"/>` + logoAt(M + 4, 18, 28)
+  s += `<text x="${M + 48}" y="38" font-family="Nunito" font-size="17" font-weight="900" fill="#FFFFFF">The SMART Study</text>`
+  s += `<text x="${A4.w - M}" y="37" font-family="Inter" font-size="9.5" font-weight="700" fill="${C.sun}" text-anchor="end" letter-spacing=".6">${esc(v.eyebrow.toUpperCase())}</text>`
+  let y = 86
+  let t = rich(M, y, v.headline, { size: 25, font: 'Nunito', weight: 900, fill: C.navy, maxW: W, lh: 29 }); s += t.svg; y += t.h + 8
+  t = rich(M, y, v.intro, { size: 11, maxW: W, lh: 15.5 }); s += t.svg; y += t.h + 12 + gap
+
+  // the ask, with the QR code
+  const qr = 66
+  const at = rich(M + 20, y + 16, v.ask.title, { size: 18, font: 'Nunito', weight: 900, fill: C.navy, maxW: W - qr - 60 })
+  const ax = rich(M + 20, y + 16 + at.h + 4, v.ask.text, { size: 12, maxW: W - qr - 60, lh: 16.5 })
+  const ah = Math.max(at.h + ax.h + 32, qr + 20)
+  s += rect(M, y, W, ah, 16, C.lemon) + at.svg + ax.svg
+  s += rect(A4.w - M - qr - 12, y + (ah - qr) / 2, qr, qr, 8, '#FFFFFF', ` stroke="${C.navy}" stroke-width="1.2" stroke-dasharray="4 3"`) +
+    `<text x="${A4.w - M - 12 - qr / 2}" y="${(y + ah / 2 + 3).toFixed(1)}" font-family="Inter" font-size="8.5" fill="${C.grey}" text-anchor="middle">[${esc(v.qr)}]</text>`
+  y += ah + 16 + gap
+
+  // what taking part involves: a timeline
+  t = rich(M, y, v.involvesTitle, { size: 14, font: 'Nunito', weight: 900, fill: C.navy, maxW: W }); s += t.svg; y += t.h + 8
+  // lay out each row first, then draw the line, the dots and the text
+  const whenW = 134
+  const rows = v.timeline.map(r => {
+    const top = y
+    const wh = rich(M + 20, top, r.when, { size: 10, maxW: whenW - 24, bold: true, fill: C.navy, lh: 13 })
+    const tx = rich(M + whenW, top, r.text, { size: 10, maxW: W - whenW, lh: 14 })
+    y += Math.max(wh.h, tx.h) + 9 + gap / 3
+    return { dot: top + 7, svg: wh.svg + tx.svg }
+  })
+  const first = rows[0].dot
+  const last = rows[rows.length - 1].dot
+  s += `<rect x="${M + 5}" y="${first.toFixed(1)}" width="2" height="${(last - first).toFixed(1)}" fill="${C.sun}"/>`
+  rows.forEach(r => { s += `<circle cx="${M + 6}" cy="${r.dot.toFixed(1)}" r="5" fill="${C.sun}" stroke="${C.cream}" stroke-width="2"/>` + r.svg })
+  y += 6 + gap / 2
+
+  // the two groups
+  const gt = rich(M + 52, y + 13, `**${v.groupsTitle}.** ${v.groups}`, { size: 9.8, maxW: W - 70, lh: 13.6 })
+  const gh = gt.h + 26
+  s += rect(M, y, W, gh, 14, C.sky) + `<circle cx="${M + 26}" cy="${y + 26}" r="14" fill="#FFFFFF"/>` + glyph('users', M + 18, y + 18, 16, C.navy) + gt.svg
+  y += gh + 16 + gap
+
+  // what you get
+  t = rich(M, y, v.getTitle, { size: 14, font: 'Nunito', weight: 900, fill: C.navy, maxW: W }); s += t.svg; y += t.h + 8
+  // one row of tiles: icon, then title, then text
+  const n = v.gets.length
+  const tw = (W - (n - 1) * 10) / n
+  const tiles = v.gets.map((g, i) => {
+    const x = M + i * (tw + 10)
+    const ti = rich(x + 14, y + 46, g.title, { size: 11.5, font: 'Nunito', weight: 900, fill: C.navy, maxW: tw - 26, lh: 14 })
+    const tx = rich(x + 14, y + 46 + ti.h + 2, g.text, { size: 9.3, maxW: tw - 26, lh: 12.5 })
+    return { x, g, i, svg: ti.svg + tx.svg, h: 46 + ti.h + 2 + tx.h + 12 }
+  })
+  const th = Math.max(...tiles.map(t => t.h))
+  tiles.forEach(t => {
+    s += rect(t.x, y, tw, th, 14, '#FFFFFF', ` stroke="${C.line}" stroke-width="1"`) +
+      `<circle cx="${t.x + 28}" cy="${y + 25}" r="14" fill="${TILE_TINTS[t.i % TILE_TINTS.length]}"/>` + glyph(t.g.icon, t.x + 20, y + 17, 16, C.navy) + t.svg
+  })
+  y += th + 4
+
+  // footer
+  const f0 = rich(M, A4.h - 76, v.choice, { size: 10.5, maxW: W, bold: true, fill: C.navy })
+  const f1 = rich(M, A4.h - 60, v.contact, { size: 10.5, maxW: W, fill: C.navy })
+  const f2 = rich(M, A4.h - 40, v.runBy, { size: 8.5, maxW: W, fill: C.grey })
+  s += `<rect x="${M}" y="${A4.h - 84}" width="${W}" height="1" fill="${C.line}"/>` + f0.svg + f1.svg + f2.svg
+  return { svg: svgDoc(A4.w, A4.h, s, C.cream), used: y }
+}
+
+function fitInvitation (v) {
+  const limit = A4.h - 96
+  const first = invitationSvg(v)
+  return invitationSvg(v, Math.min(Math.max(0, limit - first.used), 120))
+}
+
 // Lucide glyphs for the poster (from the site's icon sprite)
 const sprite = fs.readFileSync(out('assets/js/icons.js'), 'utf8')
 function glyph (name, x, y, size, colour) {
@@ -355,8 +439,63 @@ function posterDocx (p, logo) {
   return Packer.toBuffer(docFor(ch, MG))
 }
 
+function invitationDocx (v, logo) {
+  const MG = 680
+  const TW = 11906 - 2 * MG
+  const ch = []
+  ch.push(table([TW], [new TableRow({ children: [cell([
+    new Paragraph({ children: [logoRun(logo, 28), new TextRun({ text: '  The SMART Study', bold: true, color: 'FFFFFF', size: 30, font: FONT }), new TextRun({ children: [new Tab(), v.eyebrow.toUpperCase()], bold: true, color: hex(C.sun), size: 16, font: FONT })], tabStops: [{ type: TabStopType.RIGHT, position: TW - 360 }], spacing: { after: 0 } })
+  ], { w: TW, fill: C.navy, pad: 130, padX: 180, valign: VerticalAlign.CENTER })] })]))
+  ch.push(spacer(240))
+  ch.push(P(v.headline, { size: 46, bold: true, color: C.navy, after: 140 }))
+  ch.push(P(v.intro, { size: 23, after: 260 }))
+
+  // the ask, with the QR code
+  const qrW = 1700
+  const dash = { style: BorderStyle.DASHED, size: 8, color: hex(C.navy) }
+  ch.push(table([TW - qrW, qrW], [new TableRow({ children: [
+    cell([P(v.ask.title, { size: 34, bold: true, color: C.navy, after: 80 }), P(v.ask.text, { size: 25, after: 0 })], { w: TW - qrW, fill: C.lemon, pad: 280, padX: 280, valign: VerticalAlign.CENTER }),
+    cell([P(`[${v.qr}]`, { size: 16, color: C.grey, align: AlignmentType.CENTER, after: 0 })], { w: qrW, fill: 'FFFFFF', pad: 380, padX: 120, valign: VerticalAlign.CENTER, borders: { top: dash, bottom: dash, left: dash, right: dash } })
+  ] })]))
+  ch.push(spacer(300))
+
+  // what taking part involves
+  ch.push(P(v.involvesTitle, { size: 29, bold: true, color: C.navy, after: 120, keepNext: true }))
+  const whenW = 2300
+  const line = { style: BorderStyle.SINGLE, size: 4, color: hex(C.line) }
+  ch.push(table([whenW, TW - whenW], v.timeline.map((r, i) => new TableRow({ children: [
+    cell([P(r.when, { size: 22, bold: true, color: C.navy, after: 0 })], { w: whenW, pad: 100, padX: 0, borders: { top: i ? line : none, bottom: none, left: none, right: none } }),
+    cell([P(r.text, { size: 22, after: 0 })], { w: TW - whenW, pad: 100, padX: 120, borders: { top: i ? line : none, bottom: none, left: none, right: none } })
+  ] }))))
+  ch.push(spacer(240))
+
+  // the two groups
+  ch.push(table([TW], [new TableRow({ children: [cell([P(`**${v.groupsTitle}.** ${v.groups}`, { size: 21, after: 0 })], { w: TW, fill: C.sky, pad: 200, padX: 260 })] })]))
+  ch.push(spacer(300))
+
+  // what you get
+  ch.push(P(v.getTitle, { size: 29, bold: true, color: C.navy, after: 120, keepNext: true }))
+  const n = v.gets.length
+  const g = 140
+  const cw = Math.floor((TW - g * (n - 1)) / n)
+  const widths = []
+  const cells = []
+  v.gets.forEach((it, i) => {
+    if (i) { widths.push(g); cells.push(cell([P('')], { w: g, padX: 0 })) }
+    widths.push(cw)
+    cells.push(cell([P(it.title, { size: 24, bold: true, color: C.navy, after: 60 }), P(it.text, { size: 20, after: 0 })], { w: cw, fill: TILE_TINTS[i % TILE_TINTS.length], pad: 200, padX: 180 }))
+  })
+  ch.push(table(widths, [new TableRow({ children: cells })]))
+  ch.push(spacer(360))
+
+  ch.push(P(v.choice, { size: 22, bold: true, color: C.navy, after: 60 }))
+  ch.push(P(v.contact, { size: 22, color: C.navy, after: 80 }))
+  ch.push(P(v.runBy, { size: 16, color: C.grey, after: 0 }))
+  return Packer.toBuffer(docFor(ch, MG))
+}
+
 // ------------------------------------------------------------------ microsite pages
-function shell ({ title, access, page, onlyFor, body }) {
+function shell ({ title, access, page, body }) {
   return `<!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <head>
@@ -365,14 +504,14 @@ function shell ({ title, access, page, onlyFor, body }) {
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
 </head>
 <!-- Generated by tools/build-resources.js from content/resources.js. Edit the content file, not this page. -->
-<body class="govuk-template__body" data-access="${access}" data-page="${page}"${onlyFor ? ` data-only-for="${onlyFor}"` : ''}>
+<body class="govuk-template__body" data-access="${access}" data-page="${page}">
 ${body}
-  <script src="assets/js/govuk-frontend.js?v=3"></script>
-  <script src="assets/js/icons.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/govuk-frontend.js?v=4"></script>
+  <script src="assets/js/icons.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
 </body>
 </html>
 `
@@ -381,8 +520,8 @@ ${body}
 function delayPage () {
   const g = R.delay
   const tips = g.tips.items.map(it => `
-              <li id="${it.id}"><strong>${esc(it.title)}</strong> ${md(it.text)}${it.quote ? `<div class="govuk-inset-text smart-inset-friendly">"${esc(it.quote)}"</div>` : ''}${it.id === 'talking' ? `<p class="govuk-body">${md(g.video).replace('a 3-minute video about the study', '<a class="govuk-link" href="videos.html#children">a 3-minute video about the study</a>')}</p>` : ''}</li>`).join('')
-  return shell({ title: g.title, access: 'member', page: 'guides', onlyFor: 'delay', body: `
+              <li id="${it.id}"><strong>${esc(it.title)}</strong> ${md(it.text)}${it.quote ? `<div class="govuk-inset-text smart-inset-friendly">"${esc(it.quote)}"</div>` : ''}${it.id === 'talking' ? `<p class="govuk-body">${md(g.video).replace('a 3-minute video about the study', '<a class="govuk-link" href="videos.html#study">a 3-minute video about the study</a>')}</p>` : ''}</li>`).join('')
+  return shell({ title: g.title, access: 'member', page: 'guides', body: `
   <div class="govuk-width-container">
     <nav class="govuk-breadcrumbs smart-no-print" aria-label="Breadcrumb">
       <ol class="govuk-breadcrumbs__list">
@@ -471,7 +610,7 @@ function schoolsPage () {
           </div>
 
           <h2 class="govuk-heading-l" id="posters">E-posters</h2>
-          <p class="govuk-body">Print them, show them on screens, or send them with your newsletter. Your onboarding pack says which poster to use. Before you share one, add your school's details: the Word version can be edited.</p>
+          <p class="govuk-body">Print them, show them on screens, or send them with your newsletter. Most schools only need the first one. Before you share one, add your school's details: the Word version can be edited.</p>
           <ul class="smart-posters">${cards}
           </ul>
 
@@ -499,6 +638,7 @@ function schoolsPage () {
 ;(async () => {
   mkdir('exports/figma')
   mkdir('exports/posters')
+  mkdir('exports/invitations')
   const delay = delaySvg()
   fs.writeFileSync(out('exports/figma/delay-guide.svg'), delay.svg)
   if (delay.used > A4.h - 56) console.warn(`Delay guide frame is too full (${Math.round(delay.used)}px)`)
@@ -508,15 +648,23 @@ function schoolsPage () {
     fs.writeFileSync(out(`exports/figma/poster-${p.id}.svg`), r.svg)
     return { p, svg: r.svg }
   })
+  const invitationSvgs = R.invitations.map(v => {
+    const r = fitInvitation(v)
+    if (r.used > A4.h - 92) console.warn(`Invitation ${v.id} is too full (${Math.round(r.used)}px)`)
+    fs.writeFileSync(out(`exports/figma/invitation-${v.id}.svg`), r.svg)
+    return { v, svg: r.svg }
+  })
   fs.writeFileSync(out('guide-delay.html'), delayPage())
   fs.writeFileSync(out('schools.html'), schoolsPage())
-  console.log(`delay guide, ${posterSvgs.length} posters, 2 pages`)
+  console.log(`delay guide, ${posterSvgs.length} posters, ${invitationSvgs.length} invitations, 2 pages`)
   if (process.argv.includes('--no-export')) return
   const r = await renderAll([
     { key: 'logo', svg: logoSvg.replace('width="48" height="48"', 'width="192" height="192"'), w: 192, h: 192, buffer: true },
-    ...posterSvgs.map(({ p, svg }) => ({ svg, png: out(`exports/posters/SMART-poster-${p.id}.png`), pdf: out(`exports/posters/SMART-poster-${p.id}.pdf`) }))
+    ...posterSvgs.map(({ p, svg }) => ({ svg, png: out(`exports/posters/SMART-poster-${p.id}.png`), pdf: out(`exports/posters/SMART-poster-${p.id}.pdf`) })),
+    ...invitationSvgs.map(({ v, svg }) => ({ svg, png: out(`exports/invitations/SMART-invitation-${v.id}.png`), pdf: out(`exports/invitations/SMART-invitation-${v.id}.pdf`) }))
   ])
   fs.writeFileSync(out('exports/SMART-delay-guide.docx'), await delayDocx(r.logo))
   for (const { p } of posterSvgs) fs.writeFileSync(out(`exports/posters/SMART-poster-${p.id}.docx`), await posterDocx(p, r.logo))
+  for (const { v } of invitationSvgs) fs.writeFileSync(out(`exports/invitations/SMART-invitation-${v.id}.docx`), await invitationDocx(v, r.logo))
   console.log('Word documents, PDFs and PNGs written')
 })().catch(e => { console.error(e); process.exit(1) })

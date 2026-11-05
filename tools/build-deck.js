@@ -193,26 +193,26 @@ const step = (i, title, hint) => {
 // ------------------------------------------------------------------ example deck
 const SLIDES = [
   { section: 'Opening', layout: 'Title', fill: { title: 'The SMART Study microsite', subtitle: 'Design review · October 2026' }, notes: 'Title layout. Deck title in sentence case; the subtitle says who it is for and when.' },
-  { layout: 'Section', fill: { number: '1', title: 'What families see', subtitle: 'The signed-in pages for the restrict and delay groups', picture: 'illustration:family' }, notes: 'Section layout. Number every section; pick the illustration that matches it.' },
-  { section: 'Content', layout: 'Text and picture', fill: { title: 'Three things for every family', body: ['Watch the welcome webinar', "Set up their child's phone, or read the guide to waiting", 'Share a screen time screenshot once a month'], picture: 'illustration:guide-iphone' }, notes: 'Text and picture layout. Keep points short enough to read at a glance.' },
+  { layout: 'Section', fill: { number: '1', title: 'What families see', subtitle: 'The same signed-in pages for every family', picture: 'illustration:family' }, notes: 'Section layout. Number every section; pick the illustration that matches it.' },
+  { section: 'Content', layout: 'Text and picture', fill: { title: 'Three things for every family', body: ['Watch the study video with their child', "Read the guide to waiting, or set up their child's phone", 'If their child has a phone, share a screen time screenshot once a month'], picture: 'illustration:guide-iphone' }, notes: 'Text and picture layout. Keep points short enough to read at a glance.' },
   {
     layout: 'Title only',
     fill: { title: 'Help is never more than one click away' },
     extra: [
       ...card(0, 3, 'book-open', 'sky', 'Set-up guides', 'Step by step, with a picture of every screen.'),
-      ...card(1, 3, 'circle-play', 'coral', 'Videos', 'The welcome webinar and a video for children.'),
+      ...card(1, 3, 'circle-play', 'coral', 'Videos', 'The study video for children, and how-to videos.'),
       ...card(2, 3, 'life-buoy', 'mint', 'Get help', 'Common questions, or email us directly.')
     ],
     notes: 'Title only layout with cards: white, rounded, soft shadow, an icon in a tinted tile. Three or four cards, rotating the tints.'
   },
-  { layout: 'Big number', fill: { number: '80', label: 'primary schools in England', body: 'Families take part through their child\'s school, from April 2027 to April 2028.' }, notes: 'Big number layout. One number per slide, in numerals.' },
+  { layout: 'Big number', fill: { number: '80', label: 'primary schools in England', body: 'Families take part through their child\'s school, from September 2027 to September 2028.' }, notes: 'Big number layout. One number per slide, in numerals.' },
   {
     layout: 'Title only',
-    fill: { title: 'How a restrict family gets set up' },
-    extra: [...step(0, 'Watch the welcome webinar', '40 minutes'), ...step(1, "Set up your child's phone", '30 to 40 minutes'), ...step(2, 'Share a screen time screenshot', '2 minutes, monthly')],
+    fill: { title: 'How a family with a phone gets set up' },
+    extra: [...step(0, 'Watch the study video together', '3 minutes'), ...step(1, "Set up your child's phone", '30 to 40 minutes'), ...step(2, 'Share a screen time screenshot', '2 minutes, monthly')],
     notes: 'Title only layout with steps: the sun number tile from the guides. Three or four steps.'
   },
-  { layout: 'Title and body', fill: { title: 'What we still need to decide', body: ['Whether the name "SMART" appears on public pages (A4)', 'Which platform the real build uses (B2)', 'Whether to keep these illustrations or commission new ones (B5)'] }, notes: 'Title and body layout. Five points at most.' },
+  { layout: 'Title and body', fill: { title: 'What taking part involves', body: ['Two short reading and maths assessments at school', 'Short online surveys for parents', 'In some schools, a simple family plan until September 2028'] }, notes: 'Title and body layout. Five points at most.' },
   { layout: 'Quote', fill: { quote: 'A study identity of its own, with GOV.UK components underneath for accessible forms.', attribution: 'Decision B1, look and feel' }, notes: 'Quote layout. Always say who said it.' },
   { section: 'Close', layout: 'Closing', fill: { title: 'Questions?', body: 'smartphonestudy@public.io' }, notes: 'Closing layout. The ask or the contact route.' }
 ]

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
 </head>
 <body class="govuk-template__body" data-access="member" data-page="start">
 
@@ -17,8 +17,7 @@
         <div>
           <span class="smart-hero__eyebrow"><svg class="smart-icon" aria-hidden="true"><use href="#i-key-round"></use></svg> Family ID: <span data-family-id></span></span>
           <h1 class="govuk-heading-xl">Welcome, and thank you for taking part</h1>
-          <p class="govuk-body-l" data-show-for="restrict">For the next 12 months, we're asking you to keep a small number of apps on your child's phone and block everything else. We'll help you every step of the way.</p>
-          <p class="govuk-body-l" data-show-for="delay">For the next 12 months, we're asking you not to get your child their own smartphone. Here's what that means, and where to get help.</p>
+          <p class="govuk-body-l">Until September 2028, we're asking your family to do one thing. What it is depends on whether your child has their own smartphone.</p>
         </div>
         <img src="assets/images/illustrations/family.svg" alt="">
       </div>
@@ -26,49 +25,45 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-          <h2 class="govuk-heading-l">Your 3 things to do</h2>
+          <section class="smart-path" id="no-phone" aria-labelledby="no-phone-title">
+            <div class="smart-path__head">
+              <span class="smart-path__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-sun"></use></svg></span>
+              <h2 class="govuk-heading-m" id="no-phone-title">If your child doesn't have a smartphone yet</h2>
+            </div>
+            <p class="govuk-body-l">Please hold off getting them one until <strong>September 2028</strong>.</p>
+            <ol class="smart-tasks">
+              <li class="smart-task" style="--accent:#fff1c9">
+                <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
+                <div><a class="smart-task__title" href="guide-delay.html">Read our guide to waiting for a first phone</a><p class="smart-task__hint">One page, about 5 minutes. Tips for birthdays, gifts and "everyone else has one".</p></div>
+                <strong class="govuk-tag govuk-tag--blue">Not started</strong>
+              </li>
+              <li class="smart-task" style="--accent:#fde7d3">
+                <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-message-circle"></use></svg></span>
+                <div><a class="smart-task__title" href="guide-delay.html#talking">Talk to your child about the study</a><p class="smart-task__hint">Ideas for what to say, and the study video to watch together.</p></div>
+                <strong class="govuk-tag govuk-tag--blue">Not started</strong>
+              </li>
+            </ol>
+          </section>
 
-          <!-- Restrict group -->
-          <ol class="smart-tasks" data-show-for="restrict">
-            <li class="smart-task" style="--accent:#efeafd">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-play"></use></svg></span>
-              <div><a class="smart-task__title" href="videos.html#welcome">Watch the welcome webinar</a><p class="smart-task__hint">About 40 minutes. Watch the recording whenever suits you.</p></div>
-              <strong class="govuk-tag govuk-tag--purple">Recommended</strong>
-            </li>
-            <li class="smart-task" style="--accent:#eef6fd">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-shield-check"></use></svg></span>
-              <div><a class="smart-task__title" href="guides.html">Set up your child's phone</a><p class="smart-task__hint">About 30 to 40 minutes. We'll help you pick the right guide.</p></div>
-              <strong class="govuk-tag govuk-tag--blue">Not started</strong>
-            </li>
-            <li class="smart-task" style="--accent:#e6f7f1">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg></span>
-              <div><a class="smart-task__title" href="share-screen-time.html">Share a screen time screenshot</a><p class="smart-task__hint">About 2 minutes, once a month. Next one by 30 November 2026.</p></div>
-              <strong class="govuk-tag govuk-tag--yellow">Due soon</strong>
-            </li>
-          </ol>
-
-          <!-- Delay group -->
-          <ol class="smart-tasks" data-show-for="delay">
-            <li class="smart-task" style="--accent:#efeafd">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-play"></use></svg></span>
-              <div><a class="smart-task__title" href="videos.html#welcome">Watch the welcome webinar</a><p class="smart-task__hint">About 30 minutes. Watch the recording whenever suits you.</p></div>
-              <strong class="govuk-tag govuk-tag--purple">Recommended</strong>
-            </li>
-            <li class="smart-task" style="--accent:#fff1c9">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
-              <div><a class="smart-task__title" href="guide-delay.html">Read our guide to waiting for a first phone</a><p class="smart-task__hint">One page, about 5 minutes. Tips for birthdays, gifts and "everyone else has one".</p></div>
-              <strong class="govuk-tag govuk-tag--blue">Not started</strong>
-            </li>
-            <li class="smart-task" style="--accent:#fde7d3">
-              <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-message-circle"></use></svg></span>
-              <div><a class="smart-task__title" href="guide-delay.html#talking">Talk to your child about the study</a><p class="smart-task__hint">Ideas for what to say, and a short video to watch together.</p></div>
-              <strong class="govuk-tag govuk-tag--blue">Not started</strong>
-            </li>
-          </ol>
-
-          <aside class="smart-design-note" data-decision="D2 C5">
-            <p><strong>Task statuses.</strong> Here they're fixed text. In a real build, "Not started / Done" could come from what the family has done on the site (opened the guide, ticked every step, uploaded a screenshot). That gives parents a sense of progress <em>and</em> gives us a light compliance signal. Is that acceptable in the DPIA, and does it need to be in the privacy notice?</p>
-          </aside>
+          <section class="smart-path smart-path--mint" id="has-phone" aria-labelledby="has-phone-title">
+            <div class="smart-path__head">
+              <span class="smart-path__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-shield-check"></use></svg></span>
+              <h2 class="govuk-heading-m" id="has-phone-title">If your child has a smartphone</h2>
+            </div>
+            <p class="govuk-body-l">Please set it up so it only has <strong>a short list of apps and websites</strong>. We'll help you every step of the way.</p>
+            <ol class="smart-tasks">
+              <li class="smart-task" style="--accent:#eef6fd">
+                <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-shield-check"></use></svg></span>
+                <div><a class="smart-task__title" href="guides.html#set-up">Set up your child's phone</a><p class="smart-task__hint">About 30 to 40 minutes. We'll help you pick the right guide.</p></div>
+                <strong class="govuk-tag govuk-tag--blue">Not started</strong>
+              </li>
+              <li class="smart-task" style="--accent:#e6f7f1">
+                <span class="smart-task__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg></span>
+                <div><a class="smart-task__title" href="share-screen-time.html">Share a screen time screenshot</a><p class="smart-task__hint">About 2 minutes, once a month. Next one by 30 November 2027.</p></div>
+                <strong class="govuk-tag govuk-tag--yellow">Due soon</strong>
+              </li>
+            </ol>
+          </section>
 
           <div class="smart-callout">
             <span class="smart-callout__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-hand-heart"></use></svg></span>
@@ -80,27 +75,28 @@
         </div>
 
         <div class="govuk-grid-column-one-third">
+          <h2 class="govuk-heading-m">For every family</h2>
+          <a class="smart-feature" href="videos.html#study">
+            <img src="assets/images/illustrations/videos.svg" alt="">
+            <span class="smart-feature__title">Watch the study video with your child</span>
+            <span class="smart-feature__hint">About 3 minutes. Why the study matters, and the part your child plays in it.</span>
+          </a>
+
           <h2 class="govuk-heading-m">What's new</h2>
           <ul class="smart-news">
             <li>
               <span class="smart-news__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-video"></use></svg></span>
-              <div><time datetime="2026-11-04">4 November 2026</time>The welcome webinar recording is online. <a class="govuk-link" href="videos.html#welcome">Watch it</a></div>
+              <div><time datetime="2027-11-04">4 November 2027</time>The study video for children is online. <a class="govuk-link" href="videos.html#study">Watch it together</a></div>
             </li>
-            <li data-show-for="restrict">
+            <li>
               <span class="smart-news__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-refresh-cw"></use></svg></span>
-              <div><time datetime="2026-11-02">2 November 2026</time>The iPhone guides now match iOS 26.1. The "Downtime" setting in step 4 has moved. <a class="govuk-link" href="guide-iphone-parent.html#step-4">See what changed</a></div>
+              <div><time datetime="2027-11-02">2 November 2027</time>The iPhone guides now match the latest iOS update. The "Downtime" setting in step 4 has moved. <a class="govuk-link" href="guide-iphone-parent.html#step-4">See what changed</a></div>
             </li>
-            <li data-show-for="delay">
+            <li>
               <span class="smart-news__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
-              <div><time datetime="2026-11-02">2 November 2026</time>New tips for the move to secondary school. <a class="govuk-link" href="guide-delay.html#secondary">Read the tips</a></div>
+              <div><time datetime="2027-10-20">20 October 2027</time>New tips for the summer holidays in the guide to waiting. <a class="govuk-link" href="guide-delay.html#summer">Read the tips</a></div>
             </li>
           </ul>
-          <aside class="smart-design-note" data-decision="C1 C3">
-            <p><strong>"What's new"</strong> is how families find out that a guide has changed after a software update. Each item links to the step that changed, and the same text can go into the newsletter. PUBLIC needs to be able to edit this list without a developer.</p>
-          </aside>
-          <aside class="smart-design-note" data-decision="E1">
-            <p><strong>Out of scope for now:</strong> the tech spec also lists "month by month", a children's section, the newsletter archive and the forum. Add any of these now, or later?</p>
-          </aside>
         </div>
       </div>
 
@@ -109,18 +105,17 @@
         <li class="smart-card">
           <span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg></span>
           <h3 class="smart-card__title"><a href="guides.html">Guides</a></h3>
-          <p data-show-for="restrict">Step-by-step help to set up iPhones and Android phones.</p>
-          <p data-show-for="delay">Practical help with waiting for a first smartphone.</p>
+          <p>Help with waiting for a first smartphone, and step-by-step help to set up iPhones and Android phones.</p>
         </li>
         <li class="smart-card smart-card--lilac">
           <span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-monitor-play"></use></svg></span>
-          <h3 class="smart-card__title"><a href="videos.html">Videos and webinars</a></h3>
-          <p>Welcome webinar recordings and short how-to videos.</p>
+          <h3 class="smart-card__title"><a href="videos.html">Videos</a></h3>
+          <p>The study video for children, and short videos that show you how to set up a phone.</p>
         </li>
-        <li class="smart-card smart-card--mint" data-show-for="restrict">
+        <li class="smart-card smart-card--mint">
           <span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-upload"></use></svg></span>
           <h3 class="smart-card__title"><a href="share-screen-time.html">Share screen time</a></h3>
-          <p>Upload a screenshot of your child's weekly screen time.</p>
+          <p>If your child has a phone: upload a screenshot of their weekly screen time.</p>
         </li>
         <li class="smart-card smart-card--coral">
           <span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-life-buoy"></use></svg></span>
@@ -131,8 +126,8 @@
     </main>
   </div>
 
-  <script src="assets/js/govuk-frontend.js?v=3"></script>
-  <script src="assets/js/icons.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/govuk-frontend.js?v=4"></script>
+  <script src="assets/js/icons.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
 </body>
 </html>
