@@ -1,6 +1,8 @@
 # The SMART Study microsite: mock-up
 
-A clickable mock-up of the microsite for the DfE SMART RCT. It is for review and co-design, not a live service. The sign-in is fake and nothing is saved or sent.
+A clickable mock-up of the microsite for the DfE SMART RCT, showing how the site will look. It is not a live service: the sign-in is fake and nothing is saved or sent.
+
+The study runs from September 2027 to September 2028, with children in Years 3 to 5. Those dates live once, at the top of `content/resources.js`.
 
 ## View it
 
@@ -8,11 +10,10 @@ Open `index.html` in a browser, or run `npm run serve` and go to http://localhos
 
 To see the signed-in pages, sign in with any password as:
 
-- **SMART-R-4821**: a restrict family (their child has a phone)
-- **SMART-D-1093**: a delay family (their child has no phone yet)
+- **SMART-F-4821**: a family
 - **SMART-S-2041**: a school leader, who only sees the school resources page
 
-The **Review tools** box (bottom right) turns the purple design notes on and off, and switches between the two groups.
+Every family sees the same pages, because we won't know whether a child has a phone. The start page and the guides show "If your child doesn't have a smartphone yet" (wait until September 2028) first, then "If your child has a smartphone" (the set-up guides).
 
 ## What's in it
 
@@ -20,25 +21,23 @@ The **Review tools** box (bottom right) turns the purple design notes on and off
 | --- | --- |
 | `index.html` | Everyone, including the control group. Deliberately minimal. |
 | `sign-in.html`, `privacy.html`, `accessibility.html` | Everyone |
-| `start.html` | Signed-in families. Task list, what's new. |
-| `guides.html` | Signed-in. Two questions choose the right guide. |
-| `guide-iphone-parent.html`, `guide-iphone-child.html`, `guide-android.html` | Restrict group. Step-by-step guides with pictures, progress ticks and video. |
-| `guide-delay.html` | Delay group. Generated: see below. |
+| `start.html` | Signed-in families. The two paths (no phone yet / has a phone) with their tasks, the study video, what's new. |
+| `guides.html` | Signed-in. The guide to waiting, then the set-up guides, with two questions to choose the right one. |
+| `guide-iphone-parent.html`, `guide-iphone-child.html`, `guide-android.html` | Signed-in. Step-by-step set-up guides with pictures, progress ticks and video. |
+| `guide-delay.html` | Signed-in. The guide to waiting for a first smartphone. Generated: see below. |
 | `schools.html` | School leaders only. Onboarding pack and e-posters. Generated: see below. |
-| `videos.html` | Signed-in. Webinar recording (Vimeo) with chapters, children's video. |
-| `share-screen-time.html` | Restrict group. Screenshot upload with checks. |
+| `videos.html` | Signed-in. Two kinds of video: the study video, a motivational video for children about why the study matters; and the how-to videos for setting up a phone. Vimeo, loaded on play. |
+| `share-screen-time.html` | Signed-in, for families whose child has a phone. Screenshot upload with checks. |
 | `help.html` | Signed-in. FAQs, request an app, report a problem with a guide. |
-| `decisions.html` | Mock-up only. The register of open decisions that every design note links to. |
 
 ## How it's built
 
 - **Look and feel:** a study identity of its own, with the SMART logo (a sun, a parent and a child, and deliberately no phone), the Nunito typeface, a warm palette anchored on DfE blue (#003a69), Lucide icons and flat illustrations. Styles are in `src/scss/site.scss`.
-- **Underneath:** [GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) for forms, error messages, accordions and tabs, so they keep GOV.UK's accessibility testing. There's no GOV.UK crown or Transport font, as those are only for GOV.UK domains (decision B1).
-- **Logos:** the partner logos (DfE, IFF, Cambridge, PUBLIC) are dashed placeholders until each organisation agrees (decision B5).
+- **Underneath:** [GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) for forms, error messages, accordions and tabs, so they keep GOV.UK's accessibility testing. There's no GOV.UK crown or Transport font, as those are only for GOV.UK domains.
+- **Logos:** the partner logos (DfE, IFF, Cambridge, PUBLIC) are dashed placeholders until each organisation agrees.
 - **Illustrations and logo mark** are SVGs drawn by `tools/illustrations.py`. Change a colour or shape there and run `python3 tools/illustrations.py`.
 - **Icons:** `assets/js/icons.js` adds an icon sprite. Use `<svg class="smart-icon" aria-hidden="true"><use href="#i-book-open"></use></svg>`.
-- `assets/js/site.js` adds the shared header, navigation, footer, cookie banner and review tools, plus the drawn phone screens (`data-phone`), step progress and click-to-load Vimeo players (`data-vimeo`, with an optional `data-poster`).
-- Content for a single group is marked `data-show-for="restrict"` or `data-show-for="delay"`.
+- `assets/js/site.js` adds the shared header, navigation, footer, cookie banner and mock-up banner, plus the drawn phone screens (`data-phone`), step progress and click-to-load Vimeo players (`data-vimeo`, with an optional `data-poster`).
 
 To rebuild the CSS after editing the SCSS: `npm install && npm run build`.
 
@@ -66,20 +65,30 @@ Screens are drawn by `tools/screens.js` from descriptions like:
 
 `hl` draws the coral "tap here" outline with a label; `avoid` draws a red dashed "don't" outline; `span` stretches either over several rows. After a software update, changing a label means changing a word and rebuilding.
 
-The real build's platform and editing workflow are still open (decisions B2 and C1).
-
 ## The delay guide and the school e-posters
 
 These live in **`content/resources.js`**. Run `npm run build:resources` to generate:
 
 | Output | Where | Use it for |
 | --- | --- | --- |
-| Delay guide page | `guide-delay.html` | The microsite (delay group). Don't edit by hand. |
+| Guide to waiting | `guide-delay.html` | The microsite, for families whose child has no phone yet. Don't edit by hand. |
 | Delay guide, one page | `exports/SMART-delay-guide.docx`, `exports/figma/delay-guide.svg` | Word to share and print; an A4 frame for Figma. |
 | E-posters | `exports/posters/SMART-poster-{both,delay,restrict}.{docx,pdf,png}`, `exports/figma/poster-*.svg` | Schools: Word to add their details, PDF to print, PNG for screens and newsletters; A4 frames for Figma. |
 | School resources page | `schools.html` | The page school leaders see, listing the posters. |
 
-There are three posters, each with one ask: one for schools with both groups, one for waiting, one for setting up phones. Words in [square brackets] are for the school to fill in.
+There are three posters, each with one ask: one covering both situations (the one most schools need), one for waiting, one for setting up phones. Words in [square brackets] are for the school to fill in.
+
+## The invitation to take part
+
+The first thing school leaders and parents get from us, also in **`content/resources.js`** (`invitations`) and built by `npm run build:resources`:
+
+| Output | Where | Use it for |
+| --- | --- | --- |
+| Word | `exports/invitations/SMART-invitation-{schools,parents}.docx` | Editing the wording and filling in the details. |
+| PDF and PNG | `exports/invitations/SMART-invitation-{schools,parents}.{pdf,png}` | Printing, emailing, newsletters. |
+| Figma | `exports/figma/invitation-{schools,parents}.svg` | An A4 frame each, text editable. |
+
+Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey count and length) are still to be confirmed. The build warns if a page gets too full for A4.
 
 
 ## The design system board
