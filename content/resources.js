@@ -13,6 +13,10 @@
  */
 
 const EMAIL = 'smartphonestudy@public.io'
+// The study dates and year groups, used everywhere below
+const START = 'September 2027'
+const END = 'September 2028'
+const YEARS = 'Years 3 to 5'
 const RUN_BY = 'Run by IFF Research, PUBLIC and the University of Cambridge for the Department for Education.'
 
 // ------------------------------------------------------------------ delay group guide (one page)
@@ -22,7 +26,7 @@ const delay = {
   lead: 'Thank you for taking part. This is everything we\'re asking, on one page.',
   ask: {
     title: 'What we\'re asking',
-    text: 'Until **April 2028**, please hold off getting your child their own smartphone.',
+    text: `Until **${END}**, please hold off getting your child their own smartphone.`,
     still: 'Nothing else needs to change. Your child can still:',
     chips: [
       { icon: 'tablet-smartphone', text: 'Use a family tablet or computer' },
@@ -37,11 +41,11 @@ const delay = {
   tips: {
     title: 'Five things that make it easier',
     items: [
-      { id: 'talking', title: 'Tell your child together, and say why.', text: 'Children find waiting easier when they know the reason, and know it isn\'t forever.', quote: 'Our school is helping with a big study about children and phones. We\'re one of the families waiting a bit longer for a phone. It\'s until April 2028, and it helps grown-ups work out what\'s best for children.' },
-      { id: 'date', title: 'Put the date on the calendar.', text: 'Mark April 2028 somewhere your child can see it. A clear end date makes waiting feel fair.' },
+      { id: 'talking', title: 'Tell your child together, and say why.', text: 'Children find waiting easier when they know the reason, and know it isn\'t forever.', quote: `Our school is helping with a big study about children and phones. We're one of the families waiting a bit longer for a phone. It's until ${END}, and it helps grown-ups work out what's best for children.` },
+      { id: 'date', title: 'Put the date on the calendar.', text: `Mark ${END} somewhere your child can see it. A clear end date makes waiting feel fair.` },
       { id: 'family', title: 'Tell family and friends early.', text: 'Phones are a common birthday or Christmas present. Let grandparents and others know about the study now, so nobody is caught out.' },
       { id: 'touch', title: 'Agree how you\'ll stay in touch.', text: `For trips and clubs, your child can borrow a family phone. If you think your child needs a phone of their own for safety, email ${EMAIL} first and we'll talk it through.` },
-      { id: 'secondary', title: 'Plan ahead for secondary school.', text: 'Starting Year 7 is when many children get a phone. If your child moves up during the study, plan the journey to school, and how you\'ll keep in touch, before the summer.' }
+      { id: 'summer', title: 'Plan ahead for the summer holidays.', text: `The summer before a new school year is when many children get a first phone. Agree before the holidays how your child will keep in touch, so the plan holds until ${END}.` }
     ]
   },
   everyone: {
@@ -60,13 +64,13 @@ const delay = {
 // One poster per situation. Each asks for one thing, from the school, and
 // leaves the choice with the family. See the behavioural notes below.
 const plans = {
-  delay: { colour: 'lemon', icon: 'sun', title: 'Waiting for a first smartphone', text: 'If your child doesn\'t have a smartphone yet, hold off until **April 2028**. Your guide has ideas for making it easier.' },
+  delay: { colour: 'lemon', icon: 'sun', title: 'Waiting for a first smartphone', text: `If your child doesn't have a smartphone yet, hold off until **${END}**. Your guide has ideas for making it easier.` },
   restrict: { colour: 'mint', icon: 'shield-check', title: 'Setting up the phone together', text: 'If your child already has one, use our step-by-step guide to keep it to **a short list of apps and websites**.' }
 }
 
 const posterCommon = {
   eyebrow: '[School name] is taking part',
-  intro: 'Around 80 primary schools in England are part of the SMART Study, from April 2027 to April 2028. Thank you for being one of them.',
+  intro: `Around 80 primary schools in England are part of the SMART Study, from ${START} to ${END}. Thank you for being one of them.`,
   signoff: '[Headteacher name], Headteacher',
   stepsTitle: 'Three steps this week',
   steps: [
@@ -119,4 +123,4 @@ const sharingTips = [
   'Put printed copies where parents wait, such as by the school gate or reception.'
 ]
 
-module.exports = { EMAIL, delay, posters, posterPrinciples, sharingTips }
+module.exports = { EMAIL, START, END, YEARS, delay, posters, posterPrinciples, sharingTips }

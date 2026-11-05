@@ -205,7 +205,7 @@ const SLIDES = [
     ],
     notes: 'Title only layout with cards: white, rounded, soft shadow, an icon in a tinted tile. Three or four cards, rotating the tints.'
   },
-  { layout: 'Big number', fill: { number: '80', label: 'primary schools in England', body: 'Families take part through their child\'s school, from April 2027 to April 2028.' }, notes: 'Big number layout. One number per slide, in numerals.' },
+  { layout: 'Big number', fill: { number: '80', label: 'primary schools in England', body: 'Families take part through their child\'s school, from September 2027 to September 2028.' }, notes: 'Big number layout. One number per slide, in numerals.' },
   {
     layout: 'Title only',
     fill: { title: 'How a restrict family gets set up' },

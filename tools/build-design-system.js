@@ -335,7 +335,7 @@ function components () {
   row += g('Hero / Sky', rect(0, 0, 1200, 340, c('sky-light'), 32) +
     pill('Eyebrow', 40, 50, 'Around 80 primary schools in England', { bg: '#ffffff', fill: c('navy'), icon: 'school', size: 15, weight: 800, h: 30, padX: 12 })[0] +
     g('Heading', text(40, 140, 'Welcome to the SMART Study', { size: 48, weight: 900, fill: c('navy'), ls: '-0.48' })) +
-    g('Lead', text(40, 190, 'A research study with primary schools and families,', { size: 24, fill: c('ink') }) + text(40, 220, 'running from April 2027 to April 2028.', { size: 24, fill: c('ink') })) +
+    g('Lead', text(40, 190, 'A research study with primary schools and families,', { size: 24, fill: c('ink') }) + text(40, 220, 'running from September 2027 to September 2028.', { size: 24, fill: c('ink') })) +
     g('Illustration', `<g transform="translate(${1200 - 40 - hw * hk} 40) scale(${hk.toFixed(4)})">${inner(hero)}</g>`), [0, 40])
   x = 1240
   for (const [n, t] of [['Sky (default)', 'sky-light'], ['Peach', 'peach'], ['Mint', 'mint-light'], ['Lemon', 'lemon'], ['Lilac', 'lilac-light']]) {
