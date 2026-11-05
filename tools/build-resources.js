@@ -2,7 +2,7 @@
  * Builds the delay guide, the school e-posters and the schools page from
  * content/resources.js:
  *
- *   guide-delay.html                          the delay group's guide
+ *   guide-delay.html                          the guide for families whose child has no phone yet
  *   schools.html                              the school leaders' page
  *   exports/SMART-delay-guide.docx            one-page Word guide
  *   exports/figma/delay-guide.svg             A4 frame for Figma
@@ -381,7 +381,7 @@ ${body}
 function delayPage () {
   const g = R.delay
   const tips = g.tips.items.map(it => `
-              <li id="${it.id}"><strong>${esc(it.title)}</strong> ${md(it.text)}${it.quote ? `<div class="govuk-inset-text smart-inset-friendly">"${esc(it.quote)}"</div>` : ''}${it.id === 'talking' ? `<p class="govuk-body">${md(g.video).replace('a 3-minute video about the study', '<a class="govuk-link" href="videos.html#children">a 3-minute video about the study</a>')}</p>` : ''}</li>`).join('')
+              <li id="${it.id}"><strong>${esc(it.title)}</strong> ${md(it.text)}${it.quote ? `<div class="govuk-inset-text smart-inset-friendly">"${esc(it.quote)}"</div>` : ''}${it.id === 'talking' ? `<p class="govuk-body">${md(g.video).replace('a 3-minute video about the study', '<a class="govuk-link" href="videos.html#study">a 3-minute video about the study</a>')}</p>` : ''}</li>`).join('')
   return shell({ title: g.title, access: 'member', page: 'guides', body: `
   <div class="govuk-width-container">
     <nav class="govuk-breadcrumbs smart-no-print" aria-label="Breadcrumb">

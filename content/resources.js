@@ -2,7 +2,7 @@
  * SMART Study – the delay guide and the school e-posters (single source)
  *
  * `npm run build:resources` turns this file into:
- *   - guide-delay.html, the delay group's guide on the microsite
+ *   - guide-delay.html, the microsite guide for families whose child has no phone yet
  *   - exports/SMART-delay-guide.docx, the same guide as a one-page Word document
  *   - exports/figma/delay-guide.svg, an A4 frame for Figma
  *   - exports/posters/: each e-poster as Word, PDF and PNG
@@ -19,7 +19,7 @@ const END = 'September 2028'
 const YEARS = 'Years 3 to 5'
 const RUN_BY = 'Run by IFF Research, PUBLIC and the University of Cambridge for the Department for Education.'
 
-// ------------------------------------------------------------------ delay group guide (one page)
+// ------------------------------------------------------------------ guide to waiting (one page), for families whose child has no phone yet
 const delay = {
   title: 'Waiting for a first smartphone',
   eyebrow: 'The SMART Study · guide for families',
