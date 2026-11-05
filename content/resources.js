@@ -123,4 +123,77 @@ const sharingTips = [
   'Put printed copies where parents wait, such as by the school gate or reception.'
 ]
 
-module.exports = { EMAIL, START, END, YEARS, delay, posters, posterPrinciples, sharingTips }
+// ------------------------------------------------------------------ invitations to take part
+// The first thing school leaders and parents get from us. One page each:
+// a single ask, what taking part involves, and what everyone gets.
+// It goes to everyone before schools are put into groups, so it describes
+// both groups plainly and promises the same thanks to both.
+// Words in [square brackets] are still to be confirmed.
+const TERM1 = 'Autumn term 2027'
+const TERM3 = 'Summer term 2028'
+const ASSESS = 'reading and maths assessments (in the PIRA and PUMA format many schools already use)'
+
+const invitationCommon = {
+  qr: 'QR code',
+  groupsTitle: 'Two groups, chosen by chance',
+  getTitle: 'What you get, whichever group you\'re in',
+  runBy: RUN_BY
+}
+
+const invitations = [
+  {
+    id: 'schools', name: 'School leaders',
+    use: 'For headteachers and school leaders: the first invitation to take part.',
+    eyebrow: 'Invitation for school leaders',
+    headline: 'Will your school help find out what\'s best for children and phones?',
+    intro: `Nobody knows yet the best age for a first smartphone, or how best to set one up. The SMART Study will help find out, for the Department for Education. We're inviting around 80 primary schools in England, with their pupils in **${YEARS}**, from **${START}** to **${END}**.`,
+    ask: {
+      title: 'Will your school take part?',
+      text: 'Sign up by **[date]** at **[web address]**, or reply to this email. It takes about 5 minutes.'
+    },
+    involvesTitle: 'What taking part involves for your school',
+    timeline: [
+      { when: 'Summer term 2027', text: 'Sign up and name a contact. Share our invitation with families in ' + YEARS + ': we give you everything you need.' },
+      { when: TERM1, text: `Pupils do the first of two short ${ASSESS} in class, about **[45] minutes**. You fill in a short survey.` },
+      { when: 'During the year', text: 'Pass on our messages and posters to families now and then. No extra teaching.' },
+      { when: TERM3, text: 'Pupils do the second assessment. You fill in a last short survey.' }
+    ],
+    groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps. In the other, families carry on as usual. Every school does the same assessments and surveys.`,
+    gets: [
+      { icon: 'school', title: '[£X] for your school', text: 'A thank-you payment when the study ends.' },
+      { icon: 'chart-column', title: 'Your pupils\' results', text: 'Reading and maths scores from both assessments.' },
+      { icon: 'sparkles', title: 'Resources for families', text: 'Motivational videos, comic books and a newsletter.' },
+      { icon: 'mail', title: 'What we find', text: 'A summary of the findings, shared with you first.' }
+    ],
+    choice: 'Taking part is your school\'s choice, and you can stop at any time.',
+    contact: `Questions? Email ${EMAIL}, or call [phone number].`
+  },
+  {
+    id: 'parents', name: 'Parents and carers',
+    use: 'For parents and carers of children in ' + YEARS + ', sent through the school.',
+    eyebrow: 'Invitation for parents and carers',
+    headline: 'Will your family help find out what\'s best for children and phones?',
+    intro: `Nobody knows yet the best age for a first smartphone, or how best to set one up. **[School name]** is helping to find out, as one of around 80 primary schools in the SMART Study. It runs from **${START}** to **${END}**, for children in **${YEARS}**, and we'd love your family to take part.`,
+    ask: {
+      title: 'Will you take part?',
+      text: 'Say yes by **[date]**: scan the QR code or go to **[web address]**. It takes about 5 minutes.'
+    },
+    involvesTitle: 'What taking part involves for your family',
+    timeline: [
+      { when: `Before ${START}`, text: 'Say yes, and fill in a short online survey (about **[10] minutes**).' },
+      { when: TERM1, text: `Your child does the first of two short ${ASSESS} at school. There's nothing to prepare.` },
+      { when: 'During the year', text: '**[Two]** more short online surveys for you, about **[10] minutes** each.' },
+      { when: TERM3, text: 'Your child does the second assessment, and you fill in a last survey.' }
+    ],
+    groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps and share a screen time screenshot once a month, with our step-by-step help. In the other, families carry on as usual. Everyone does the same surveys and assessments.`,
+    gets: [
+      { icon: 'gift', title: 'A [£X] voucher', text: 'After each survey you fill in.' },
+      { icon: 'sparkles', title: 'Fun things for your child', text: 'Motivational videos, comic books and a newsletter.' },
+      { icon: 'mail', title: 'What we find', text: 'A summary of what your family helped to find out.' }
+    ],
+    choice: 'Taking part is your choice. You can stop at any time, without giving a reason.',
+    contact: `Questions? Ask [staff name] at school, or email ${EMAIL}.`
+  }
+].map(i => ({ ...invitationCommon, ...i }))
+
+module.exports = { EMAIL, START, END, YEARS, invitations, delay, posters, posterPrinciples, sharingTips }
