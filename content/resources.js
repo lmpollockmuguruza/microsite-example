@@ -154,13 +154,13 @@ const invitations = [
     involvesTitle: 'What taking part involves for your school',
     timeline: [
       { when: 'Summer term 2027', text: 'Sign up and name a contact. Share our invitation with families in ' + YEARS + ': we give you everything you need.' },
-      { when: TERM1, text: `Pupils do the first of two short ${ASSESS} in class, about **[45] minutes**. You fill in a short survey.` },
-      { when: 'During the year', text: 'Pass on our messages and posters to families now and then. No extra teaching.' },
-      { when: TERM3, text: 'Pupils do the second assessment. You fill in a last short survey.' }
+      { when: TERM1, text: `Pupils do the first of two short ${ASSESS} in class, about **[45] minutes**.` },
+      { when: 'During the year', text: 'Pass on our messages and posters to families now and then, and give us short feedback three times. No extra teaching.' },
+      { when: TERM3, text: 'Pupils do the second assessment. The study ends in ' + END + '.' }
     ],
     groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps. In the other, families carry on as usual. Every school does the same assessments and surveys.`,
     gets: [
-      { icon: 'school', title: '[£X] for your school', text: 'A thank-you payment when the study ends.' },
+      { icon: 'school', title: '£500 for your school', text: 'For taking part, plus [£XX] for each feedback round.' },
       { icon: 'chart-column', title: 'Your pupils\' results', text: 'Reading and maths scores from both assessments.' },
       { icon: 'sparkles', title: 'Resources for families', text: 'Motivational videos, comic books and a newsletter.' },
       { icon: 'mail', title: 'What we find', text: 'A summary of the findings, shared with you first.' }
@@ -180,10 +180,10 @@ const invitations = [
     },
     involvesTitle: 'What taking part involves for your family',
     timeline: [
-      { when: `Before ${START}`, text: 'Say yes, and fill in a short online survey (about **[10] minutes**).' },
+      { when: 'Summer term 2027', text: 'Say yes. That\'s all until the study starts in ' + START + '.' },
       { when: TERM1, text: `Your child does the first of two short ${ASSESS} at school. There's nothing to prepare.` },
-      { when: 'During the year', text: '**[Two]** more short online surveys for you, about **[10] minutes** each.' },
-      { when: TERM3, text: 'Your child does the second assessment, and you fill in a last survey.' }
+      { when: 'Three times', text: 'A short online survey about how your family is getting on (about **[10] minutes**), in [December 2027, April 2028 and September 2028].' },
+      { when: TERM3, text: 'Your child does the second assessment. The study ends in ' + END + '.' }
     ],
     groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps and share a screen time screenshot once a month, with our step-by-step help. In the other, families carry on as usual. Everyone does the same surveys and assessments.`,
     gets: [
@@ -196,4 +196,4 @@ const invitations = [
   }
 ].map(i => ({ ...invitationCommon, ...i }))
 
-module.exports = { EMAIL, START, END, YEARS, invitations, delay, posters, posterPrinciples, sharingTips }
+module.exports = { EMAIL, RUN_BY, START, END, YEARS, invitations, delay, posters, posterPrinciples, sharingTips }
