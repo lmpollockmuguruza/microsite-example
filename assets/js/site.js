@@ -226,9 +226,20 @@
       '</div></div>' + (caption ? '<p class="smart-phone__caption" aria-hidden="true">' + esc(caption) + '</p>' : '')
   })
 
+  // ------------------------------------------------------------------ guide versions (for testing)
+  // A step with versions holds each one in a [data-version] block, all but one
+  // hidden. ?version=C in the address shows version C instead.
+  var wanted = (location.search.match(/[?&]version=([A-Za-z])/) || [])[1]
+  if (wanted && document.querySelector('[data-version="' + wanted.toUpperCase() + '"]')) {
+    wanted = wanted.toUpperCase()
+    document.querySelectorAll('[data-version]').forEach(function (n) { n.hidden = n.getAttribute('data-version') !== wanted })
+    body.classList.add('smart-has-version')
+  }
+
   // ------------------------------------------------------------------ guide progress ("I've done this step")
   // Saved in this browser only. In a real build this could also be sent as an
-  // engagement signal.
+  // engagement signal. A step is true (done), 'skip' (skipped, or already done
+  // before the parent got here) or missing.
   var guide = body.getAttribute('data-guide')
   if (guide) {
     var key = 'smart_guide_' + guide
@@ -237,23 +248,46 @@
     var steps = document.querySelectorAll('.smart-step')
     var bar = document.querySelector('.smart-progress span')
     var count = document.querySelector('[data-progress-text]')
+    var save = function () { set('localStorage', key, JSON.stringify(done)) }
     var refresh = function () {
       var n = 0
+      var todo = 0
       steps.forEach(function (s) {
-        var on = !!done[s.id]
+        var on = done[s.id] === true
+        var skipped = done[s.id] === 'skip'
         s.classList.toggle('is-done', on)
+        s.classList.toggle('is-skipped', skipped)
         var box = s.querySelector('.smart-step__done input')
         if (box) box.checked = on
+        var note = s.querySelector('.smart-step__skipped')
+        if (note) note.hidden = !skipped
         var link = document.querySelector('.smart-contents a[href="#' + s.id + '"]')
-        if (link) link.parentNode.classList.toggle('is-done', on)
+        if (link) {
+          link.parentNode.classList.toggle('is-done', on)
+          link.parentNode.classList.toggle('is-skipped', skipped)
+        }
         if (on) n++
+        if (!skipped) todo++
       })
-      if (bar) bar.style.width = (steps.length ? (n / steps.length) * 100 : 0) + '%'
-      if (count) count.textContent = n + ' of ' + steps.length + ' steps done'
+      if (bar) bar.style.width = (todo ? (n / todo) * 100 : 0) + '%'
+      if (count) count.textContent = n + ' of ' + todo + ' steps done'
     }
     steps.forEach(function (s) {
       var box = s.querySelector('.smart-step__done input')
-      if (box) box.addEventListener('change', function () { done[s.id] = box.checked; set('localStorage', key, JSON.stringify(done)); refresh() })
+      if (box) box.addEventListener('change', function () { done[s.id] = box.checked || undefined; save(); refresh() })
+      var undo = s.querySelector('[data-unskip]')
+      if (undo) undo.addEventListener('click', function () { delete done[s.id]; save(); refresh() })
+    })
+    // "Skip to Step 3": the steps before it that aren't done count as skipped
+    document.querySelectorAll('[data-skip-to]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        var target = a.getAttribute('data-skip-to')
+        for (var i = 0; i < steps.length && steps[i].id !== target; i++) {
+          if (done[steps[i].id] !== true) done[steps[i].id] = 'skip'
+        }
+        save()
+        refresh()
+      })
     })
     refresh()
   }

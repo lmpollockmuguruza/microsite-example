@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/site.css?v=4">
+  <link rel="stylesheet" href="assets/css/site.css?v=5">
 </head>
 <body class="govuk-template__body" data-access="member" data-page="guides">
 
@@ -41,7 +41,7 @@
               <span class="smart-path__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-shield-check"></use></svg></span>
               <h2 class="govuk-heading-l" id="set-up-title">If your child has a smartphone</h2>
             </div>
-            <p class="govuk-body-l">Please set it up so it only has a short list of apps and websites. It takes about 30 to 40 minutes. There are 3 guides, depending on which phones you and your child have. Answer 2 quick questions and we'll show you the right one.</p>
+            <p class="govuk-body-l">Please set it up so it only has a short list of apps and websites. It takes about 30 to 40 minutes. There's one guide for iPhones and one for Android phones. Your own phone can be anything. If some of it is already set up, each guide shows you where to start.</p>
 
             <form id="picker" class="smart-box" novalidate>
               <div class="govuk-form-group" id="q1-group">
@@ -50,27 +50,8 @@
                   <p class="govuk-error-message smart-hide" id="q1-error"><span class="govuk-visually-hidden">Error:</span> Select the kind of phone your child has</p>
                   <div class="govuk-radios smart-tiles" data-module="govuk-radios">
                     <div class="govuk-radios__item">
-                      <input class="govuk-radios__input" id="child-iphone" name="child" type="radio" value="iphone" data-aria-controls="q2-wrap">
+                      <input class="govuk-radios__input" id="child-iphone" name="child" type="radio" value="iphone">
                       <label class="govuk-label govuk-radios__label" for="child-iphone"><svg class="smart-icon smart-tile-img" aria-hidden="true"><use href="#i-smartphone"></use></svg>An iPhone</label>
-                    </div>
-                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="q2-wrap">
-                      <div class="govuk-form-group" id="q2-group">
-                        <fieldset class="govuk-fieldset">
-                          <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Do you have your own iPhone or iPad?</legend>
-                          <div class="govuk-hint">This lets you change your child's settings from your own device.</div>
-                          <p class="govuk-error-message smart-hide" id="q2-error"><span class="govuk-visually-hidden">Error:</span> Select yes if you have your own iPhone or iPad</p>
-                          <div class="govuk-radios govuk-radios--small">
-                            <div class="govuk-radios__item">
-                              <input class="govuk-radios__input" id="parent-yes" name="parent" type="radio" value="yes">
-                              <label class="govuk-label govuk-radios__label" for="parent-yes">Yes</label>
-                            </div>
-                            <div class="govuk-radios__item">
-                              <input class="govuk-radios__input" id="parent-no" name="parent" type="radio" value="no">
-                              <label class="govuk-label govuk-radios__label" for="parent-no">No, I have an Android phone or no smartphone</label>
-                            </div>
-                          </div>
-                        </fieldset>
-                      </div>
                     </div>
                     <div class="govuk-radios__item">
                       <input class="govuk-radios__input" id="child-android" name="child" type="radio" value="android">
@@ -93,17 +74,15 @@
               <p class="govuk-body govuk-!-margin-bottom-0">Still not sure? Email <a class="govuk-link" href="mailto:smartphonestudy@public.io">smartphonestudy@public.io</a> and we'll help.</p>
             </div>
 
-            <h2 class="govuk-heading-m">All set-up guides</h2>
+            <h2 class="govuk-heading-m">Both set-up guides</h2>
             <ul class="smart-cards">
-              <li class="smart-card"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-tablet-smartphone"></use></svg></span><h3 class="smart-card__title"><a href="guide-iphone-parent.html">Route A: iPhone, managed from your iPhone or iPad</a></h3><p>About 35 minutes</p></li>
-              <li class="smart-card smart-card--sun"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-smartphone"></use></svg></span><h3 class="smart-card__title"><a href="guide-iphone-child.html">Route B: iPhone, set up on your child's phone</a></h3><p>For parents without an Apple device · About 25 minutes</p></li>
-              <li class="smart-card smart-card--mint"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-smartphone"></use></svg></span><h3 class="smart-card__title"><a href="guide-android.html">Route C: Android phone, with Family Link</a></h3><p>Samsung, Pixel, Motorola and others · About 40 minutes</p></li>
+              <li class="smart-card"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-smartphone"></use></svg></span><h3 class="smart-card__title"><a href="guide-iphone.html">Your child has an iPhone</a></h3><p>About 25 minutes, or 35 if you connect it to your own iPhone or iPad</p></li>
+              <li class="smart-card smart-card--mint"><span class="smart-card__icon"><svg class="smart-icon" aria-hidden="true"><use href="#i-smartphone"></use></svg></span><h3 class="smart-card__title"><a href="guide-android.html">Your child has an Android phone</a></h3><p>Samsung, Pixel, Motorola and others · About 40 minutes, or 20 if you already use Family Link</p></li>
             </ul>
 
             <h2 class="govuk-heading-m">Which apps are allowed?</h2>
-            <p class="govuk-body">Everything is blocked, apart from a short list of apps that most families told us they need:</p>
-            <ul class="smart-chips"><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-phone"></use></svg>Phone</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-message-square-text"></use></svg>Messages</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-map"></use></svg>Maps</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-camera"></use></svg>Camera</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-image"></use></svg>Photos</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-clock"></use></svg>Clock</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-calculator"></use></svg>Calculator</li><li class="smart-chip"><svg class="smart-icon" aria-hidden="true"><use href="#i-school"></use></svg>School app [TBC]</li><li class="smart-chip smart-chip--tbc"><svg class="smart-icon" aria-hidden="true"><use href="#i-circle-help"></use></svg>WhatsApp? [TBC]</li></ul>
-            <p class="govuk-body">Anything your child installs later is blocked automatically. If your family needs another app, <a class="govuk-link" href="help.html#request-app">ask us to add it</a>. We'll reply within 5 working days.</p>
+            <p class="govuk-body">Everything is blocked apart from a short list of apps families told us they need, such as calls, messages and maps, and a short list of websites. You'll see the list in your guide, at the step where you allow them back. Anything your child installs later is blocked automatically.</p>
+            <p class="govuk-body">If your family needs another app, <a class="govuk-link" href="help.html#request-app">ask us to add it</a>. We'll reply within 5 working days.</p>
           </section>
 
         </div>
@@ -112,8 +91,8 @@
   </div>
 
   <script src="assets/js/govuk-frontend.js?v=4"></script>
-  <script src="assets/js/icons.js?v=4"></script>
-  <script src="assets/js/site.js?v=4"></script>
+  <script src="assets/js/icons.js?v=5"></script>
+  <script src="assets/js/site.js?v=5"></script>
   <script>
     (function () {
       var form = document.getElementById('picker')
@@ -125,12 +104,10 @@
       form.addEventListener('submit', function (e) {
         e.preventDefault()
         var child = (form.querySelector('[name=child]:checked') || {}).value
-        var parent = (form.querySelector('[name=parent]:checked') || {}).value
         err('q1', !child)
-        err('q2', child === 'iphone' && !parent)
         document.getElementById('unsure').classList.toggle('smart-hide', child !== 'unsure')
         if (child === 'android') location.href = 'guide-android.html'
-        if (child === 'iphone' && parent) location.href = parent === 'yes' ? 'guide-iphone-parent.html' : 'guide-iphone-child.html'
+        if (child === 'iphone') location.href = 'guide-iphone.html'
       })
     })()
   </script>

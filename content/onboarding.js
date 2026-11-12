@@ -88,7 +88,7 @@ module.exports = {
       widths: [0.22, 0.39, 0.39],
       rows: [
         ['Summer term 2027', 'Share our welcome message and posters. Send us your school\'s apps and websites. Book your autumn assessment session.', 'Receive their welcome message and their sign-in details for the study website.'],
-        [START, 'The study starts.', 'Find their route on the study website and follow their guide. Watch the study video with their child.'],
+        [START, 'The study starts.', 'Find their guide on the study website (one for iPhones, one for Android phones) and follow it. Watch the study video with their child.'],
         ['Autumn term 2027', 'Pupils do the first reading and maths assessment, in class.', 'Nothing extra: the assessment happens at school.'],
         ['Throughout the year', 'Newsletter updates. Contact us whenever you need to.', 'Newsletter, study website and support email. If their child has a phone, a screen time screenshot once a month.'],
         [ROUNDS, 'A short feedback round, paid at [£XX] each.', 'A short survey from IFF Research, paid at [£XX] each.'],
