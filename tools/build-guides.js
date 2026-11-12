@@ -91,15 +91,20 @@ function writeSvgs (screens) {
   for (const [id, sc] of screens) fs.writeFileSync(out(`assets/guides/screens/${id}.svg`), render(sc) + '\n')
 }
 
+// A screen's SVG with its internal ids (clip paths, fades) made unique, so the same
+// screen can appear more than once on a page or board. With shared ids, browsers
+// and Figma use the first copy's clip, which can cut off another copy's edges.
+let copies = 0
+function screenSvg (sc, opts) {
+  const k = `c${++copies}-`
+  return render(sc, opts).replace(/id="([^"]+)"/g, `id="${k}$1"`).replace(/url\(#([^)]+)\)/g, `url(#${k}$1)`)
+}
+
 // ------------------------------------------------------------------ 2. microsite pages
 function screenFigure (sc, n, prefix) {
   const cap = `${prefix}${sc.id}-cap`
-  const svg = render(sc).replace('<svg ', `<svg aria-labelledby="${cap}" `).replace(/<title>.*?<\/title>/, '')
+  const svg = screenSvg(sc).replace('<svg ', `<svg aria-labelledby="${cap}" `).replace(/<title>.*?<\/title>/, '')
   return `<figure class="smart-screen" role="listitem">${svg}<figcaption id="${cap}"><span class="smart-screen__n">${n}</span><span><strong>${esc(sc.device)}.</strong> ${esc(sc.alt || '')}</span></figcaption></figure>`
-}
-
-function appChips () {
-  return G.allowlist.apps.map(a => `<li class="smart-chip${a.tbc ? ' smart-chip--tbc' : ''}">${icon(a.icon)}${esc(a.name)}<span class="smart-chip__for">${esc(a.for)}</span></li>`).join('')
 }
 
 // What a step says, below its title: everything that can change between versions
@@ -111,15 +116,6 @@ function stepBody (st, nums, prefix) {
   const d = G.allowlist.discretion
   return `
               ${st.intro ? `<p class="govuk-body">${md(st.intro, nums)}</p>` : ''}
-              ${st.list ? `<div class="smart-list">
-                <h4 class="govuk-heading-s">The apps on the list</h4>
-                <p class="govuk-body-s smart-list__tbc">${esc(G.allowlist.placeholder)}</p>
-                <ul class="smart-chips smart-chips--list">${appChips()}</ul>
-              </div>` : ''}
-              ${st.sites ? `<div class="smart-list">
-                <h4 class="govuk-heading-s">The websites on the list</h4>
-                <p class="govuk-body govuk-!-margin-bottom-0">${esc(G.allowlist.websites)}</p>
-              </div>` : ''}
               <ol class="govuk-list govuk-list--number smart-step__list">${items}</ol>
               ${(st.after || []).map(a => `<p class="govuk-body">${md(a, nums)}</p>`).join('')}
               ${st.list ? `<div class="smart-note smart-note--sky">
@@ -128,7 +124,7 @@ function stepBody (st, nums, prefix) {
               </div>` : ''}
               ${st.warn ? `<div class="govuk-inset-text smart-inset-warn">${md(st.warn, nums)}</div>` : ''}
               ${st.check ? `<div class="smart-check">${icon('circle-check')}<p class="govuk-body govuk-!-margin-bottom-0">${md(st.check, nums)}</p></div>` : ''}
-              ${screens ? `<div class="smart-screens" role="list" aria-label="What you'll see on the phone">${screens}</div>` : ''}`
+              ${screens ? `<p class="smart-screens__hint smart-no-print" aria-hidden="true">Swipe to see all ${st.screens.length} screens ${icon('arrow-right')}</p><div class="smart-screens" role="list" aria-label="What you'll see on the phone">${screens}</div>` : ''}`
 }
 
 // One step. On a guide page, a step that differs between versions holds every
@@ -138,7 +134,8 @@ function stepHtml (guide, i, opts = {}) {
   const shown = opts.version || V.shown
   const st = stepsFor(guide, shown)[i]
   const n = i + 1
-  let body = stepBody(st, nums, `s${n}-`)
+  const pre = opts.version ? `${guide.id}-${opts.version}-` : ''
+  let body = stepBody(st, nums, `${pre}s${n}-`)
   if (!opts.version) {
     const bodies = V.versions.map(v => ({ v, html: stepBody(stepsFor(guide, v.id)[i], nums, `s${n}-`) }))
     if (bodies.some(b => b.html !== body)) {
@@ -154,7 +151,7 @@ function stepHtml (guide, i, opts = {}) {
               </div>` : ''
   const already = st.already ? `<div class="smart-already">${icon('list-checks')}<p class="govuk-body govuk-!-margin-bottom-0">${md(st.already, nums)}</p></div>` : ''
   return `
-            <li class="smart-step" id="step-${n}">
+            <li class="smart-step" id="${pre}step-${n}">
               <h3 class="govuk-heading-m">${esc(st.title)}</h3>
               <ul class="smart-step__meta">
                 <li>${icon('clock')} ${esc(st.time)}</li>
@@ -200,8 +197,25 @@ function table (cols, rows, opts = {}) {
   return `<table class="govuk-table smart-table${opts.cls ? ' ' + opts.cls : ''}">
             ${opts.caption ? `<caption class="govuk-table__caption govuk-visually-hidden">${esc(opts.caption)}</caption>` : ''}
             <thead class="govuk-table__head"><tr class="govuk-table__row">${cols.map(c => `<th scope="col" class="govuk-table__header">${c}</th>`).join('')}</tr></thead>
-            <tbody class="govuk-table__body">${rows.map(r => `<tr class="govuk-table__row">${r.map((c, i) => i === 0 && opts.rowHeads ? `<th scope="row" class="govuk-table__header">${c}</th>` : `<td class="govuk-table__cell">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+            <tbody class="govuk-table__body">${rows.map(r => `<tr class="govuk-table__row">${r.map((c, i) => i === 0 && opts.rowHeads ? `<th scope="row" class="govuk-table__header">${c}</th>` : `<td class="govuk-table__cell" data-label="${esc(cols[i].replace(/<[^>]+>/g, ''))}">${c}</td>`).join('')}</tr>`).join('')}</tbody>
           </table>`
+}
+
+// Under Part 1: on iPhone, what changes if you skip it; on Android, why you can't
+function partOneNote (guide, nums) {
+  if (guide.compare) {
+    const c = guide.compare
+    return `<h3 class="govuk-heading-m" id="compare">${esc(c.title)}</h3>
+          <p class="govuk-body">${md(c.text, nums)}</p>
+          <div class="smart-table-wrap">${table(c.cols.map(x => esc(x)), c.rows.map(r => r.map(x => md(x, nums))), { rowHeads: true, cls: 'smart-table--compare', caption: c.title })}</div>`
+  }
+  if (guide.shortcut) {
+    return `<div class="smart-note" id="compare">
+            <h3 class="govuk-heading-s">${esc(guide.shortcut.title)}</h3>
+            ${guide.shortcut.text.map(t => `<p class="govuk-body">${md(t, nums)}</p>`).join('\n            ')}
+          </div>`
+  }
+  return ''
 }
 
 function pageHtml (guide) {
@@ -260,18 +274,9 @@ ${breadcrumbs}
           <p class="govuk-body">${md(G.intro.moreDevices)}</p>
           ${guide.os === 'android' ? `<div class="govuk-inset-text">${md(G.intro.androidNote)}</div>` : ''}
 
-          <h2 class="govuk-heading-l" id="how">${esc(G.howItWorks.title)}</h2>
-          ${G.howItWorks.text.map(t => `<p class="govuk-body">${md(t)}</p>`).join('\n          ')}
-
-          ${guide.compare ? `<h2 class="govuk-heading-l" id="compare">${esc(guide.compare.title)}</h2>
-          <p class="govuk-body">${md(guide.compare.text, nums)}</p>
-          <div class="smart-table-wrap">${table(guide.compare.cols.map(c => esc(c)), guide.compare.rows.map(r => r.map(c => md(c, nums))), { rowHeads: true, cls: 'smart-table--compare', caption: guide.compare.title })}</div>
-          <p class="govuk-body">${md(guide.compare.after, nums)}</p>` : ''}
-          ${guide.shortcut ? `<h2 class="govuk-heading-l" id="compare">${esc(guide.shortcut.title)}</h2>
-          ${guide.shortcut.text.map(t => `<p class="govuk-body">${md(t, nums)}</p>`).join('\n          ')}` : ''}
-
           ${stepsByPart.map(({ p, idx }) => `<h2 class="govuk-heading-l smart-part" id="part-${p}">${esc(guide.parts[p].title)}</h2>
           <p class="govuk-body-l">${md(guide.parts[p].text, nums)}</p>
+          ${p === 'connect' ? partOneNote(guide, nums) : ''}
           <ol class="smart-steps" style="counter-reset: step ${idx[0]}">${idx.map(i => stepHtml(guide, i)).join('')}
           </ol>`).join('\n\n          ')}
 
@@ -469,16 +474,11 @@ function docxKit () {
     }
     return new Table({ width: { size: colW * cols, type: WidthType.DXA }, columnWidths: [colW, colW, colW], borders: noBorders, rows })
   }
-  k.appsTable = () => k.table(['App', 'For'], G.allowlist.apps.map(a => [a.tbc ? `[${a.name}]` : a.name, a.for]), [3000, 6026])
   k.stepBlock = (st, label, nums) => {
     const ch = [k.H(`${label}: ${st.title}`, HeadingLevel.HEADING_3), k.P(`${st.time} · on ${st.device}`, { color: '555555', italics: true })]
     if (st.skip) ch.push(k.callout(st.skip.text, 'EEF6FD', '1A5C9E', nums), k.space())
     if (st.already) ch.push(k.callout(st.already, 'E6F7F1', '0B7A67', nums), k.space())
     if (st.intro) ch.push(k.P(st.intro, { nums }))
-    if (st.list) {
-      ch.push(k.P('**The apps on the list**'), k.P(G.allowlist.placeholder, { bold: true, color: CORAL }), k.appsTable(), k.space())
-    }
-    if (st.sites) ch.push(k.P('**The websites on the list**'), k.P(G.allowlist.websites, { bold: true, color: CORAL }))
     ch.push(...k.numbered(st.items || [], nums))
     ;(st.after || []).forEach(a => ch.push(k.P(a, { nums })))
     if (st.list) {
@@ -536,8 +536,6 @@ function buildGuidanceDocx () {
   body.push(k.callout(G.intro.beforeWarn, 'FDE7D3', k.CORAL), k.space())
   body.push(k.P(G.intro.moreDevices))
 
-  body.push(k.H(G.howItWorks.title, HeadingLevel.HEADING_2))
-  G.howItWorks.text.forEach(t => body.push(k.P(t)))
 
   G.guides.forEach(guide => {
     const nums = numbers(guide)
@@ -554,21 +552,15 @@ function buildGuidanceDocx () {
     body.push(k.table(['Where you are', 'Start at'], sf.rows.map(r => [r.have, `**Step ${nums.get(r.go)}**: ${guide.steps[nums.get(r.go) - 1].title}`]), [5400, 3626], nums))
     body.push(k.space(), k.P(sf.after, { nums }))
 
-    if (guide.compare) {
-      const c = guide.compare
-      body.push(k.H(c.title, HeadingLevel.HEADING_2))
-      body.push(k.P(c.text, { nums }))
-      body.push(k.table(c.cols, c.rows, [2600, 3213, 3213], nums))
-      body.push(k.space(), k.P(c.after, { nums }))
-    }
-    if (guide.shortcut) {
-      body.push(k.H(guide.shortcut.title, HeadingLevel.HEADING_2))
-      guide.shortcut.text.forEach(t => body.push(k.P(t, { nums })))
-    }
-
     partKeys(guide).forEach(p => {
       body.push(k.H(guide.parts[p].title, HeadingLevel.HEADING_2))
       body.push(k.P(guide.parts[p].text, { italics: true }))
+      if (p === 'connect' && guide.compare) {
+        const c = guide.compare
+        body.push(k.P(`**${c.title}.** ${c.text}`, { nums }))
+        body.push(k.table(c.cols, c.rows, [2600, 3213, 3213], nums), k.space())
+      }
+      if (p === 'connect' && guide.shortcut) body.push(k.callout([`**${guide.shortcut.title}.**`, ...guide.shortcut.text], 'EEF6FD', '1A5C9E', nums), k.space())
       steps.forEach((st, i) => { if (st.part === p) body.push(...k.stepBlock(st, `Step ${i + 1}`, nums)) })
     })
   })
@@ -636,19 +628,22 @@ function figmaBoard (title, blocks) {
     if (st.skip) callout(st.skip.text, '#EEF6FD')
     if (st.already) callout(st.already, '#E6F7F1')
     if (st.intro) { wrapLines(p(st.intro), 16, 470).forEach(l => { text += t(60, ty, l, 16, 400); ty += 22 }); ty += 10 }
-    if (st.list) callout('Apps on the list: ' + G.allowlist.apps.map(a => a.name).join(', '), '#FFFAF3')
-    const items = (st.items || []).flatMap(it => typeof it === 'string' ? [it] : [it.text, ...(it.sub || []).map(x => '– ' + x)])
-    items.forEach((it, k) => {
-      const lines = wrapLines(p(it), 16, 440)
-      lines.forEach((l, li) => { text += t(li === 0 ? 60 : 84, ty, (li === 0 ? `${k + 1}. ` : '') + l, 16, 400); ty += 22 })
+    ;(st.items || []).forEach((it, k) => {
+      const main = typeof it === 'string' ? it : it.text
+      wrapLines(p(main), 16, 440).forEach((l, li) => { text += t(li === 0 ? 60 : 84, ty, (li === 0 ? `${k + 1}. ` : '') + l, 16, 400); ty += 22 })
+      ;((typeof it === 'string' ? [] : it.sub) || []).forEach(x => {
+        ty += 4
+        wrapLines(p(x), 15, 410).forEach((l, li) => { text += t(li === 0 ? 84 : 100, ty, (li === 0 ? '– ' : '') + l, 15, 400, '#33475F'); ty += 21 })
+      })
       ty += 8
     })
+    if (st.list) callout([G.allowlist.discretion.title + '.', ...G.allowlist.discretion.text].join(' '), '#EEF6FD')
     ;(st.after || []).forEach(a => { wrapLines(p(a), 15, 470).forEach(l => { text += t(60, ty, l, 15, 400, '#4A5B70'); ty += 21 }); ty += 8 })
     ;[st.warn, st.check].filter(Boolean).forEach(c => callout(c, '#FFF1C9'))
     let sx = 580
     let sh = 0
     ;(st.screens || []).forEach(sc => {
-      const svg = render(sc, { title: false })
+      const svg = screenSvg(sc, { title: false })
       const m = svg.match(/viewBox="0 0 (\d+) (\d+)"/)
       const w = +m[1] * scale
       const h = +m[2] * scale

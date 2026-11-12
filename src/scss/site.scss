@@ -751,16 +751,29 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
   &--peach { background: $peach; }
   &--sky { background: $sky-light; }
 }
-.smart-list {
-  margin: 0 0 18px; padding: 16px 18px 6px; border-radius: 16px; border: 2px dashed $line;
-  .smart-chips { margin-bottom: 10px; }
-}
-.smart-list__tbc { color: $coral-dark; font-weight: 700; }
 .smart-part { margin-top: 40px; }
+.smart-screens__hint {
+  display: none;
+  @include govuk.govuk-media-query($until: tablet) {
+    display: flex; align-items: center; gap: 6px; margin: 18px 0 -12px;
+    font-size: 15px; font-weight: 800; color: #4a5b70;
+    .smart-icon { width: 16px; height: 16px; }
+  }
+}
 .smart-nowrap { white-space: nowrap; }
 .smart-table-wrap { overflow-x: auto; margin-bottom: 20px; .govuk-table { margin-bottom: 0; } }
 .smart-table { @include govuk.govuk-font(16); }
-.smart-table--compare { min-width: 560px; th[scope="row"] { width: 30%; } }
+.smart-table--compare {
+  th[scope="row"] { width: 30%; }
+  // Phones: one card per row, each answer labelled with its column
+  @include govuk.govuk-media-query($until: tablet) {
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    tr, th[scope="row"], td { display: block; width: auto !important; }
+    tr { padding: 10px 0; border-bottom: 1px solid $line; }
+    th[scope="row"], td { border: 0; padding-top: 4px; padding-bottom: 4px; }
+    td::before { content: attr(data-label); display: block; font-weight: 800; color: #4a5b70; font-size: 14px; }
+  }
+}
 .smart-table--versions { min-width: 760px; }
 .smart-contents__part { font-size: 14px; font-weight: 800; color: #4a5b70; text-transform: uppercase; letter-spacing: .04em; margin: 12px 0 4px; }
 .smart-contents li.is-skipped a { color: #6b7785; text-decoration: line-through; }
