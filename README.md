@@ -23,7 +23,8 @@ Every family sees the same pages, because we won't know whether a child has a ph
 | `sign-in.html`, `privacy.html`, `accessibility.html` | Everyone |
 | `start.html` | Signed-in families. The two paths (no phone yet / has a phone) with their tasks, the study video, what's new. |
 | `guides.html` | Signed-in. The guide to waiting, then the set-up guides, with two questions to choose the right one. |
-| `guide-iphone-parent.html`, `guide-iphone-child.html`, `guide-android.html` | Signed-in. Step-by-step set-up guides with pictures, progress ticks and video. |
+| `guide-iphone.html`, `guide-android.html` | Signed-in. Step-by-step set-up guides with pictures, progress ticks, skip-ahead and video. |
+| `guide-versions.html` | The study team. The versions of the "Block apps" step we're testing, side by side. Not linked from the site. Generated: see below. |
 | `guide-delay.html` | Signed-in. The guide to waiting for a first smartphone. Generated: see below. |
 | `schools.html` | School leaders only. Onboarding pack and e-posters. Generated: see below. |
 | `videos.html` | Signed-in. Two kinds of video: the study video, a motivational video for children about why the study matters; and the how-to videos for setting up a phone. Vimeo, loaded on play. |
@@ -43,14 +44,37 @@ To rebuild the CSS after editing the SCSS: `npm install && npm run build`.
 
 ## The set-up guides (one source, three outputs)
 
-The restrictions guidance lives in **`content/guidance.js`**: the routes (A, B, C), the steps, the allowed-apps list, and a short description of every phone screen. Run `npm run build:guides` to generate:
+The restrictions guidance lives in **`content/guidance.js`**: the two guides, their steps, the versions of the "Block apps" step, the allowed-apps list, and a short description of every phone screen. Run `npm run build:guides` to generate:
 
 | Output | Where | Use it for |
 | --- | --- | --- |
-| Guide pages | `guide-iphone-parent.html` (A), `guide-iphone-child.html` (B), `guide-android.html` (C) | The microsite. Don't edit these by hand. |
-| Word document | `exports/SMART-restrictions-guidance.docx` | Sharing and printing. Text is editable. |
-| Figma boards | `exports/figma/route-a.svg`, `-b`, `-c` | Drag into Figma: one board per route, text stays editable (Inter). |
-| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. The PNGs are numbered in the order the Word document places them (`01-ios-settings-account.png` onwards): routes A, B and C, then the shared iPhone and Android settings. A screen used twice keeps the number of its first use. |
+| Guide pages | `guide-iphone.html`, `guide-android.html` | The microsite. Don't edit these by hand. |
+| Versions page | `guide-versions.html` | The team: every version of the "Block apps" step, with what it changes, why to try it, what to watch for and how to tell them apart. |
+| Word documents | `exports/SMART-restrictions-guidance.docx`, `exports/SMART-block-step-versions.docx` | Sharing and printing. Text is editable. |
+| Figma boards | `exports/figma/guide-iphone.svg`, `guide-android.svg`, `block-step-versions.svg` | Drag into Figma: one board per guide, and one with every version. Text stays editable (Inter). |
+| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. The PNGs are numbered in the order the guidance Word document places them (`01-ios-settings-account.png` onwards): the iPhone guide, then the Android guide, then the screens only the other versions use. A screen used twice keeps the number of its first use. |
+
+### How the guides work
+
+There's one guide per child's phone; the parent's own phone doesn't matter. Each guide has two parts:
+
+- **Part 1 connects the child's phone to the parent's.** On an iPhone it's optional: parents without an Apple device, or who'd rather go quicker, press **Skip to Step 3** and set everything up on the child's phone. The apps and websites are just as locked down; a table on the page sets out what they give up (changing settings from their own phone, requests coming to them, Apple's default protections for children's accounts, code recovery). On Android, Family Link is what locks the settings, so Part 1 is needed unless the family already uses it.
+- **Part 2 is the study settings**, the same shape on both phones: set the code (iPhone), block apps, allow back the apps on the list, allow only the websites on the list, lock the settings, check it works.
+
+Every guide opens with **Start from what you already have**, a table that sends parents to the right step, and every step has an **Already done?** note saying how to check and what to keep. Skipped steps are marked as such and don't count against the parent's progress. The apps on the list appear only in Step 5 ("Allow back the apps on the list"), with a note on using judgement for any single extra app; the websites appear in Step 6. There's also a box asking parents to do this themselves rather than handing the phone to their child.
+
+### Testing the "Block apps" step
+
+`blockVersions` in the content file holds four versions of Step 4, each with its own words and screens for iPhone and Android:
+
+| Version | What it is |
+| --- | --- |
+| A | The previous guides' wording: ten categories listed one by one. |
+| **B** | **In the guides now.** The same ten categories, as one rule ("every category except two"), with a number to check, a reason, "nothing is deleted", and a single-app exception. |
+| C | Top three only: Social, Games and Entertainment (on Android, blocking those apps by hand). Lighter, so it's a trial decision as well as a wording one. |
+| D | Top three first, then the rest: the same end result as B, asked in two stages. |
+
+Add `?version=C` (or A, D) to a guide's address to see a version in context; a yellow tag marks the step. Change `shown` to change what families see.
 
 The PNG and Word steps use Playwright's Chromium. To use a browser that's already installed, set `CHROMIUM` to its path, for example `CHROMIUM=/opt/pw-browsers/chromium npm run build:guides`. Screens removed from the content file are deleted from both folders on the next build, and PNGs are renumbered if the order changes.
 
