@@ -20,19 +20,32 @@ const EMAIL = 'smartphonestudy@public.io'
 // ------------------------------------------------------------------ the allowlist
 const allowlist = {
   apps: [
-    { name: 'Phone', for: 'Calls', icon: 'phone', colour: '#34C759' },
-    { name: 'Messages', for: 'Texts', icon: 'message-circle', colour: '#34C759' },
+    { name: 'Phone', for: 'Calls', icon: 'phone', colour: '#34C759', iosDefault: true, androidAlways: true },
+    { name: 'Messages', for: 'Texts', icon: 'message-circle', colour: '#34C759', iosDefault: true },
     { name: 'WhatsApp', for: 'Family and friends', icon: 'message-square', colour: '#25D366' },
-    { name: 'Maps', for: 'Getting around', icon: 'map', colour: '#30B0C7' },
+    { name: 'Maps', android: 'Google Maps', for: 'Getting around', icon: 'map', colour: '#30B0C7', iosDefault: true },
     { name: 'Life360', for: 'Location', icon: 'map-pin', colour: '#7B61FF', tbc: true },
     { name: 'Weather', for: 'Weather', icon: 'cloud-sun', colour: '#1E90FF' },
     { name: 'Moodle', for: 'Schoolwork', icon: 'graduation-cap', colour: '#F98012', tbc: true },
-    { name: 'School app', for: 'Timetable and notices', icon: 'school', colour: '#003A69', tbc: true },
+    { name: 'School app', label: "your child's school app", for: 'Timetable and notices', icon: 'school', colour: '#003A69', tbc: true },
     { name: 'Camera', for: 'Photos', icon: 'camera', colour: '#8E8E93' },
     { name: 'Clock', for: 'Alarms', icon: 'clock', colour: '#1C1C1E' }
   ],
   websites: '[PLACEHOLDER: [SCHOOL DOMAIN], [Moodle], [BBC Bitesize], [others agreed with parents]]',
   placeholder: '[PLACEHOLDER: replace with the co-designed list.]'
+}
+
+// The apps, as words for the steps: "**WhatsApp**, **Weather** and **Camera**".
+// Apps still to be confirmed are in [square brackets].
+const andList = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0]
+const appWords = (apps, os) => andList(apps.map(a => {
+  const n = (os === 'android' && a.android) || a.label || a.name
+  return a.tbc ? `**[${n}]**` : `**${n}**`
+}))
+const APPS = {
+  iosKeep: appWords(allowlist.apps.filter(a => a.iosDefault)),
+  iosAdd: appWords(allowlist.apps.filter(a => !a.iosDefault)),
+  android: appWords(allowlist.apps.filter(a => !a.androidAlways), 'android')
 }
 
 // ------------------------------------------------------------------ reusable screen parts
@@ -243,10 +256,10 @@ S.alwaysAllowedList = {
       { icon: 'phone', colour: '#34C759', label: 'Phone', app: true },
       { minus: true, icon: 'message-circle', colour: '#34C759', label: 'Messages', app: true },
       { minus: true, icon: 'map', colour: '#30B0C7', label: 'Maps', app: true },
-      { minus: true, icon: 'play', colour: '#34C759', label: 'FaceTime', app: true, hl: 'Remove if not on the list' }
+      { minus: true, icon: 'play', colour: '#34C759', label: 'FaceTime', app: true, hl: 'Remove anything else' }
     ] },
     { type: 'group', header: 'Choose Apps', rows: [
-      { plus: true, icon: 'message-square', colour: '#25D366', label: 'WhatsApp', app: true, hl: 'Add each app on the list' },
+      { plus: true, icon: 'message-square', colour: '#25D366', label: 'WhatsApp', app: true, hl: 'Add the apps in the guide' },
       { plus: true, icon: 'cloud-sun', colour: '#1E90FF', label: 'Weather', app: true },
       { plus: true, icon: 'camera', colour: '#8E8E93', label: 'Camera', app: true },
       { plus: true, icon: 'play', colour: '#FF0000', label: 'YouTube', app: true }
@@ -392,7 +405,7 @@ S.timeLimitScreen = {
   blocks: [
     { type: 'message', icon: 'hourglass', title: 'Time Limit', text: "You've reached your limit on YouTube.", button: 'Ask For More Time', dark: true }
   ],
-  alt: "What your child sees when they open an app that isn't on the list: Time Limit."
+  alt: "What your child sees when they open an app that's blocked: Time Limit."
 }
 
 // ------------------------------------------------------------------ shared settings: Android (Family Link)
@@ -477,7 +490,7 @@ S.flAppLimits = {
     ] }
   ],
   cut: true,
-  alt: 'App limits in Family Link. Each app on the list, and Google Chrome, is set to Unlimited time and shows an infinity sign. Apps not on the list have no sign.'
+  alt: 'App limits in Family Link. Each app your child needs, and Google Chrome, is set to Unlimited time and shows an infinity sign. The others have no sign.'
 }
 
 const WEEK = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
@@ -528,11 +541,11 @@ S.flChrome = {
       { radio: 'on', label: 'Only allow approved sites', sub: 'Customise your own list and approve requests', hl: 'Choose this' }
     ] },
     { type: 'fcard', title: 'Manage sites', text: "Allow specific sites for Alex and block sites that you don't want them visiting", rows: [
-      { label: 'Approved sites', sub: '2 sites', chevron: true, hl: 'Add the sites on the list' },
+      { label: 'Approved sites', sub: '2 sites', chevron: true, hl: 'Add the sites in the guide' },
       { label: 'Blocked sites', sub: '0 sites', chevron: true }
     ] }
   ],
-  alt: 'Google Chrome and web in Family Link, set to Only allow approved sites. Add the sites on the list under Approved sites.'
+  alt: 'Google Chrome and web in Family Link, set to Only allow approved sites. Add the sites in the guide under Approved sites.'
 }
 
 S.flPlay = {
@@ -812,7 +825,7 @@ S.flAppLimitsBlocked = {
     ] }
   ],
   cut: true,
-  alt: 'App limits in Family Link. Social media, game and video apps such as YouTube, TikTok and Roblox are set to Block. Apps on the list keep their infinity sign.'
+  alt: 'App limits in Family Link. Social media, game and video apps such as YouTube, TikTok and Roblox are set to Block. The apps your child needs keep their infinity sign.'
 }
 
 // ------------------------------------------------------------------ route-specific screens
@@ -1036,16 +1049,15 @@ S.flProfile = flScreenTime('fl-profile', { device: 'This means it worked' }, "Sc
 // Step fields: title, time, device, intro, items, after, warn, check, screens,
 //   already  "Already done?" note at the top of the step: what to keep, or where to go
 //   skip     a "skip ahead" box: { text, to: step key }
-//   list     true shows the apps on the list in this step
-//   sites    true shows the websites on the list in this step
+//   list     true adds the "If your child needs another app" note
 //   variants true means the step has versions to test (see blockVersions below)
 
 const intro = {
   title: 'Setting up your child\'s phone',
   lead: '**What we\'re asking you to do:** turn on a few settings that are already built into your child\'s phone, so it only has a short list of apps and websites. Then leave them running.',
   text: [
-    'There\'s nothing to buy and nothing to install on your child\'s phone. Most families take 25 to 40 minutes.',
-    '**You don\'t need to start from scratch.** If some of this is already set up, start from what you have. Each step tells you how to check, and what to keep.'
+    '**How it works:** you block apps, then allow back the few your child needs, such as calls, messages and maps. Then you limit the web to a few sites, and lock it all with a code only you know. Anything installed later is blocked automatically.',
+    'There\'s nothing to buy and nothing to install on your child\'s phone.'
   ],
   webOnly: 'You can stop between steps and come back. This page remembers the steps you\'ve ticked.',
   before: [
@@ -1058,10 +1070,10 @@ const intro = {
   moreDevices: `**If your child has more than one device**, such as an old phone or a tablet, do the main phone first and tell us about the others at ${EMAIL}.`,
   androidNote: '**A note on Android phones.** Samsung, Google Pixel, Xiaomi, Motorola and the rest arrange their Settings slightly differently. If a step doesn\'t match, **open Settings, tap the search box or magnifying glass at the top, and type the name of the setting.** It will find it whatever your phone.',
   optional: {
-    title: 'Optional: time caps on apps on the list',
+    title: 'Optional: time caps on the apps you allowed',
     text: [
       'This isn\'t part of what we\'re asking. Skip it if you\'re happy as things stand.',
-      `The list works by exempting apps from limits, so an app on the list will ignore a time limit you set on it, on both iPhone and Android. If you want a cap on one of them, email ${EMAIL} and we'll sort out the set-up for your phone.`
+      `The list works by exempting apps from limits, so an app you've allowed will ignore a time limit you set on it, on both iPhone and Android. If you want a cap on one of them, email ${EMAIL} and we'll sort out the set-up for your phone.`
     ]
   }
 }
@@ -1070,26 +1082,18 @@ const intro = {
 const yourself = {
   title: 'Please do this yourself, not your child',
   text: [
-    'Your child may know their way round the phone better than you, and it can be tempting to hand it over. Please don\'t. **Whoever sets this up knows the code, and whoever knows the code can undo all of it.**',
-    'Sit together and explain what you\'re doing, if you like. But hold the phone yourself, type the codes yourself, and don\'t let anyone watch you type them, older brothers and sisters included.'
-  ]
-}
-
-const howItWorks = {
-  title: 'How it works',
-  text: [
-    '**Block apps, then allow back a short list** your child needs, such as calls, messages and maps. Then limit the web to a short list of sites, and lock it all with a code only you know.',
-    'Anything installed later is blocked automatically, because it isn\'t on the list. You\'ll see the list at the step where you use it.'
+    'Your child may know their way round the phone better than you, and it\'s tempting to hand it over. Please don\'t. **Whoever sets this up knows the code, and whoever knows the code can undo all of it.**',
+    'Sit together and explain what you\'re doing, if you like. But hold the phone and type the codes yourself, where nobody can see.'
   ]
 }
 
 // Shown at the step where parents allow apps back, on both phones
 allowlist.discretion = {
-  title: 'If your child needs an app that isn\'t on the list',
+  title: 'If your child needs another app',
   text: [
-    'You can allow back a single app yourself, here, one at a time: for example a map for getting to a club, or an app their school uses.',
-    '**Please use your judgement.** Will they need it most weeks? Does it have videos, a feed, games, or chat with people they don\'t know? If it has any of those, leave it off. If you\'re not sure, leave it off and ask us.',
-    `Please tell us about any app you add, at ${EMAIL}. We reply within five working days, and if other families need it too we'll add it to the list for everyone.`
+    'You can allow back one more app yourself, in the same way: for example one their school or a club uses.',
+    '**Please use your judgement.** Will they need it most weeks? Does it have videos, a feed, games, or chat with people they don\'t know? If it has any of those, leave it blocked. If you\'re not sure, leave it blocked and ask us.',
+    `Please tell us about any app you add, at ${EMAIL}. If other families need it too, we'll add it to the guide for everyone.`
   ]
 }
 
@@ -1142,7 +1146,7 @@ const blockVersions = {
       why: 'One rule is easier to follow than a list of ten. Saying nothing is deleted, and pointing to a single-app exception, should stop parents unticking a whole category to keep one app.',
       watch: 'Pointing to the exception may lead some parents to allow back more apps than they need.',
       ios: {
-        intro: '**This is the step that does the work.** One limit blocks whole categories of apps, including any your child installs later. In the next step you allow back the few apps on the list.',
+        intro: '**This is the step that does the work.** One limit blocks whole categories of apps, including any your child installs later. In the next step you allow back the few your child needs.',
         items: [
           'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
           { text: '**Tick every category except two.** Leave **Information & Reading** and **Utilities** unticked: the phone needs them to open any website, and [[step:web]] limits the web separately.', sub: [
@@ -1159,7 +1163,7 @@ const blockVersions = {
         screens: [S.appLimitsRow, S.addLimit, S.chooseAppsRule, S.timePicker, S.blockAtEnd, S.timeLimitScreen]
       },
       android: {
-        intro: '**This is the step that does the work.** Family Link doesn\'t group apps into categories, so the way to block everything at once, including apps installed later, is downtime for the whole day. It sounds drastic, but it\'s only the first half: in the next step you allow back the apps on the list.',
+        intro: '**This is the step that does the work.** Family Link doesn\'t group apps into categories, so the way to block everything at once, including apps installed later, is downtime for the whole day. It sounds drastic, but it\'s only the first half: in the next step you allow back the few apps your child needs.',
         items: [
           'Open **Family Link**. It opens on **Screen time** (bottom left). Tap **Schedules**.',
           'Turn on **Downtime**. Leave **School time** off.',
@@ -1168,7 +1172,7 @@ const blockVersions = {
         ],
         after: [
           '**Your child\'s phone will lock, apart from calls, until you finish the next step.** That\'s expected. Nothing is deleted: apps, photos and messages stay on the phone.',
-          '**Need one app that isn\'t on the list?** Allow back just that app in the next step.'
+          '**Need another app?** You can allow it back in the next step too.'
         ],
         screens: [S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
       }
@@ -1192,7 +1196,7 @@ const blockVersions = {
         ],
         after: [
           '**Nothing is deleted.** Apps, photos and messages stay on the phone, just locked. You can change any of this later with your code.',
-          'Messaging apps such as WhatsApp are in **Social**, so they\'re blocked too. If they\'re on the list, you\'ll allow them back in the next step.'
+          'Messaging apps such as WhatsApp are in **Social**, so they\'re blocked too. You\'ll allow WhatsApp back in the next step.'
         ],
         screens: [S.appLimitsRow, S.addLimit, S.chooseAppsTop3, S.timePicker3, S.blockAtEnd3, S.timeLimitScreen]
       },
@@ -1214,8 +1218,8 @@ const blockVersions = {
       androidAllow: {
         intro: 'In this version only the apps you chose are blocked, so this is a quick check.',
         items: [
-          'In **App limits**, check that none of the apps on the list says **Blocked**. If one does, tap it and choose **Unlimited time**.',
-          'Set **Google Chrome** to **Unlimited time** too, so the websites on the list open.'
+          `In **App limits**, check that none of these says **Blocked**: ${APPS.android}. If one does, tap it and choose **Unlimited time**.`,
+          'Set **Google Chrome** to **Unlimited time** too, so the websites in the next step open.'
         ],
         after: [],
         screens: [S.flAppLimits]
@@ -1255,7 +1259,7 @@ const blockVersions = {
         ],
         after: [
           '**Your child\'s phone will lock, apart from calls, until you finish the next step.** That\'s expected. Nothing is deleted.',
-          '**Need one app that isn\'t on the list?** Allow back just that app in the next step.'
+          '**Need another app?** You can allow it back in the next step too.'
         ],
         screens: [S.flAppLimitsBlocked, S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
       }
@@ -1268,28 +1272,28 @@ const guides = [
     id: 'iphone', slug: 'guide-iphone', os: 'ios', illus: 'guide-iphone.svg', hero: '',
     title: 'Your child has an iPhone',
     short: 'iPhone',
-    lead: 'One guide for every iPhone, whatever phone you have. Connecting your child\'s iPhone to your own (Steps 1 and 2) gives you the most control. If that\'s not for you, skip to Step 3: the apps and websites are just as locked down.',
+    lead: 'Whatever phone you have yourself. If you have an iPhone or iPad, you can also connect your child\'s iPhone to it, so you can manage it from your own phone.',
     time: 'About 25 minutes, or 35 with Steps 1 and 2',
     checked: 'Checked on iOS 18 and 26',
     video: '1084537',
     startFrom: {
       title: 'Start from what you already have',
-      text: 'Find the first row that\'s true for you.',
+      text: 'Find the row that matches where you are.',
       rows: [
-        { have: 'Screen Time on your child\'s iPhone is locked with a code **only you** know', go: 'block' },
-        { have: 'Your child is in your Family Sharing group, and their iPhone is signed in to their own account', go: 'code' },
-        { have: 'You don\'t have an iPhone or iPad, or you\'d like the quicker way', go: 'code' },
-        { have: 'Nothing is set up yet, and you have an iPhone or iPad', go: 'family' }
+        { have: 'Nothing is set up yet, and you have an iPhone or iPad', go: 'family' },
+        { have: 'Nothing is set up yet, and you don\'t have an iPhone or iPad', go: 'code' },
+        { have: 'Your child is already in your Family Sharing group, and their iPhone is signed in to their own account', go: 'code' },
+        { have: 'Screen Time on their iPhone is already locked with a code **only you** know', go: 'block' }
       ],
       after: 'Already using **App Limits**, **Downtime** or **Content & Privacy Restrictions**? Keep them. The steps add to what you have, and each one says what to change.'
     },
     // With or without Part 1: the differences
     compare: {
-      title: 'Connected to your iPhone, or set up on theirs only?',
-      text: 'Both block the same apps and websites, and both are locked with your code. The difference is what you can do afterwards.',
-      cols: ['', 'Connected to your iPhone or iPad (Steps 1 and 2)', 'Set up on their iPhone only (skip to Step 3)'],
+      title: 'What changes if you skip Part 1',
+      text: 'The apps and websites are just as locked down either way. The difference is what you can do afterwards.',
+      cols: ['', 'With Steps 1 and 2', 'Skipping to Step 3'],
       rows: [
-        ['Apps and websites limited to the list', 'Yes', 'Yes, exactly the same'],
+        ['Apps and websites blocked', 'Yes', 'Yes, exactly the same'],
         ['Locked with a code only you know', 'Yes', 'Yes'],
         ['Changing a setting later', 'From your own phone, any time', 'Only with their phone in your hands'],
         ['When your child asks for more time or a new app', 'The request comes to your phone', 'You type your code on their phone'],
@@ -1298,17 +1302,16 @@ const guides = [
         ['If you forget your code', 'Reset it with your Apple Account', 'Reset it with an Apple Account if you gave one. If not, the phone may need erasing'],
         ['What you need', 'Your own iPhone or iPad. To create a child account, possibly a credit card to show you\'re over 18', 'Nothing extra'],
         ['Time', 'About 35 minutes', 'About 25 minutes']
-      ],
-      after: 'Not sure? Try Steps 1 and 2. If they get stuck, for example on proving your age, **skip to Step 3 rather than stopping there**. You can come back to them another day.'
+      ]
     },
     parts: {
-      connect: { title: 'Part 1: Connect their iPhone to yours', text: 'Recommended if you have an iPhone or iPad. You can skip it.' },
+      connect: { title: 'Part 1: Connect their iPhone to yours', text: 'Worth doing if you have an iPhone or iPad, but you can skip it.' },
       settings: { title: 'Part 2: The study settings', text: 'Everyone does these, on your child\'s phone.' }
     },
     steps: [
       {
         key: 'family', part: 'connect', title: 'Add your child to your family group', time: '5 minutes', device: 'your phone',
-        skip: { text: '**Skip Steps 1 and 2** if you don\'t have an iPhone or iPad, if they\'re already done, or if you\'d rather set everything up on your child\'s phone. Their phone will be just as locked down. [See what\'s different](#compare).', to: 'code', button: 'Skip to Step 3' },
+        skip: { text: '**No iPhone or iPad, or short of time?** Skip to Step 3 and set everything up on your child\'s phone. It will be just as locked down.', to: 'code', button: 'Skip to Step 3' },
         already: '**Already done** if your child\'s name is listed in **Settings** → your name → **Family**. Go to [[step:signin]].',
         items: [
           'On **your** phone, open **Settings** and tap **your name** at the very top.',
@@ -1322,7 +1325,7 @@ const guides = [
         ],
         after: [
           'If your child\'s Apple Account was set up with an adult\'s age, you can correct it and convert it to a child account from this same screen. It\'s worth doing.',
-          '**Stuck here**, for example with no credit card or an age check that won\'t go through? Don\'t stop: skip to [[step:code]] and set everything up on your child\'s phone. You can come back to this later.'
+          '**Stuck here**, for example on the age check? Don\'t stop: skip to [[step:code]]. You can come back to this another day.'
         ],
         screens: [S.parentSettingsRoot, S.appleAccount, S.inviteFamily, S.createChild]
       },
@@ -1342,7 +1345,7 @@ const guides = [
       },
       {
         key: 'code', part: 'settings', title: 'Turn on Screen Time and set your code', time: '5 minutes', device: "your child's phone",
-        already: '**Already have a Screen Time code?** If you see **Change Screen Time Passcode**, there is one. If only you know it, go to [[step:block]]. If your child might know it, or you chose it together, tap **Change Screen Time Passcode** and pick a new one.',
+        already: '**Already have a code?** If you see **Change Screen Time Passcode**, you do. If only you know it, go to [[step:block]]. If your child might know it, tap **Change Screen Time Passcode** and choose a new one.',
         items: [
           'On **your child\'s** phone, open **Settings** and tap **Screen Time**.',
           'If Screen Time isn\'t on yet, turn it on. If a screen like the one shown pops up, tap **Turn on App & Website Activity**.',
@@ -1358,34 +1361,33 @@ const guides = [
       },
       {
         key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: "your child's phone", variants: true,
-        already: '**Already have App Limits?** Keep them, and add this as one more limit. An app is blocked as soon as any of its limits runs out, so this one takes over.'
+        already: '**Already have App Limits?** Keep them, and add this one alongside.'
       },
       {
-        key: 'allow', part: 'settings', title: 'Allow back the apps on the list', time: '5 minutes', device: "your child's phone", list: true,
-        intro: 'These are the apps most families told us their child needs. They\'ll work as normal, at any time.',
-        already: '**Already use Always Allowed for Downtime?** It\'s the same list for both, so apps you allow here also work during Downtime.',
+        key: 'allow', part: 'settings', title: 'Allow back the apps your child needs', time: '5 minutes', device: "your child's phone", list: true,
+        already: '**Already use Always Allowed for Downtime?** It\'s the same list for both, so these apps will work during Downtime too.',
         items: [
           'Go back to **Screen Time** and tap **Always Allowed**.',
-          'The top section is what\'s allowed now, such as Phone, Messages, FaceTime and Maps. Tap the red **−** next to anything that isn\'t on the list. Phone can\'t be removed.',
-          'The lower section lists the other apps on the phone. Tap the green **+** next to each app on the list that\'s installed.'
+          `The top section is what\'s allowed now. Keep ${APPS.iosKeep}. Tap the red **−** next to anything else, such as **FaceTime**. (Phone can\'t be removed.)`,
+          `In the lower section, tap the green **+** next to each of these, if it\'s on the phone: ${APPS.iosAdd}.`
         ],
-        after: ['Apps on the list now work as normal. Everything else shows a **Time Limit** screen.'],
-        warn: `**If an app on the list is still blocked**, check it's in the **top** section of Always Allowed, not the lower one. If it still won't open, email ${EMAIL}. Don't remove the limit from the last step.`,
+        after: ['These apps now work as normal, at any time. Everything else shows a **Time Limit** screen.'],
+        warn: `**If one of these apps is still blocked**, check it's in the **top** section of Always Allowed. If it still won't open, email ${EMAIL}. Don't remove the limit from the last step.`,
         screens: [S.alwaysRow, S.alwaysAllowedList]
       },
       {
-        key: 'web', part: 'settings', title: 'Allow only the websites on the list', time: '5 minutes', device: "your child's phone", sites: true,
-        intro: 'Blocking an app doesn\'t block its website. This step makes the web work the same way as the apps: only what\'s on the list.',
+        key: 'web', part: 'settings', title: 'Allow only the websites they need', time: '5 minutes', device: "your child's phone",
+        intro: 'Blocking an app doesn\'t block its website. This step makes the web work the same way: only a few sites open.',
         already: '**Already limit websites?** If **Web Content** is set to **Limit Adult Websites**, change it to **Only Approved Websites**. If it\'s already on Only Approved Websites, check the sites against the list and add any that are missing.',
         items: [
           'Open **Settings** → **Screen Time** → **Content & Privacy Restrictions** and turn it on.',
           'Tap **Allowed Apps & Features** and make sure **Safari** is on.',
           'Go back, then tap **App Store, Media, Web & Games** → **Web Content**.',
           'Choose **Only Approved Websites**.',
-          'Swipe left to delete anything on the starter list that isn\'t on our list.',
-          'Tap **Add Website** and enter each site on the list, **exactly as written**. A typo stops it working.'
+          'Swipe left to delete the sites already listed there, such as **Apple — Start**.',
+          `Tap **Add Website** and enter each of these, **exactly as written**: ${allowlist.websites}. A typo stops it working.`
         ],
-        check: `**Check it works before you move on.** Open Safari and load one of the approved sites: it should open. Then type in a site that isn't on the list, like youtube.com: it should be blocked. **If the blocked site loads, stop and email ${EMAIL}.** Don't leave it as it is, because your child would have an open browser, where they could also reach the apps you just blocked.`,
+        check: `**Check it works before you move on.** Open Safari and load one of the approved sites: it should open. Then type in a site you didn't add, like youtube.com: it should be blocked. **If the blocked site loads, stop and email ${EMAIL}.** Don't leave it as it is, because your child would have an open browser, where they could also reach the apps you just blocked.`,
         screens: [S.restrictionsRow, S.restrictionsOn, S.allowedFeatures, S.mediaWeb, S.approvedSites, S.swipeDelete, S.addWebsite, S.safariAllowed, S.safariBlocked]
       },
       {
@@ -1415,37 +1417,36 @@ const guides = [
     id: 'android', slug: 'guide-android', os: 'android', illus: 'guide-android.svg', hero: 'smart-hero--mint',
     title: 'Your child has an Android phone',
     short: 'Android phone',
-    lead: 'Google\'s Family Link works whichever phone you have, including an iPhone. Already using Family Link with your child? Skip to Step 4.',
+    lead: 'Whatever phone you have yourself. You manage it with Google\'s Family Link app, which works on any phone, iPhones included.',
     time: 'About 40 minutes, or 20 if you already use Family Link',
     checked: 'Checked on Android and Family Link',
     video: '347119375',
     startFrom: {
       title: 'Start from what you already have',
-      text: 'Find the first row that\'s true for you.',
+      text: 'Find the row that matches where you are.',
       rows: [
-        { have: 'You use **Family Link** with this child, and it shows their phone', go: 'block' },
+        { have: 'Nothing is set up yet, or you only use Digital Wellbeing on their phone', go: 'app' },
         { have: 'You have Family Link, but haven\'t linked this child\'s phone', go: 'link' },
-        { have: 'Nothing is set up yet, or you only use Digital Wellbeing on their phone', go: 'app' }
+        { have: 'You use **Family Link** with this child, and it shows their phone', go: 'block' }
       ],
       after: 'Already have **time limits**, **downtime** or a **website filter** in Family Link? Keep them. The steps add to what you have, and each one says what to change.'
     },
     // Why there's no "set it up on their phone only" route on Android
     shortcut: {
-      title: 'Is there a quicker way on Android?',
+      title: 'Why you can\'t skip this part',
       text: [
-        '**Only if you already use Family Link** with this child. Then skip to [[step:block]].',
-        'Otherwise, no. Android\'s own screen time tools (Digital Wellbeing) can\'t be locked with a code, so a child can switch them off in seconds. Family Link is what locks the settings, so Steps 1 to 3 are worth doing.',
-        `If you get stuck in Steps 1 to 3, for example creating your child's account or proving your age, don't stop there: email ${EMAIL} and we'll help.`
+        'Android\'s own screen time settings (Digital Wellbeing) can\'t be locked with a code, so a child can switch them off in seconds. Family Link is what locks them.',
+        `If you get stuck, for example creating your child's account or proving your age, don't give up: email ${EMAIL} and we'll help.`
       ]
     },
     parts: {
-      connect: { title: 'Part 1: Connect their phone to Family Link', text: 'Needed on Android. Skip it if it\'s already done.' },
+      connect: { title: 'Part 1: Connect their phone to Family Link', text: 'Skip it if you already use Family Link with this child.' },
       settings: { title: 'Part 2: The study settings', text: 'Everyone does these, from Family Link on your phone.' }
     },
     steps: [
       {
         key: 'app', part: 'connect', title: 'Get the Family Link app', time: '2 minutes', device: 'your phone',
-        skip: { text: '**Already use Family Link with this child?** Skip Steps 1 to 3. Check first: open Family Link, and you should see your child\'s phone on **Screen time**.', to: 'block', button: 'Skip to Step 4' },
+        skip: { text: '**Already use Family Link with this child?** If it shows their phone on **Screen time**, skip to Step 4.', to: 'block', button: 'Skip to Step 4' },
         already: '**Already have Family Link** on your phone? Open it and go to [[step:account]].',
         items: [
           'Open the **Play Store** (Android) or the **App Store** (iPhone).',
@@ -1499,32 +1500,30 @@ const guides = [
       },
       {
         key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: 'your phone, in Family Link', variants: true,
-        already: '**Already have downtime at bedtime?** This replaces it with downtime all day. The apps on the list will then work at night too. If you want them off at night, email us and we\'ll help you set it up.'
+        already: '**Already have downtime at bedtime?** This replaces it with downtime all day. The apps you allow back next will then work at night too. If you want them off at night, email us and we\'ll help.'
       },
       {
-        key: 'allow', part: 'settings', title: 'Allow back the apps on the list', time: '10 minutes', device: 'your phone, in Family Link', list: true,
-        intro: 'These are the apps most families told us their child needs. They\'ll work as normal, at any time, downtime included.',
-        already: '**Already set limits on some apps?** Change the ones on the list to **Unlimited time**. Leave the rest as they are.',
+        key: 'allow', part: 'settings', title: 'Allow back the apps your child needs', time: '10 minutes', device: 'your phone, in Family Link', list: true,
+        already: '**Already set limits on some apps?** Change the ones below to **Unlimited time**. Leave the rest as they are.',
         items: [
           'Go back to **Screen time** and tap **Time limits**, then **App limits**. Leave **Daily limit** off.',
-          'Tap each app on the list, one at a time, and choose **Unlimited time**. There\'s no way to do them all at once. Apps set to Unlimited time show an infinity sign (**∞**).',
-          'Set **Google Chrome** to **Unlimited time** too. Without it, the websites on the list won\'t open.',
-          'Go back to **Screen time**, tap **Schedules**, then **Allowed apps**. Turn on **Unlimited apps**. This is what lets them work during downtime. Calls always work.'
+          `Tap each of these, one at a time, and choose **Unlimited time**: ${APPS.android}. Each one then shows an infinity sign (**∞**). Calls always work, so you don\'t need Phone.`,
+          'Do the same for **Google Chrome**. Without it, the websites in the next step won\'t open.',
+          'Go back to **Screen time**, tap **Schedules**, then **Allowed apps**. Turn on **Unlimited apps**. This is what lets them work during downtime.'
         ],
-        after: ['To block one app outright: **Time limits** → **App limits** → tap the app → **Block**. Some system apps can\'t be blocked.'],
         screens: [S.flHomeLimits, S.flTimeLimits, S.flAppLimits, S.flDowntimeAllowed, S.flAllowed]
       },
       {
-        key: 'web', part: 'settings', title: 'Allow only the websites on the list', time: '5 minutes', device: 'your phone, in Family Link', sites: true,
-        intro: 'Blocking an app doesn\'t block its website. This step makes the web work the same way as the apps: only what\'s on the list.',
+        key: 'web', part: 'settings', title: 'Allow only the websites they need', time: '5 minutes', device: 'your phone, in Family Link',
+        intro: 'Blocking an app doesn\'t block its website. This step makes the web work the same way: only a few sites open.',
         already: '**Already filter websites?** If it\'s set to **Try to block explicit sites**, change it to **Only allow approved sites**. If it\'s already on approved sites, check them against the list and add any that are missing.',
         items: [
           'In Family Link, tap **Controls** at the bottom, then **Google Chrome and web**.',
           'Choose **Only allow approved sites**.',
-          'Tap **Approved sites**, then **Add site**. Type each site on the list and tap **Done**. **Use the main web address**, such as bbc.co.uk: Family Link may not accept a page within a site, such as bbc.co.uk/bitesize.',
+          `Tap **Approved sites**, then **Add site**. Add each of these, tapping **Done** after each one: ${allowlist.websites}. **Use the main web address**, such as bbc.co.uk: Family Link may not accept a page within a site, such as bbc.co.uk/bitesize.`,
           '**If other browsers aren\'t already blocked**, block them: **Screen time** → **Time limits** → **App limits** → tap each browser → **Block**.'
         ],
-        after: [`Your child can ask to visit a site that isn't on the list, and the request comes to Family Link on your phone. Only approve sites on the list. For anything else, email ${EMAIL}.`],
+        after: [`Your child can ask to visit a blocked site, and the request comes to Family Link on your phone. Please only approve sites they need for school. If you're not sure, email ${EMAIL}.`],
         warn: `If a homework site won't load, don't switch the filter off. Email ${EMAIL} and we'll add it to the shared list.`,
         screens: [S.flControlsChrome, S.flChrome, S.flApprovedSites, S.flAddSite]
       },
@@ -1533,7 +1532,7 @@ const guides = [
         already: '**Already done** if **Require approval for** says **All content**.',
         items: [
           'In Family Link, tap **Controls** at the bottom, then **Google Play**.',
-          'Tap **Require approval for** and choose **All content**, so nothing new can be installed without your approval.'
+          'Tap **Require approval for** and choose **All content**, so nothing new can be installed without your approval. When your child asks for an app, apply the same judgement as in [[step:allow]].'
         ],
         screens: [S.flControlsPlay, S.flPlay]
       },
@@ -1551,4 +1550,4 @@ const guides = [
   }
 ]
 
-module.exports = { EMAIL, allowlist, intro, yourself, howItWorks, blockVersions, guides }
+module.exports = { EMAIL, allowlist, intro, yourself, blockVersions, guides }
