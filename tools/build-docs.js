@@ -52,6 +52,8 @@ const FONT = 'Nunito'
 const SIZE = { body: 21, small: 18, caption: 16, lead: 23, eyebrow: 17, title: 52, h1: 34, h2: 27, h3: 23 }
 const PAGE = { w: 11906, h: 16838, x: 1134, top: 1300, bottom: 1134 }
 const TW = PAGE.w - PAGE.x * 2 // text width
+// The cover image, in pixels at 96 dpi: the text width, and nearly the text height
+const COVER = { w: 642, h: 930 }
 
 const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
 const noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none }
@@ -228,60 +230,22 @@ function kit (accentName, docTitle, logo) {
     })
   }
 
-  k.titleBlock = (eyebrow, title, lead) => [
+  k.titleBlock = (eyebrow, title, lead, anchor) => [
     new Paragraph({ children: [new TextRun({ text: eyebrow.toUpperCase(), bold: true, color: A.text, size: SIZE.eyebrow, font: FONT, characterSpacing: 20 })], spacing: { after: 80 } }),
-    new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun({ text: title, font: FONT })], spacing: { before: 0, after: 100, line: 240, lineRule: AUTO } }),
+    new Paragraph({ heading: HeadingLevel.TITLE, children: anchored(anchor, [new TextRun({ text: title, font: FONT })]), spacing: { before: 0, after: 100, line: 240, lineRule: AUTO } }),
     k.P(lead, { size: SIZE.lead, color: C.grey, after: 240 })
   ]
 
-  // The cover: a page of its own, full bleed, with no header or footer.
-  // A band in the audience colour says who it's for; below it, what the document is.
-  k.cover = cv => {
-    const W = PAGE.w
-    const pad = { top: 0, bottom: 0, left: PAGE.x, right: PAGE.x }
-    const row = (h, fill, children, o = {}) => new TableRow({
-      height: { value: h, rule: HeightRule.EXACT }, cantSplit: true,
-      children: [new TableCell({ width: { size: W, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill }, borders: { top: none, bottom: none, left: none, right: none }, margins: { ...pad, top: o.top || 0 }, verticalAlign: o.valign || VerticalAlign.TOP, children })]
-    })
-    const t = (text, o) => new TextRun({ text, font: FONT, ...o })
-    const para = (children, o = {}) => new Paragraph({ children, alignment: o.align, spacing: { before: o.before || 0, after: o.after ?? 0, line: o.line || 240, lineRule: AUTO } })
-    // who gets it, as a tinted pill
-    const who = new Table({
-      width: { size: W - PAGE.x * 2, type: WidthType.DXA }, columnWidths: [W - PAGE.x * 2], borders: noBorders,
-      rows: [new TableRow({ children: [new TableCell({
-        width: { size: W - PAGE.x * 2, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: A.tint },
-        borders: { top: none, bottom: none, right: none, left: { style: BorderStyle.SINGLE, size: 36, color: A.band } },
-        margins: { top: 200, bottom: 200, left: 280, right: 280 },
-        children: [para([t('Who it\'s for: ', { bold: true, color: C.navy, size: 28 }), t(cv.use, { color: C.navy, size: 28 })], { line: 264 })]
-      })] })]
-    })
-    return {
-      properties: { type: SectionType.NEXT_PAGE, page: { size: { width: W, height: PAGE.h }, margin: { top: 0, bottom: 0, left: 0, right: 0, header: 0, footer: 0 } } },
-      children: [
-        new Table({
-          width: { size: W, type: WidthType.DXA }, columnWidths: [W], borders: noBorders,
-          rows: [
-            row(3300, A.band, [
-              para([new ImageRun({ type: 'png', data: cv.logo, transformation: { width: 46, height: 46 }, altText: { title: 'SMART Study logo', description: 'The SMART Study logo: a sun, a parent and a child', name: 'logo' } }), t('   THE SMART STUDY', { bold: true, color: C.white, size: 30, characterSpacing: 30 })], { before: 0 }),
-              para([t(cv.audience.toUpperCase(), { bold: true, color: A.label, size: 56, characterSpacing: 10 })], { before: 620 })
-            ], { top: 760 }),
-            row(11760, C.cream, [
-              para([t(cv.kind.toUpperCase(), { bold: true, color: A.text === C.navy ? C.coral : A.text, size: 30, characterSpacing: 30 })], { before: 900, after: 140 }),
-              para([t(cv.title, { bold: true, color: C.navy, size: 84 })], { after: 220, line: 220 }),
-              para([t(cv.what, { color: C.grey, size: 30 })], { after: 500, line: 264 }),
-              para([new ImageRun({ type: 'png', data: cv.illustration.data, transformation: { width: Math.round(270 * cv.illustration.w / cv.illustration.h), height: 270 }, altText: { title: cv.title, description: 'Illustration', name: 'cover illustration' } })], { align: AlignmentType.CENTER, after: 500 }),
-              who
-            ]),
-            row(1700, A.band, [
-              para([t(`${R.START} to ${R.END}`, { bold: true, color: C.white, size: 24 })], { after: 80 }),
-              para([t(R.RUN_BY, { color: C.white, size: 18 })])
-            ], { valign: VerticalAlign.CENTER })
-          ]
-        }),
-        new Paragraph({ children: [], spacing: { before: 0, after: 0, line: 20, lineRule: LineRuleType.EXACT } })
-      ]
-    }
-  }
+  // The cover: one image filling the first page (see coverImage). It's an image, not
+  // a table, so it looks the same in Word, Google Docs and the PDF: Google Docs
+  // ignores fixed row heights and breaks full-bleed table layouts.
+  k.coverParagraph = cv => new Paragraph({
+    spacing: { before: 0, after: 0, line: 240, lineRule: AUTO },
+    children: [
+      new ImageRun({ type: 'png', data: cv.image, transformation: { width: COVER.w, height: COVER.h }, altText: { title: cv.title, description: `${cv.audience}. ${cv.kind}: ${cv.title}. ${cv.what}`, name: 'cover' } }),
+      new PageBreak()
+    ]
+  })
 
   k.pack = (body, meta) => Packer.toBuffer(new Document({
     creator: 'PUBLIC',
@@ -300,9 +264,9 @@ function kit (accentName, docTitle, logo) {
       paragraphStyles: [{ id: 'SmartFooter', name: 'SMART footer', basedOn: 'Normal', run: { font: FONT, size: SIZE.caption, color: C.grey }, paragraph: { spacing: { after: 0 } } }]
     },
     numbering: { config: numbering },
-    sections: [...(meta.cover ? [k.cover(meta.cover)] : []), {
-      properties: { type: SectionType.NEXT_PAGE, page: { size: { width: PAGE.w, height: PAGE.h }, pageNumbers: { start: 1 }, margin: { top: PAGE.top, bottom: PAGE.bottom, left: PAGE.x, right: PAGE.x, header: 520, footer: 520 } } },
-      headers: { default: new Header({ children: [new Paragraph({
+    sections: [{
+      properties: { titlePage: !!meta.cover, page: { size: { width: PAGE.w, height: PAGE.h }, pageNumbers: { start: meta.cover ? 0 : 1 }, margin: { top: PAGE.top, bottom: PAGE.bottom, left: PAGE.x, right: PAGE.x, header: 520, footer: 520 } } },
+      headers: { first: new Header({ children: [new Paragraph({ children: [] })] }), default: new Header({ children: [new Paragraph({
         children: [
           new ImageRun({ type: 'png', data: logo, transformation: { width: 22, height: 22 }, altText: { title: 'SMART Study logo', description: 'The SMART Study logo: a sun, a parent and a child', name: 'logo' } }),
           new TextRun({ text: '  THE SMART STUDY', bold: true, color: A.text, size: SIZE.eyebrow, font: FONT, characterSpacing: 20 }),
@@ -311,7 +275,7 @@ function kit (accentName, docTitle, logo) {
         tabStops: [{ type: TabStopType.RIGHT, position: TW }],
         border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: A.rule, space: 6 } }
       })] }) },
-      footers: { default: new Footer({ children: [new Paragraph({
+      footers: { first: new Footer({ children: [new Paragraph({ children: [] })] }), default: new Footer({ children: [new Paragraph({
         style: 'SmartFooter',
         children: [
           new TextRun({ text: meta.footer, color: C.grey, size: SIZE.caption, font: FONT }),
@@ -320,7 +284,7 @@ function kit (accentName, docTitle, logo) {
         ],
         tabStops: [{ type: TabStopType.RIGHT, position: TW }]
       })] }) },
-      children: body
+      children: meta.cover ? [k.coverParagraph(meta.cover), ...body] : body
     }]
   }))
   return k
@@ -359,18 +323,29 @@ const GUIDE = {
     kind: 'Step-by-step guide',
     title: 'Setting up your child\'s phone',
     what: 'How to set up an iPhone or Android phone so it only has a short list of apps and websites.',
-    use: 'families whose child already has a smartphone.',
     illustration: 'guide-iphone'
   }
 }
 
-// Phone screen PNGs written by build-guides.js, found by the screen's id
-function pngFor (id) {
-  const f = fs.readdirSync(out('exports/png')).find(n => new RegExp(`^\\d+-${id}\\.png$`).test(n))
-  if (!f) throw new Error(`No PNG for screen ${id}: run npm run build:guides first`)
-  const data = fs.readFileSync(out(`exports/png/${f}`))
-  return { data, w: data.readUInt32BE(16), h: data.readUInt32BE(20) }
+// Phone screen PNGs written by build-guides.js, found by the screen's id, and
+// scaled to 600px wide: sharp in print at the size they're shown, and half the file size
+const SCREENS = new Map()
+async function loadScreens () {
+  const sharp = require('sharp')
+  const files = fs.readdirSync(out('exports/png'))
+  for (const g of G.guides) {
+    for (const st of g.steps) {
+      for (const sc of st.screens || []) {
+        if (SCREENS.has(sc.id)) continue
+        const f = files.find(n => new RegExp(`^\\d+-${sc.id}\\.png$`).test(n))
+        if (!f) throw new Error(`No PNG for screen ${sc.id}: run npm run build:guides first`)
+        const data = await sharp(out(`exports/png/${f}`)).resize({ width: 600, withoutEnlargement: true }).png({ compressionLevel: 9 }).toBuffer()
+        SCREENS.set(sc.id, { data, w: data.readUInt32BE(16), h: data.readUInt32BE(20) })
+      }
+    }
+  }
 }
+const pngFor = id => SCREENS.get(id)
 
 function screensTable (k, screens) {
   const cols = 4
@@ -407,7 +382,7 @@ function guidanceBody (k) {
   const ask = G.intro.lead.replace(/^\*\*What we're asking you to do:\*\*\s*/, '')
 
   // ---- the first page: what this is, which guide, what to have ready
-  body.push(...k.titleBlock('Guide for families', GUIDE.title, 'If your child has a smartphone, this guide shows you how to set it up so it only has a short list of apps and websites. Most families take 25 to 40 minutes.'))
+  body.push(...k.titleBlock('Guide for families', GUIDE.title, 'If your child has a smartphone, this guide shows you how to set it up so it only has a short list of apps and websites. Most families take 25 to 40 minutes.', 'start'))
   body.push(k.titledBox('What we\'re asking', [ask.charAt(0).toUpperCase() + ask.slice(1), ...G.intro.text], k.A.ask), k.space(80))
 
   body.push(k.H2('Which guide is yours?'))
@@ -447,7 +422,7 @@ function guidanceBody (k) {
       guide.steps.forEach((st, i) => { if (st.part === p) body.push(...stepBlock(k, st, i + 1, guide, ctx)) })
     })
     body.push(k.space(120), k.titledBox('That\'s it. Thank you!', `In about a week, we'll ask you to share a screenshot of your child's screen time on the study website. Then once a month after that.`, C.mint))
-    body.push(k.P(`[Back to the start](#top) · ${guide.os === 'ios' ? '[Go to the Android guide](#android_guide)' : '[Go to the iPhone guide](#ios_guide)'}`, { before: 120, size: SIZE.small }))
+    body.push(k.P(`[Back to the start](#start) · ${guide.os === 'ios' ? '[Go to the Android guide](#android_guide)' : '[Go to the iPhone guide](#ios_guide)'}`, { before: 120, size: SIZE.small }))
   }
 
   // ---- the end: the longer explanations, linked from Part 1
@@ -505,6 +480,53 @@ function stepBlock (k, st, n, guide, ctx) {
   return ch
 }
 
+// ------------------------------------------------------------------ covers
+// Each cover is drawn as a web page and saved as one image. A band in the audience's
+// colour says who it's for; below it, the kind of document, its title, what it's
+// about and an illustration; at the bottom, the dates and who runs the study.
+async function coverImages (list) {
+  const { chromium } = require('playwright')
+  const font = w => `@font-face{font-family:Nunito;font-weight:${w};src:url(data:font/woff2;base64,${fs.readFileSync(require.resolve(`@fontsource/nunito/files/nunito-latin-${w}-normal.woff2`)).toString('base64')}) format('woff2')}`
+  const svgData = f => 'data:image/svg+xml;base64,' + fs.readFileSync(out(f)).toString('base64')
+  const hexc = c => '#' + c
+  const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {})
+  const page = await browser.newPage({ viewport: { width: COVER.w, height: COVER.h }, deviceScaleFactor: 3 })
+  const images = new Map()
+  for (const cv of list) {
+    const A = ACCENT[cv.accent]
+    const kind = A.text === C.navy ? C.coral : A.text
+    await page.setContent(`<!doctype html><html><head><style>
+      ${[400, 700, 800, 900].map(font).join('')}
+      *{box-sizing:border-box;margin:0}
+      body{width:${COVER.w}px;height:${COVER.h}px;font-family:Nunito;background:#fff}
+      .card{height:100%;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:${hexc(C.cream)}}
+      .top{background:${hexc(A.band)};padding:34px 40px 38px}
+      .brand{display:flex;align-items:center;gap:14px;color:#fff;font-weight:800;font-size:15px;letter-spacing:.14em}
+      .disc{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center}
+      .disc img{width:32px;height:32px}
+      .for{margin-top:30px;color:${hexc(A.label)};font-weight:900;font-size:33px;letter-spacing:.05em;line-height:1.1}
+      .body{flex:1;padding:52px 40px 0;display:flex;flex-direction:column}
+      .kind{color:${hexc(kind)};font-weight:800;font-size:15px;letter-spacing:.16em}
+      h1{margin-top:12px;color:${hexc(C.navy)};font-weight:900;font-size:50px;line-height:1.04;letter-spacing:-.01em}
+      p{margin-top:18px;color:${hexc(C.grey)};font-size:19px;line-height:1.4;max-width:520px}
+      .art{flex:1;display:grid;place-items:center;padding:20px 0 30px}
+      .art img{width:430px;max-height:100%}
+      .bottom{background:${hexc(A.band)};color:#fff;padding:22px 40px 24px}
+      .bottom b{display:block;font-weight:800;font-size:16px}
+      .bottom span{display:block;margin-top:4px;font-size:12px;opacity:.95}
+    </style></head><body><div class="card">
+      <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span>THE SMART STUDY</div><div class="for">${cv.audience.toUpperCase()}</div></div>
+      <div class="body"><div class="kind">${cv.kind.toUpperCase()}</div><h1>${cv.title.replace(/'/g, '&rsquo;')}</h1><p>${cv.what.replace(/'/g, '&rsquo;')}</p>
+        <div class="art"><img src="${svgData(`assets/images/illustrations/${cv.illustration}.svg`)}" alt=""></div></div>
+      <div class="bottom"><b>${R.START} to ${R.END}</b><span>${R.RUN_BY}</span></div>
+    </div></body></html>`, { waitUntil: 'load' })
+    await page.evaluate(() => document.fonts.ready)
+    images.set(cv.title, await page.screenshot({ type: 'png', omitBackground: true }))
+  }
+  await browser.close()
+  return images
+}
+
 // ------------------------------------------------------------------ PDF (LibreOffice, with Nunito from the repo)
 function toPdf (docx) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'smart-docs-'))
@@ -523,25 +545,19 @@ function toPdf (docx) {
   const sharp = require('sharp')
   const logoSvg = fs.readFileSync(out('assets/images/logo-mark.svg'), 'utf8')
   const logo = await sharp(Buffer.from(logoSvg)).resize(192, 192).png().toBuffer()
-  // On the cover's coloured band the logo sits on a white disc, so its colours stay clear
-  const logoInner = logoSvg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
-  const coverLogo = await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><circle cx="96" cy="96" r="96" fill="#FFFFFF"/><g transform="translate(36 36) scale(2.5)">${logoInner}</g></svg>`)).png().toBuffer()
-  const illustration = async name => {
-    const data = await sharp(fs.readFileSync(out(`assets/images/illustrations/${name}.svg`)), { density: 288 }).resize(1200).png().toBuffer()
-    return { data, w: data.readUInt32BE(16), h: data.readUInt32BE(20) }
-  }
-  const cover = async cv => ({ ...cv, logo: coverLogo, illustration: await illustration(cv.illustration) })
+  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }])
+  const cover = cv => ({ ...cv, image: covers.get(cv.title) })
+  await loadScreens()
   const docs = []
   for (const pack of O.packs) {
     const k = kit(pack.accent, pack.name, logo)
     // a bookmark at the top, for "Back to the start"
-    docs.push({ file: `exports/SMART-onboarding-pack-${pack.id}.docx`, buf: await k.pack(packBody(pack, k), { title: `The SMART Study: ${pack.name.toLowerCase()}`, short: pack.name, footer: 'The SMART Study · ' + pack.name, description: pack.lead, cover: await cover(pack.cover) }) })
+    docs.push({ file: `exports/SMART-onboarding-pack-${pack.id}.docx`, buf: await k.pack(packBody(pack, k), { title: `The SMART Study: ${pack.name.toLowerCase()}`, short: pack.name, footer: 'The SMART Study · ' + pack.name, description: pack.lead, cover: cover(pack.cover) }) })
   }
   {
     const k = kit('parents', GUIDE.title, logo)
     const body = guidanceBody(k)
-    body.unshift(new Paragraph({ children: [new Bookmark({ id: 'top', children: [new TextRun({ text: '', font: FONT })] })], spacing: { after: 0 } }))
-    docs.push({ file: `exports/${GUIDE.file}.docx`, buf: await k.pack(body, { title: `The SMART Study: ${GUIDE.title.toLowerCase()}`, short: 'Guide for families', footer: 'The SMART Study · ' + GUIDE.title, description: 'How to set up your child\'s iPhone or Android phone for the SMART Study.', cover: await cover(GUIDE.cover) }) })
+    docs.push({ file: `exports/${GUIDE.file}.docx`, buf: await k.pack(body, { title: `The SMART Study: ${GUIDE.title.toLowerCase()}`, short: 'Guide for families', footer: 'The SMART Study · ' + GUIDE.title, description: 'How to set up your child\'s iPhone or Android phone for the SMART Study.', cover: cover(GUIDE.cover) }) })
   }
   // Drop the ZIP's folder entries: Word has refused files that have them when
   // opened through a cloud co-editing service
@@ -550,7 +566,17 @@ function toPdf (docx) {
     // (copy the files into a new archive: JSZip's remove() on a folder removes what's in it too)
     const src = await JSZip.loadAsync(d.buf)
     const zip = new JSZip()
-    for (const [name, entry] of Object.entries(src.files)) if (!entry.dir) zip.file(name, await entry.async('nodebuffer'), { createFolders: false })
+    // the package's own parts first, as Word writes them
+    const names = Object.keys(src.files).filter(n => !src.files[n].dir)
+    const first = ['[Content_Types].xml', '_rels/.rels']
+    for (const name of [...first.filter(n => names.includes(n)), ...names.filter(n => !first.includes(n))]) {
+      let data = await src.files[name].async('nodebuffer')
+      // docx gives every picture the inner id 0; give each the id of its drawing
+      if (/^word\/(document|header\d+|footer\d+)\.xml$/.test(name)) {
+        data = Buffer.from(data.toString('utf8').replace(/(<wp:docPr id="(\d+)"[^>]*\/>(?:(?!<wp:docPr).)*?)<pic:cNvPr id="0" name="" descr=""\/>/gs, (m, pre, id) => `${pre}<pic:cNvPr id="${id}" name="Picture ${id}"/>`), 'utf8')
+      }
+      zip.file(name, data, { createFolders: false })
+    }
     const buf = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
     if (!(await JSZip.loadAsync(buf)).file('word/document.xml')) throw new Error(`${d.file}: the Word file came out empty`)
     fs.writeFileSync(out(d.file), buf)
