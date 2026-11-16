@@ -2,14 +2,12 @@
  * SMART Study – restrictions guidance (single source)
  *
  * Everything the set-up guides say lives here: the two guides (iPhone and
- * Android), their steps, the versions of the "Block apps" step we're testing,
- * the allowed-apps list and a description of every phone screen.
+ * Android), their steps, the allowed-apps list and a description of every phone screen.
  * `npm run build:guides` turns this file into:
- *   - the two guide pages on the microsite, and guide-versions.html (the
- *     versions of the "Block apps" step side by side, for the team)
+ *   - the two guide pages on the microsite
  *   - one SVG per screen (assets/guides/screens/)
- *   - an editable Word version (exports/SMART-restrictions-guidance.docx)
- *   - one board per guide, and one of the versions, for Figma (exports/figma/)
+ *   - one board per guide for Figma (exports/figma/)
+ * and `npm run build:docs` turns it into the guidance for parents, as Word and PDF.
  *
  * Text: **bold** marks the words to look for on the phone.
  * Screens: see tools/screens.js for what each field does.
@@ -197,7 +195,6 @@ const CATEGORIES = [
   { icon: 'ellipsis', colour: '#8E8E93', label: 'Other' }
 ]
 const TEN = CATEGORIES.map(c => c.label).filter(l => l !== 'Information & Reading' && l !== 'Utilities')
-const TOP3 = ['Social', 'Games', 'Entertainment']
 
 function chooseAppsScreen (id, ticked, marks, alt) {
   return {
@@ -755,38 +752,6 @@ S.flAddSite = {
   alt: 'Add site in Family Link: type the web address (here bbc.co.uk), then tap Done.'
 }
 
-// ------------------------------------------------------------------ screens for the versions of the "Block apps" step
-// The ticks and outlines differ between versions; the settings screens around them are the same.
-S.chooseAppsRule = chooseAppsScreen('ios-choose-apps-rule', TEN, {
-  Social: { hl: 'Tick every category…', span: 6 },
-  'Information & Reading': { avoid: '…except this one' },
-  'Health & Fitness': { hl: 'Tick' },
-  Utilities: { avoid: '…and this one' },
-  'Shopping & Food': { hl: 'Tick', span: 3 }
-}, 'Choose Apps. Every category is ticked except Information & Reading and Utilities. All Apps & Categories at the top and Websites at the bottom are not ticked either. Next is at the top right.')
-
-S.chooseAppsTop3 = chooseAppsScreen('ios-choose-apps-top3', TOP3, {
-  Social: { hl: 'Tick these three', span: 3 }
-}, 'Choose Apps. Only Social, Games and Entertainment are ticked. All Apps & Categories at the top is not ticked. Next is at the top right.')
-
-S.chooseAppsStaged = chooseAppsScreen('ios-choose-apps-staged', TEN, {
-  Social: { hl: '1. These three first', span: 3 },
-  Creativity: { hl: '2. Then the rest', span: 3 },
-  'Information & Reading': { avoid: 'Leave unticked' },
-  'Health & Fitness': { hl: '2.' },
-  Utilities: { avoid: 'Leave unticked' },
-  'Shopping & Food': { hl: '2.', span: 3 }
-}, 'Choose Apps. First Social, Games and Entertainment are ticked, then every other category except Information & Reading and Utilities. Next is at the top right.')
-
-S.timePicker3 = { ...S.timePicker, id: 'ios-time-picker-3', bar: { ...S.timePicker.bar, title: '3 Categories' } }
-
-S.blockAtEnd3 = {
-  ...S.blockAtEnd,
-  id: 'ios-block-at-end-3',
-  bar: { back: 'App Limits', title: '3 Categories' },
-  blocks: S.blockAtEnd.blocks.map(b => b.header ? { ...b, rows: [{ icon: 'users-round', colour: '#FF2D55', label: 'Social, Games and Entertainment' }, { label: 'Edit List', blue: true }] } : b)
-}
-
 // Family Link: the Screen time tab, pointing at one row
 S.flHomeSchedules = flScreenTime('fl-home-schedules', { schedules: 'Tap' }, 'Family Link on your phone opens on Screen time. Your child\'s phone is shown by its model name (here SM-S901B). Schedules is below it.')
 S.flHomeLimits = flScreenTime('fl-home-limits', { timeLimits: 'Tap' }, 'Screen time in Family Link. Time limits is below your child\'s phone.')
@@ -810,23 +775,6 @@ function flSchedulesPage (id, hl, note) {
 }
 S.flDowntime = flSchedulesPage('fl-downtime', { downtime: 'Turn on', weekly: 'Set to 12:00–11:59' }, 'Schedules in Family Link. Turn on Downtime and set its weekly schedule to 12:00–11:59. Leave School time off.')
 S.flDowntimeAllowed = flSchedulesPage('fl-downtime-allowed', { allowed: 'Tap' }, 'Schedules in Family Link, with Downtime on. Allowed apps is the last row under Downtime.')
-
-// App limits with the big apps blocked one by one (the "top three" versions on Android)
-S.flAppLimitsBlocked = {
-  id: 'fl-app-limits-blocked', os: 'android', ...fl, bg: FL_BG,
-  bar: { back: true, title: 'App limits', center: true },
-  blocks: [
-    { type: 'list', card: true, rows: [
-      { app: true, icon: 'play', colour: '#FF0000', label: 'YouTube', sub: 'Blocked', badge: 'ban', badgeHl: 'Block' },
-      { app: true, icon: 'music', colour: '#111111', label: 'TikTok', sub: 'Blocked', badge: 'ban' },
-      { app: true, icon: 'gamepad-2', colour: '#4A4A4A', label: 'Roblox', sub: 'Blocked', badge: 'ban' },
-      { app: true, icon: 'message-square', colour: '#25D366', label: 'WhatsApp', sub: '0 min', badge: 'infinity' },
-      { app: true, icon: 'map', colour: '#34A853', label: 'Google Maps', sub: '0 min', badge: 'infinity' }
-    ] }
-  ],
-  cut: true,
-  alt: 'App limits in Family Link. Social media, game and video apps such as YouTube, TikTok and Roblox are set to Block. The apps your child needs keep their infinity sign.'
-}
 
 // ------------------------------------------------------------------ route-specific screens
 S.parentSettingsRoot = {
@@ -1050,7 +998,6 @@ S.flProfile = flScreenTime('fl-profile', { device: 'This means it worked' }, "Sc
 //   already  "Already done?" note at the top of the step: what to keep, or where to go
 //   skip     a "skip ahead" box: { text, to: step key }
 //   list     true adds the "If your child needs another app" note
-//   variants true means the step has versions to test (see blockVersions below)
 
 const intro = {
   title: 'Setting up your child\'s phone',
@@ -1073,7 +1020,7 @@ const intro = {
     title: 'Optional: time caps on the apps you allowed',
     text: [
       'This isn\'t part of what we\'re asking. Skip it if you\'re happy as things stand.',
-      `The list works by exempting apps from limits, so an app you've allowed will ignore a time limit you set on it, on both iPhone and Android. If you want a cap on one of them, email ${EMAIL} and we'll sort out the set-up for your phone.`
+      `Allowing an app back works by exempting it from limits, so an app you've allowed will ignore a time limit you set on it, on both iPhone and Android. If you want a cap on one of them, email ${EMAIL} and we'll sort out the set-up for your phone.`
     ]
   }
 }
@@ -1097,176 +1044,6 @@ allowlist.discretion = {
   ]
 }
 
-// ------------------------------------------------------------------ the "Block apps" step: versions to test
-// Every version ends in a working set-up. A and B, and D if finished, block the same
-// apps; C blocks fewer. The guide shows `shown`; add ?version=C to a guide's address to
-// see another. guide-versions.html lays them side by side for the team.
-const blockVersions = {
-  step: 'block',
-  shown: 'B',
-  title: 'Testing the "Block apps" step',
-  lead: 'This is the step that decides how much of the phone is blocked, and the one where parents are most likely to stop or make a mistake. These are four versions of the picture and the words, to try with parents before we settle on one.',
-  measure: [
-    '**Which settings families end up with.** Ask a sample of parents for a screenshot of App Limits (iPhone) or App limits (Android) once they\'ve finished. On an iPhone it says how many categories are limited, such as "10 Categories" or "3 Categories".',
-    '**How many finish.** How many tick this step as done, and how many go on to tick the last step.',
-    '**Where they get stuck.** Help emails and "Tell us about a problem" messages that mention this step.',
-    '**In sessions with parents:** how long the step takes, whether anyone ticks All Apps & Categories by mistake, and what they say when they reach the list of categories.'
-  ],
-  versions: [
-    {
-      id: 'A', name: 'Ten categories, listed one by one', tag: 'The previous guide',
-      what: 'The words and picture from the previous guides. Parents tick ten categories by name, with reasons for the two they leave.',
-      endState: 'Ten categories blocked',
-      why: 'The baseline: the full restriction, as it\'s been tested so far.',
-      watch: 'A long list to work through. Parents may miss one, or tick All Apps & Categories as a shortcut.',
-      ios: {
-        items: [
-          'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
-          'Tick these categories **one by one**: Social, Games, Entertainment, Creativity, Productivity & Finance, Education, Health & Fitness, Shopping & Food, Travel and Other. Work down the list so you don\'t miss one.',
-          '**Leave Information & Reading and Utilities unticked**, and don\'t tick **Websites**. Your child\'s phone needs these two for getting on the web at all. The websites step then limits the web to the sites on the list.',
-          '**Do not tick "All Apps & Categories"** at the top. It looks like a shortcut, but it also cuts off web access, which undoes the websites step.',
-          'Tap **Next** and set the limit to **0 minutes**.',
-          'Turn on **Block at End of Limit**. Without it there\'s an "Ignore Limit" button and nothing holds.'
-        ],
-        screens: [S.appLimitsRow, S.addLimit, S.chooseApps, S.timePicker, S.blockAtEnd, S.timeLimitScreen]
-      },
-      android: {
-        items: [
-          'Open **Family Link**. It opens on **Screen time** (bottom left).',
-          'Tap **Schedules**. Turn on **Downtime**, and leave **School time** off.',
-          'Tap **Weekly schedule**, then **Mon**. Check **Downtime ON** is switched on, set **Start time** to **12:00** and **End time** to **11:59**, tick **Apply to all days of the week** and tap **Done**. Every day should now show **12:00–11:59**, so downtime covers the whole day.'
-        ],
-        screens: [S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
-      }
-    },
-    {
-      id: 'B', name: 'Ten categories, one simple rule', tag: 'In the guides now',
-      what: 'The same settings as A. The instruction becomes one rule, "tick every category except two", with a number to check against, a reason, a reassurance that nothing is deleted, and what to do if one app is needed.',
-      endState: 'Ten categories blocked',
-      why: 'One rule is easier to follow than a list of ten. Saying nothing is deleted, and pointing to a single-app exception, should stop parents unticking a whole category to keep one app.',
-      watch: 'Pointing to the exception may lead some parents to allow back more apps than they need.',
-      ios: {
-        intro: '**This is the step that does the work.** One limit blocks whole categories of apps, including any your child installs later. In the next step you allow back the few your child needs.',
-        items: [
-          'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
-          { text: '**Tick every category except two.** Leave **Information & Reading** and **Utilities** unticked: the phone needs them to open any website, and [[step:web]] limits the web separately.', sub: [
-            '**Don\'t tick "All Apps & Categories"** at the top, or **Websites** at the bottom. They look like shortcuts, but they cut off the web too.'
-          ] },
-          'Tap **Next**. The top of the screen should say **10 Categories**. If it says a different number, go back and check the ticks.',
-          'Set the time to **0 minutes** and tap **Add**.',
-          'Turn on **Block at End of Limit**. Without it, your child gets an **Ignore Limit** button and nothing holds.'
-        ],
-        after: [
-          '**Nothing is deleted.** Apps, photos and messages stay on the phone, just locked. You can change any of this later with your code.',
-          '**Need one app from a ticked category, such as a map or a school app?** Don\'t untick the whole category. Allow back just that app in the next step.'
-        ],
-        screens: [S.appLimitsRow, S.addLimit, S.chooseAppsRule, S.timePicker, S.blockAtEnd, S.timeLimitScreen]
-      },
-      android: {
-        intro: '**This is the step that does the work.** Family Link doesn\'t group apps into categories, so the way to block everything at once, including apps installed later, is downtime for the whole day. It sounds drastic, but it\'s only the first half: in the next step you allow back the few apps your child needs.',
-        items: [
-          'Open **Family Link**. It opens on **Screen time** (bottom left). Tap **Schedules**.',
-          'Turn on **Downtime**. Leave **School time** off.',
-          'Tap **Weekly schedule**, then **Mon**. Check **Downtime ON** is switched on, set **Start time** to **12:00** and **End time** to **11:59**, tick **Apply to all days of the week** and tap **Done**.',
-          'Every day should now show **12:00–11:59**. That means downtime covers the whole day.'
-        ],
-        after: [
-          '**Your child\'s phone will lock, apart from calls, until you finish the next step.** That\'s expected. Nothing is deleted: apps, photos and messages stay on the phone.',
-          '**Need another app?** You can allow it back in the next step too.'
-        ],
-        screens: [S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
-      }
-    },
-    {
-      id: 'C', name: 'Top three only', tag: 'A lighter set-up',
-      what: 'Block only social media, games and video (on an iPhone, the Social, Games and Entertainment categories). Everything else stays open.',
-      endState: 'Three categories blocked',
-      why: 'The shortest ask. These three hold the apps children spend most time on, so more parents may finish.',
-      watch: 'Weaker. Creativity, shopping and other apps stay open, and on Android a parent has to find each app by hand. This changes what the study tests, not just the wording, so it needs agreeing as a trial decision before families see it.',
-      ios: {
-        intro: '**This is the step that does the work.** You block the three categories that hold the apps children spend most time on: social media, games and video. That includes any your child installs later.',
-        items: [
-          'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
-          { text: '**Tick three categories: Social, Games and Entertainment.** Leave the rest unticked.', sub: [
-            '**Don\'t tick "All Apps & Categories"** at the top. It looks like a shortcut, but it blocks everything, the web included.'
-          ] },
-          'Tap **Next**. The top of the screen should say **3 Categories**.',
-          'Set the time to **0 minutes** and tap **Add**.',
-          'Turn on **Block at End of Limit**. Without it, your child gets an **Ignore Limit** button and nothing holds.'
-        ],
-        after: [
-          '**Nothing is deleted.** Apps, photos and messages stay on the phone, just locked. You can change any of this later with your code.',
-          'Messaging apps such as WhatsApp are in **Social**, so they\'re blocked too. You\'ll allow WhatsApp back in the next step.'
-        ],
-        screens: [S.appLimitsRow, S.addLimit, S.chooseAppsTop3, S.timePicker3, S.blockAtEnd3, S.timeLimitScreen]
-      },
-      android: {
-        already: '**Already blocked some apps?** Keep them blocked. If you have downtime at bedtime, you can keep that too.',
-        intro: '**This is the step that does the work.** You block the social media, game and video apps on your child\'s phone. These hold the apps children spend most time on.',
-        items: [
-          'Open **Family Link** on **Screen time** and tap **Time limits**, then **App limits**.',
-          'Go down the list. Tap each social media, game or video app, such as YouTube, TikTok, Snapchat or Roblox, and choose **Block**.',
-          'Leave everything else as it is. You don\'t need downtime in this version.'
-        ],
-        after: [
-          'New apps can\'t be installed without your approval once you\'ve done [[step:lock]], so nothing new slips in.',
-          '**Nothing is deleted.** A blocked app stays on the phone, just locked.'
-        ],
-        screens: [S.flHomeLimits, S.flTimeLimits, S.flAppLimitsBlocked]
-      },
-      // Step 5 on Android: nothing else is blocked, so there is less to allow back
-      androidAllow: {
-        intro: 'In this version only the apps you chose are blocked, so this is a quick check.',
-        items: [
-          `In **App limits**, check that none of these says **Blocked**: ${APPS.android}. If one does, tap it and choose **Unlimited time**.`,
-          'Set **Google Chrome** to **Unlimited time** too, so the websites in the next step open.'
-        ],
-        after: [],
-        screens: [S.flAppLimits]
-      }
-    },
-    {
-      id: 'D', name: 'Top three first, then the rest', tag: 'Two-stage ask',
-      what: 'The same end result as A and B, asked in two stages: first social media, games and video, then everything else.',
-      endState: 'Ten categories blocked (three if a parent stops halfway)',
-      why: 'A small first ask makes sure the three that matter most are done, then asks for the rest while the parent is already on the right screen.',
-      watch: 'Some parents may stop after the first stage and end up with C.',
-      ios: {
-        intro: '**This is the step that does the work.** One limit blocks whole categories of apps, including any your child installs later. You tick them in two goes: the three that matter most, then the rest.',
-        items: [
-          'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
-          '**First, tick Social, Games and Entertainment.** These hold the apps children spend most time on: social media, games and video.',
-          { text: '**Then tick the rest, apart from Information & Reading and Utilities.** The phone needs those two to open any website, and [[step:web]] limits the web separately.', sub: [
-            '**Don\'t tick "All Apps & Categories"** at the top, or **Websites** at the bottom. They look like shortcuts, but they cut off the web too.'
-          ] },
-          'Tap **Next**. The top of the screen should say **10 Categories**.',
-          'Set the time to **0 minutes** and tap **Add**.',
-          'Turn on **Block at End of Limit**. Without it, your child gets an **Ignore Limit** button and nothing holds.'
-        ],
-        after: [
-          '**Nothing is deleted.** Apps, photos and messages stay on the phone, just locked. You can change any of this later with your code.',
-          '**Need one app from a ticked category, such as a map or a school app?** Don\'t untick the whole category. Allow back just that app in the next step.'
-        ],
-        screens: [S.appLimitsRow, S.addLimit, S.chooseAppsStaged, S.timePicker, S.blockAtEnd, S.timeLimitScreen]
-      },
-      android: {
-        intro: '**This is the step that does the work.** You do it in two goes: first the apps that matter most, then everything else.',
-        items: [
-          '**First, block social media, games and video.** In **Family Link**, tap **Time limits**, then **App limits**. Tap each social media, game or video app, such as YouTube, TikTok, Snapchat or Roblox, and choose **Block**.',
-          '**Then block everything else, with downtime for the whole day.** Go back to **Screen time** and tap **Schedules**. Turn on **Downtime** and leave **School time** off.',
-          'Tap **Weekly schedule**, then **Mon**. Check **Downtime ON** is switched on, set **Start time** to **12:00** and **End time** to **11:59**, tick **Apply to all days of the week** and tap **Done**.',
-          'Every day should now show **12:00–11:59**. That means downtime covers the whole day.'
-        ],
-        after: [
-          '**Your child\'s phone will lock, apart from calls, until you finish the next step.** That\'s expected. Nothing is deleted.',
-          '**Need another app?** You can allow it back in the next step too.'
-        ],
-        screens: [S.flAppLimitsBlocked, S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
-      }
-    }
-  ]
-}
-
 const guides = [
   {
     id: 'iphone', slug: 'guide-iphone', os: 'ios', illus: 'guide-iphone.svg', hero: '',
@@ -1287,7 +1064,8 @@ const guides = [
       ],
       after: 'Already using **App Limits**, **Downtime** or **Content & Privacy Restrictions**? Keep them. The steps add to what you have, and each one says what to change.'
     },
-    // With or without Part 1: the differences
+    partOneLink: 'Not sure whether to do Part 1? See what changes if you skip it.',
+    // With or without Part 1: the differences (at the end of the guide, linked from Part 1)
     compare: {
       title: 'What changes if you skip Part 1',
       text: 'The apps and websites are just as locked down either way. The difference is what you can do afterwards.',
@@ -1360,8 +1138,18 @@ const guides = [
         screens: [S.settingsScreenTime, S.activitySheet, S.lockSettings, S.passcodeEntry, S.passcodeRecovery]
       },
       {
-        key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: "your child's phone", variants: true,
-        already: '**Already have App Limits?** Keep them, and add this one alongside.'
+        key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: "your child's phone",
+        already: '**Already have App Limits?** Keep them, and add this one alongside.',
+        items: [
+          'Open **Settings** → **Screen Time** → **App Limits** → **Add Limit**.',
+          'Tick these categories **one by one**: Social, Games, Entertainment, Creativity, Productivity & Finance, Education, Health & Fitness, Shopping & Food, Travel and Other. Work down the list so you don\'t miss one.',
+          '**Leave Information & Reading and Utilities unticked**, and don\'t tick **Websites**. Your child\'s phone needs these two for getting on the web at all. [[step:web]] then limits the web to the sites your child needs.',
+          '**Do not tick "All Apps & Categories"** at the top. It looks like a shortcut, but it also cuts off web access, which undoes [[step:web]].',
+          'Tap **Next** and set the limit to **0 minutes**.',
+          'Turn on **Block at End of Limit**. Without it there\'s an "Ignore Limit" button and nothing holds.'
+        ],
+        after: ['Nothing is deleted: apps, photos and messages stay on the phone, just locked. In the next step you allow back the few apps your child needs.'],
+        screens: [S.appLimitsRow, S.addLimit, S.chooseApps, S.timePicker, S.blockAtEnd, S.timeLimitScreen]
       },
       {
         key: 'allow', part: 'settings', title: 'Allow back the apps your child needs', time: '5 minutes', device: "your child's phone", list: true,
@@ -1431,7 +1219,8 @@ const guides = [
       ],
       after: 'Already have **time limits**, **downtime** or a **website filter** in Family Link? Keep them. The steps add to what you have, and each one says what to change.'
     },
-    // Why there's no "set it up on their phone only" route on Android
+    partOneLink: 'Why can\'t I skip this part?',
+    // Why there's no "set it up on their phone only" route on Android (at the end, linked from Part 1)
     shortcut: {
       title: 'Why you can\'t skip this part',
       text: [
@@ -1499,8 +1288,16 @@ const guides = [
         screens: [S.andAccounts, S.andSettingsGoogle, S.androidParental, S.andParentalIntro, S.andWho, S.andParentSignIn, S.andPin, S.andAgree, S.andSettingsSearch]
       },
       {
-        key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: 'your phone, in Family Link', variants: true,
-        already: '**Already have downtime at bedtime?** This replaces it with downtime all day. The apps you allow back next will then work at night too. If you want them off at night, email us and we\'ll help.'
+        key: 'block', part: 'settings', title: 'Block apps', time: '5 minutes', device: 'your phone, in Family Link',
+        already: '**Already have downtime at bedtime?** This replaces it with downtime all day. The apps you allow back next will then work at night too. If you want them off at night, email us and we\'ll help.',
+        intro: 'Family Link doesn\'t group apps into categories, so you block everything with **downtime for the whole day**. In the next step you allow back the few apps your child needs. Calls always work.',
+        items: [
+          'Open **Family Link**. It opens on **Screen time** (bottom left).',
+          'Tap **Schedules**. Turn on **Downtime**, and leave **School time** off.',
+          'Tap **Weekly schedule**, then **Mon**. Check **Downtime ON** is switched on, set **Start time** to **12:00** and **End time** to **11:59**, tick **Apply to all days of the week** and tap **Done**. Every day should now show **12:00–11:59**, so downtime covers the whole day.'
+        ],
+        after: ['Your child\'s phone will lock, apart from calls, until you finish the next step. That\'s expected, so do both in one go.'],
+        screens: [S.flHomeSchedules, S.flDowntime, S.flScheduleDay, S.flSchedule]
       },
       {
         key: 'allow', part: 'settings', title: 'Allow back the apps your child needs', time: '10 minutes', device: 'your phone, in Family Link', list: true,
@@ -1550,4 +1347,4 @@ const guides = [
   }
 ]
 
-module.exports = { EMAIL, allowlist, intro, yourself, blockVersions, guides }
+module.exports = { EMAIL, allowlist, intro, yourself, guides }

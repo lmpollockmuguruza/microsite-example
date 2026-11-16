@@ -24,7 +24,6 @@ Every family sees the same pages, because we won't know whether a child has a ph
 | `start.html` | Signed-in families. The two paths (no phone yet / has a phone) with their tasks, the study video, what's new. |
 | `guides.html` | Signed-in. The guide to waiting, then the set-up guides, with two questions to choose the right one. |
 | `guide-iphone.html`, `guide-android.html` | Signed-in. Step-by-step set-up guides with pictures, progress ticks, skip-ahead and video. |
-| `guide-versions.html` | The study team. The versions of the "Block apps" step we're testing, side by side. Not linked from the site. Generated: see below. |
 | `guide-delay.html` | Signed-in. The guide to waiting for a first smartphone. Generated: see below. |
 | `schools.html` | School leaders only. Onboarding pack and e-posters. Generated: see below. |
 | `videos.html` | Signed-in. Two kinds of video: the study video, a motivational video for children about why the study matters; and the how-to videos for setting up a phone. Vimeo, loaded on play. |
@@ -44,15 +43,14 @@ To rebuild the CSS after editing the SCSS: `npm install && npm run build`.
 
 ## The set-up guides (one source, three outputs)
 
-The restrictions guidance lives in **`content/guidance.js`**: the two guides, their steps, the versions of the "Block apps" step, the allowed-apps list, and a short description of every phone screen. Run `npm run build:guides` to generate:
+The restrictions guidance lives in **`content/guidance.js`**: the two guides, their steps, the allowed-apps list, and a short description of every phone screen. Run `npm run build:guides` to generate:
 
 | Output | Where | Use it for |
 | --- | --- | --- |
 | Guide pages | `guide-iphone.html`, `guide-android.html` | The microsite. Don't edit these by hand. |
-| Versions page | `guide-versions.html` | The team: every version of the "Block apps" step, with what it changes, why to try it, what to watch for and how to tell them apart. |
-| Word documents | `exports/SMART-restrictions-guidance.docx`, `exports/SMART-block-step-versions.docx` | Sharing and printing. Text is editable. |
-| Figma boards | `exports/figma/guide-iphone.svg`, `guide-android.svg`, `block-step-versions.svg` | Drag into Figma: one board per guide, and one with every version. Text stays editable (Inter). |
-| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. The PNGs are numbered in the order the guidance Word document places them (`01-ios-settings-account.png` onwards): the iPhone guide, then the Android guide, then the screens only the other versions use. A screen used twice keeps the number of its first use. |
+| Figma boards | `exports/figma/guide-iphone.svg`, `guide-android.svg` | Drag into Figma: one board per guide. Text stays editable (Inter). |
+| Word and PDF | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` | The guidance for parents, built by `npm run build:docs`: see **The documents** below. |
+| Single screens | `assets/guides/screens/*.svg` (vector), `exports/png/*.png` (3x) | Reuse anywhere: Figma, slides, the printed pack. The PNGs are numbered in the order the Word guidance places them (`01-ios-settings-account.png` onwards): the iPhone guide, then the Android guide. A screen used twice keeps the number of its first use. |
 
 ### How the guides work
 
@@ -61,20 +59,11 @@ There's one guide per child's phone; the parent's own phone doesn't matter. Each
 - **Part 1 connects the child's phone to the parent's.** On an iPhone it's optional: parents without an Apple device, or who'd rather go quicker, press **Skip to Step 3** and set everything up on the child's phone. The apps and websites are just as locked down; a table on the page sets out what they give up (changing settings from their own phone, requests coming to them, Apple's default protections for children's accounts, code recovery). On Android, Family Link is what locks the settings, so Part 1 is needed unless the family already uses it.
 - **Part 2 is the study settings**, the same shape on both phones: set the code (iPhone), block apps, allow back the apps on the list, allow only the websites on the list, lock the settings, check it works.
 
-Every guide opens with **Start from what you already have**, a table that sends parents to the right step, and every step has an **Already done?** note saying how to check and what to keep. Skipped steps are marked as such and don't count against the parent's progress. There's no separate allow list to read: Step 5 ("Allow back the apps your child needs") names the apps in the instruction itself (iPhone: which to keep in Always Allowed and which to add; Android: which to set to Unlimited time), built from `allowlist` in the content file, with a note on using judgement for any extra app. Step 6 names the websites the same way. There's also a box asking parents to do this themselves rather than handing the phone to their child.
+Part 1 has a one-line link to the longer explanation, which sits at the end of the page so it doesn't stand between parents and Step 1. Every guide opens with **Start from what you already have**, a table that sends parents to the right step, and every step has an **Already done?** note saying how to check and what to keep. Skipped steps are marked as such and don't count against the parent's progress. There's no separate allow list to read: Step 5 ("Allow back the apps your child needs") names the apps in the instruction itself (iPhone: which to keep in Always Allowed and which to add; Android: which to set to Unlimited time), built from `allowlist` in the content file, with a note on using judgement for any extra app. Step 6 names the websites the same way. There's also a box asking parents to do this themselves rather than handing the phone to their child.
 
-### Testing the "Block apps" step
+### Step 4, "Block apps"
 
-`blockVersions` in the content file holds four versions of Step 4, each with its own words and screens for iPhone and Android:
-
-| Version | What it is |
-| --- | --- |
-| A | The previous guides' wording: ten categories listed one by one. |
-| **B** | **In the guides now.** The same ten categories, as one rule ("every category except two"), with a number to check, a reason, "nothing is deleted", and a single-app exception. |
-| C | Top three only: Social, Games and Entertainment (on Android, blocking those apps by hand). Lighter, so it's a trial decision as well as a wording one. |
-| D | Top three first, then the rest: the same end result as B, asked in two stages. |
-
-Add `?version=C` (or A, D) to a guide's address to see a version in context; a yellow tag marks the step. Change `shown` to change what families see.
+We drafted four versions of this step and chose the original (Option A): parents tick ten app categories by name on an iPhone, and turn on all-day downtime on Android. Earlier versions are in the git history.
 
 The PNG and Word steps use Playwright's Chromium. To use a browser that's already installed, set `CHROMIUM` to its path, for example `CHROMIUM=/opt/pw-browsers/chromium npm run build:guides`. Screens removed from the content file are deleted from both folders on the next build, and PNGs are renumbered if the order changes.
 
@@ -114,18 +103,21 @@ The first thing school leaders and parents get from us, also in **`content/resou
 
 Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey length) are still to be confirmed. The build warns if a page gets too full for A4.
 
-## The onboarding pack for schools
+## The documents: onboarding packs and the guidance for parents
 
-The welcome pack for schools in the group trying the family plan lives in **`content/onboarding.js`**, as a list of blocks (headings, paragraphs, tables, lists, boxes). It's adapted from the April 2027 draft to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, and the study video and how-to videos in place of webinars. `npm run build:resources` builds:
+These go out as Word and PDF, in one house style taken from the April 2027 packs and the design review: Nunito, body text at 10.5pt, one heading hierarchy, and a colour per audience (navy and yellow for schools, coral for parents). Words in [square brackets] are still to be confirmed and are highlighted in yellow. `npm run build:docs` builds each one as Word, then makes the PDF from the Word file with LibreOffice, so the two always match:
 
-| Output | Where | Use it for |
+| Document | Source | Files |
 | --- | --- | --- |
-| Word | `exports/SMART-onboarding-pack-schools.docx` | Editing. Word does its own page breaks (about 3 pages). |
-| PDF | `exports/SMART-onboarding-pack-schools.pdf` | The download on the school resources page (4 pages). |
-| Figma | `exports/figma/onboarding-pack-schools.svg` | Every A4 page side by side, one named group per page, text editable. |
+| Welcome pack for schools | `content/onboarding.js` (`schools`) | `exports/SMART-onboarding-pack-schools.docx\|pdf` (4 pages) |
+| Welcome pack for families | `content/onboarding.js` (`parents`) | `exports/SMART-onboarding-pack-parents.docx\|pdf` (4 pages) |
+| Setting up your child's phone (the guidance for parents) | `content/guidance.js` | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` (about 23 pages) |
 
-Text can use **bold** and [links](https://example.com). In the PDF and Figma pages, a block that doesn't fit starts a new page, headings stay with what follows, and tables repeat their header row. The school resources page lists the pack's four asks and links to the PDF.
+The packs are lists of blocks (the main ask, headings, paragraphs, stats, tables, lists, boxes). They're adapted to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, a screen time screenshot once a month, and the study video and how-to videos in place of webinars. Both say plainly that tablets, computers and borrowing a parent's phone are expected and built into the study.
 
+The guidance reads top to bottom: what we're asking, which guide is yours (a link to each), what to have ready, then the iPhone guide and the Android guide. Each guide starts with **Start from what you already have**, whose rows link to the right step; "Skip to Step 3", "Go to Step 4" and the other step references are links too. The longer explanations (what changes if you skip Part 1 on an iPhone, why Android has no shortcut) are in **Good to know** at the end, linked from Part 1. Each step has a tick box for parents who print it.
+
+It needs the screen PNGs from `npm run build:guides` and LibreOffice (`soffice`, or set `SOFFICE`). Nunito is embedded in the Word files and given to LibreOffice from `assets/fonts/ttf`, so it needn't be installed. `npm run build` runs the steps in the right order; build the docs before the resources, so the school resources page shows the packs' page counts.
 
 ## The design system board
 
