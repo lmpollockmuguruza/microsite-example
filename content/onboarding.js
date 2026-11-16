@@ -32,6 +32,15 @@ const schools = {
   id: 'schools',
   name: 'Welcome pack for schools',
   accent: 'schools',
+  // The cover: who it's for and what it is, at a glance (the colour comes from `accent`)
+  cover: {
+    audience: 'For school leaders',
+    kind: 'Welcome pack',
+    title: 'Welcome pack for schools',
+    what: 'What the study asks of your school, the year ahead, and the support you\'ll have.',
+    use: 'headteachers and the staff leading the study at your school.',
+    illustration: 'school'
+  },
   eyebrow: 'Welcome pack for schools',
   title: 'Welcome to the SMART Study',
   lead: 'Thank you for taking part. This pack explains the study, what it asks of your school and your families, and the support available to you.',
@@ -140,6 +149,14 @@ const parents = {
   id: 'parents',
   name: 'Welcome pack for families',
   accent: 'parents',
+  cover: {
+    audience: 'For parents and carers',
+    kind: 'Welcome pack',
+    title: 'Welcome pack for families',
+    what: 'What the study is, what we\'re asking of your family, and the help you\'ll have along the way.',
+    use: `every family taking part, with a child in ${YEARS}.`,
+    illustration: 'family'
+  },
   eyebrow: 'Welcome pack for families',
   title: 'Welcome to the SMART Study',
   lead: 'Thank you for taking part. This explains what the study is, what we\'re asking of your family, and the help you\'ll have along the way.',
