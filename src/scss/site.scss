@@ -774,7 +774,6 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
     td::before { content: attr(data-label); display: block; font-weight: 800; color: #4a5b70; font-size: 14px; }
   }
 }
-.smart-table--versions { min-width: 760px; }
 .smart-contents__part { font-size: 14px; font-weight: 800; color: #4a5b70; text-transform: uppercase; letter-spacing: .04em; margin: 12px 0 4px; }
 .smart-contents li.is-skipped a { color: #6b7785; text-decoration: line-through; }
 .smart-step.is-skipped { opacity: .7; }
@@ -784,18 +783,6 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
   padding: 0; border: 0; background: none; font: inherit; color: govuk.$govuk-link-colour; text-decoration: underline; cursor: pointer;
   &:focus { outline: 3px solid govuk.$govuk-focus-colour; background: govuk.$govuk-focus-colour; color: govuk.$govuk-focus-text-colour; }
 }
-// Versions of a step being tested: the tag only shows when ?version= picked one
-.smart-version__tag {
-  display: none; align-items: center; gap: 8px; margin: 0 0 14px; padding: 6px 12px; border-radius: 999px;
-  background: $lemon; color: $navy; font-weight: 800; @include govuk.govuk-font(16, $weight: bold);
-  .smart-icon { width: 18px; height: 18px; }
-}
-.smart-has-version .smart-version__tag { display: inline-flex; }
-.smart-version-section { margin-top: 50px; }
-.smart-version-letter {
-  display: inline-grid; place-items: center; width: 48px; height: 48px; margin-right: 6px; border-radius: 16px;
-  background: $sun; color: $navy; vertical-align: middle;
-}
 .smart-chips--list .smart-chip { flex-direction: row; }
 .smart-chip__for { font-weight: 400; color: #4a5b70; }
 .smart-chip__for::before { content: "·"; margin: 0 6px 0 2px; }
@@ -804,7 +791,6 @@ $shadow: 0 1px 2px rgba(18, 38, 63, .06), 0 6px 20px rgba(18, 38, 63, .07);
   .smart-screens { display: flex; flex-wrap: wrap; overflow: visible; margin: 10px 0; }
   .smart-screen { width: 30%; break-inside: avoid; svg { filter: none; } }
   .smart-step__done { display: none; }
-  .smart-version[hidden] { display: none !important; }
   .smart-step.is-skipped { opacity: 1; }
 }
 

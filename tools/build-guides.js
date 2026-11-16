@@ -4,16 +4,12 @@
  *   assets/guides/screens/*.svg   one vector file per phone screen
  *   guide-iphone.html, guide-android.html
  *                                 the two guides on the microsite
- *   guide-versions.html           the versions of the "Block apps" step side by
- *                                 side, for the study team (not linked from the site)
- *   exports/png/*.png             sharp (3x) images of each screen, for Word,
- *                                 numbered in the order the Word documents
- *                                 place them (01-ios-settings-account.png)
- *   exports/SMART-restrictions-guidance.docx   the editable Word version
- *   exports/SMART-block-step-versions.docx     the versions, for the team
- *   exports/figma/*.svg           one board per guide and one of the versions
+ *   exports/png/*.png             sharp (3x) images of each screen, for the Word
+ *                                 guidance (tools/build-docs.js), numbered in the
+ *                                 order it places them (01-ios-settings-account.png)
+ *   exports/figma/*.svg           one board per guide
  *
- * Run: npm run build:guides   (add --no-export to skip the PNGs and Word)
+ * Run: npm run build:guides   (add --no-export to skip the PNGs)
  */
 const fs = require('fs')
 const path = require('path')
@@ -23,7 +19,6 @@ const G = require('../content/guidance')
 const ROOT = path.resolve(__dirname, '..')
 const out = p => path.join(ROOT, p)
 const mkdir = p => fs.mkdirSync(out(p), { recursive: true })
-const V = G.blockVersions
 
 // ------------------------------------------------------------------ helpers
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -46,15 +41,7 @@ const resolve = (s, nums) => String(s)
 const plain = (s, nums) => resolve(s, nums).replace(/\*\*/g, '')
 const icon = n => `<svg class="smart-icon" aria-hidden="true"><use href="#i-${n}"></use></svg>`
 
-// A guide's steps, with one version of the "Block apps" step filled in
-function stepsFor (guide, versionId = V.shown) {
-  const v = V.versions.find(x => x.id === versionId)
-  return guide.steps.map(st => {
-    if (st.variants) return { ...st, ...v[guide.os], version: v }
-    if (st.key === 'allow' && v[guide.os + 'Allow']) return { ...st, ...v[guide.os + 'Allow'], version: v }
-    return st
-  })
-}
+const stepsFor = guide => guide.steps
 
 function allScreens () {
   const m = new Map()
@@ -62,12 +49,10 @@ function allScreens () {
   return m
 }
 
-// Screens in the order the Word documents place them: each guide as shown,
-// then the screens only the other versions use.
+// Screens in the order the Word guidance places them: the iPhone guide, then Android
 function pngOrder () {
   const list = []
   G.guides.forEach(g => stepsFor(g).forEach(st => list.push(...(st.screens || []))))
-  V.versions.forEach(v => G.guides.forEach(g => stepsFor(g, v.id).forEach(st => list.push(...(st.screens || [])))))
   return list
 }
 function pngNames () {
@@ -107,7 +92,7 @@ function screenFigure (sc, n, prefix) {
   return `<figure class="smart-screen" role="listitem">${svg}<figcaption id="${cap}"><span class="smart-screen__n">${n}</span><span><strong>${esc(sc.device)}.</strong> ${esc(sc.alt || '')}</span></figcaption></figure>`
 }
 
-// What a step says, below its title: everything that can change between versions
+// What a step says, below its title
 function stepBody (st, nums, prefix) {
   const items = (st.items || []).map(it => typeof it === 'string'
     ? `<li>${md(it, nums)}</li>`
@@ -127,31 +112,19 @@ function stepBody (st, nums, prefix) {
               ${screens ? `<p class="smart-screens__hint smart-no-print" aria-hidden="true">Swipe to see all ${st.screens.length} screens ${icon('arrow-right')}</p><div class="smart-screens" role="list" aria-label="What you'll see on the phone">${screens}</div>` : ''}`
 }
 
-// One step. On a guide page, a step that differs between versions holds every
-// version, with all but the one shown hidden (site.js swaps them for ?version=).
-function stepHtml (guide, i, opts = {}) {
+// One step
+function stepHtml (guide, i) {
   const nums = numbers(guide)
-  const shown = opts.version || V.shown
-  const st = stepsFor(guide, shown)[i]
+  const st = guide.steps[i]
   const n = i + 1
-  const pre = opts.version ? `${guide.id}-${opts.version}-` : ''
-  let body = stepBody(st, nums, `${pre}s${n}-`)
-  if (!opts.version) {
-    const bodies = V.versions.map(v => ({ v, html: stepBody(stepsFor(guide, v.id)[i], nums, `s${n}-`) }))
-    if (bodies.some(b => b.html !== body)) {
-      body = V.versions.map(v => `
-              <div class="smart-version" data-version="${v.id}"${v.id === shown ? '' : ' hidden'}>
-                <p class="smart-version__tag">${icon('flask-conical')} Testing version ${v.id}: ${esc(v.name)}</p>${stepBody(stepsFor(guide, v.id)[i], nums, `s${n}-${v.id}-`)}
-              </div>`).join('')
-    }
-  }
-  const skip = st.skip && !opts.version ? `<div class="smart-skip smart-no-print">
+  const body = stepBody(st, nums, `s${n}-`)
+  const skip = st.skip ? `<div class="smart-skip smart-no-print">
                 <p class="govuk-body">${md(st.skip.text, nums)}</p>
                 <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" href="#step-${nums.get(st.skip.to)}" data-skip-to="step-${nums.get(st.skip.to)}">${icon('skip-forward')} ${esc(st.skip.button)}</a>
               </div>` : ''
   const already = st.already ? `<div class="smart-already">${icon('list-checks')}<p class="govuk-body govuk-!-margin-bottom-0">${md(st.already, nums)}</p></div>` : ''
   return `
-            <li class="smart-step" id="${pre}step-${n}">
+            <li class="smart-step" id="step-${n}">
               <h3 class="govuk-heading-m">${esc(st.title)}</h3>
               <ul class="smart-step__meta">
                 <li>${icon('clock')} ${esc(st.time)}</li>
@@ -159,7 +132,7 @@ function stepHtml (guide, i, opts = {}) {
               </ul>
               ${skip}
               ${already}${body}
-              ${opts.version ? '' : `<p class="smart-step__skipped smart-no-print" hidden>Skipped, because it's already done or not needed. <button type="button" class="smart-link-button" data-unskip>Undo</button></p>
+              ${`<p class="smart-step__skipped smart-no-print" hidden>Skipped, because it's already done or not needed. <button type="button" class="smart-link-button" data-unskip>Undo</button></p>
               <div class="govuk-checkboxes govuk-checkboxes--small smart-step__done smart-no-print"><div class="govuk-checkboxes__item"><input class="govuk-checkboxes__input" id="done-${n}" type="checkbox"><label class="govuk-label govuk-checkboxes__label" for="done-${n}">I've done this step</label></div></div>`}
             </li>`
 }
@@ -201,19 +174,25 @@ function table (cols, rows, opts = {}) {
           </table>`
 }
 
-// Under Part 1: on iPhone, what changes if you skip it; on Android, why you can't
+// Under Part 1: one line, with a link to the longer explanation at the end of the page
 function partOneNote (guide, nums) {
+  const more = guide.compare || guide.shortcut
+  return more ? `<p class="govuk-body"><a class="govuk-link" href="#compare">${esc(guide.partOneLink)}</a></p>` : ''
+}
+
+// At the end of the page: on iPhone, what changes if you skip Part 1; on Android, why you can't
+function compareSection (guide, nums) {
   if (guide.compare) {
     const c = guide.compare
-    return `<h3 class="govuk-heading-m" id="compare">${esc(c.title)}</h3>
+    return `<h2 class="govuk-heading-l" id="compare">${esc(c.title)}</h2>
           <p class="govuk-body">${md(c.text, nums)}</p>
-          <div class="smart-table-wrap">${table(c.cols.map(x => esc(x)), c.rows.map(r => r.map(x => md(x, nums))), { rowHeads: true, cls: 'smart-table--compare', caption: c.title })}</div>`
+          <div class="smart-table-wrap">${table(c.cols.map(x => esc(x)), c.rows.map(r => r.map(x => md(x, nums))), { rowHeads: true, cls: 'smart-table--compare', caption: c.title })}</div>
+          <p class="govuk-body"><a class="govuk-link" href="#part-connect">Back to Part 1</a></p>`
   }
   if (guide.shortcut) {
-    return `<div class="smart-note" id="compare">
-            <h3 class="govuk-heading-s">${esc(guide.shortcut.title)}</h3>
-            ${guide.shortcut.text.map(t => `<p class="govuk-body">${md(t, nums)}</p>`).join('\n            ')}
-          </div>`
+    return `<h2 class="govuk-heading-l" id="compare">${esc(guide.shortcut.title)}</h2>
+          ${guide.shortcut.text.map(t => `<p class="govuk-body">${md(t, nums)}</p>`).join('\n          ')}
+          <p class="govuk-body"><a class="govuk-link" href="#part-connect">Back to Part 1</a></p>`
   }
   return ''
 }
@@ -285,6 +264,8 @@ ${breadcrumbs}
             <div class="govuk-panel__body govuk-!-font-size-24">In about a week, we'll ask you to <a href="share-screen-time.html" style="color:#fff">share a screenshot</a> of your child's screen time.</div>
           </div>
 
+          ${compareSection(guide, nums)}
+
           <h2 class="govuk-heading-m">${esc(G.intro.optional.title)}</h2>
           ${G.intro.optional.text.map(t => `<p class="govuk-body">${md(t)}</p>`).join('\n          ')}
 
@@ -315,59 +296,6 @@ ${breadcrumbs}
 ` + foot
 }
 
-// The team's page: every version of the "Block apps" step, side by side
-function versionsHtml () {
-  const sections = V.versions.map(v => {
-    const blocks = G.guides.map(g => {
-      const idx = g.steps.findIndex(s => s.key === V.step)
-      const more = g.steps.findIndex(s => s.key === 'allow')
-      const list = [idx]
-      if (v[g.os + 'Allow']) list.push(more)
-      return `<h3 class="govuk-heading-m">${esc(g.short)} <a class="govuk-link govuk-body-s" href="${g.slug}.html?version=${v.id}#step-${idx + 1}">Open it in the ${esc(g.short)} guide</a></h3>
-          ${list.map(i => `<ol class="smart-steps" style="counter-reset: step ${i}">${stepHtml(g, i, { version: v.id })}</ol>`).join('\n          ')}`
-    }).join('\n          ')
-    return `<section class="smart-version-section" id="version-${v.id}" aria-labelledby="version-${v.id}-title">
-          <h2 class="govuk-heading-l" id="version-${v.id}-title"><span class="smart-version-letter">${v.id}</span> ${esc(v.name)}${v.id === V.shown ? ' <strong class="govuk-tag govuk-tag--green">In the guides now</strong>' : ` <strong class="govuk-tag govuk-tag--grey">${esc(v.tag)}</strong>`}</h2>
-          <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">What changes</dt><dd class="govuk-summary-list__value">${md(v.what)}</dd></div>
-            <div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Ends with</dt><dd class="govuk-summary-list__value">${md(v.endState)}</dd></div>
-            <div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Why try it</dt><dd class="govuk-summary-list__value">${md(v.why)}</dd></div>
-            <div class="govuk-summary-list__row"><dt class="govuk-summary-list__key">Watch for</dt><dd class="govuk-summary-list__value">${md(v.watch)}</dd></div>
-          </dl>
-          ${blocks}
-        </section>`
-  }).join('\n\n        ')
-
-  return head(V.title.replace(/"/g, '')) + `
-  <div class="govuk-width-container">
-${breadcrumbs}
-    <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content">
-      <div class="smart-hero smart-hero--compact smart-hero--lemon">
-        <div>
-          <span class="smart-hero__eyebrow">${icon('flask-conical')} For the study team · not linked from the site</span>
-          <h1 class="govuk-heading-xl">${esc(V.title)}</h1>
-          <p class="govuk-body-l">${md(V.lead)}</p>
-        </div>
-      </div>
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-          <p class="govuk-body">The guides show <strong>version ${V.shown}</strong>. To see another in context, add <code>?version=</code> and the letter to a guide's address, or use the links below. Everything else in the guides stays the same.</p>
-          <div class="smart-table-wrap">${table(['Version', 'What changes', 'Ends with', 'Why try it', 'Watch for'], V.versions.map(v => [`<a class="govuk-link" href="#version-${v.id}"><strong>${v.id}</strong>: ${esc(v.name)}</a>`, md(v.what), md(v.endState), md(v.why), md(v.watch)]), { rowHeads: true, cls: 'smart-table--versions', caption: 'The versions' })}</div>
-          <h2 class="govuk-heading-m">How we'd tell them apart</h2>
-          <ul class="govuk-list govuk-list--bullet govuk-list--spaced">${V.measure.map(m => `<li>${md(m)}</li>`).join('')}</ul>
-          <p class="govuk-body">Download: <a class="govuk-link" href="exports/SMART-block-step-versions.docx">all versions as a Word document</a> · <a class="govuk-link" href="exports/figma/block-step-versions.svg">Figma board</a></p>
-        </div>
-      </div>
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-        ${sections}
-        </div>
-      </div>
-    </main>
-  </div>
-` + foot
-}
-
 // ------------------------------------------------------------------ 3. PNGs (for Word)
 async function writePngs (screens) {
   mkdir('exports/png')
@@ -386,214 +314,7 @@ async function writePngs (screens) {
   await browser.close()
 }
 
-// ------------------------------------------------------------------ 4. Word
-function pngSize (file) {
-  const b = fs.readFileSync(file)
-  return { w: b.readUInt32BE(16), h: b.readUInt32BE(20), data: b }
-}
-
-// The building blocks both Word documents use
-function docxKit () {
-  const d = require('docx')
-  const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, ImageRun, AlignmentType, ShadingType, LevelFormat, PageBreak, Footer, PageNumber } = d
-  const NAVY = '003A69'
-  const CORAL = 'C4412A'
-  const FONT = 'Arial'
-  const numberingConfigs = [{ reference: 'bullets', levels: [
-    { level: 0, format: LevelFormat.BULLET, text: '•', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 460, hanging: 280 } } } },
-    { level: 1, format: LevelFormat.BULLET, text: '–', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 920, hanging: 280 } } } }
-  ] }]
-
-  const k = {}
-  k.HeadingLevel = HeadingLevel
-  k.NAVY = NAVY
-  k.CORAL = CORAL
-  k.runs = (s, o = {}) => resolve(s, o.nums).split(/(\*\*.+?\*\*)/).filter(Boolean).map(part => {
-    const b = /^\*\*.+\*\*$/.test(part)
-    return new TextRun({ text: b ? part.slice(2, -2) : part, bold: b || o.bold, color: o.color, size: o.size, italics: o.italics, font: FONT })
-  })
-  k.P = (s, o = {}) => new Paragraph({ children: k.runs(s, o), spacing: { after: o.after ?? 120 }, ...(o.p || {}) })
-  k.H = (s, level) => new Paragraph({ heading: level, children: [new TextRun({ text: plain(s), font: FONT })], spacing: { before: level === HeadingLevel.HEADING_1 ? 360 : 240, after: 120 } })
-  k.space = () => k.P('', { after: 60 })
-  k.pageBreak = () => new Paragraph({ children: [new PageBreak()] })
-  k.bullet = (s, level = 0, nums) => new Paragraph({ children: k.runs(s, { nums }), numbering: { reference: 'bullets', level }, spacing: { after: 80 } })
-  let listId = 0
-  k.numbered = (items, nums) => {
-    const ref = 'steps' + (++listId)
-    numberingConfigs.push({ reference: ref, levels: [{ level: 0, format: LevelFormat.DECIMAL, text: '%1.', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 460, hanging: 320 } } } }] })
-    const ps = []
-    items.forEach(it => {
-      const text = typeof it === 'string' ? it : it.text
-      ps.push(new Paragraph({ children: k.runs(text, { nums }), numbering: { reference: ref, level: 0 }, spacing: { after: 80 } }))
-      if (typeof it !== 'string') (it.sub || []).forEach(x => ps.push(k.bullet(x, 1, nums)))
-    })
-    return ps
-  }
-  // A shaded box with a coloured bar on the left. `s` is a string or a list of paragraphs' text.
-  k.callout = (s, fill, border, nums) => new Table({
-    width: { size: 9026, type: WidthType.DXA },
-    columnWidths: [9026],
-    rows: [new TableRow({ children: [new TableCell({
-      width: { size: 9026, type: WidthType.DXA },
-      shading: { type: ShadingType.CLEAR, color: 'auto', fill },
-      borders: { top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, left: { style: BorderStyle.SINGLE, size: 24, color: border } },
-      margins: { top: 120, bottom: 120, left: 200, right: 200 },
-      children: [].concat(s).map((x, i, a) => k.P(x, { after: i === a.length - 1 ? 0 : 100, nums }))
-    })] })]
-  })
-  k.table = (cols, rows, widths, nums) => {
-    const cell = (s, i, headCell) => new TableCell({ width: { size: widths[i], type: WidthType.DXA }, shading: headCell ? { type: ShadingType.CLEAR, color: 'auto', fill: NAVY } : undefined, margins: { top: 70, bottom: 70, left: 110, right: 110 }, children: [k.P(s, { after: 0, color: headCell ? 'FFFFFF' : undefined, bold: headCell, size: 20, nums })] })
-    return new Table({ width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA }, columnWidths: widths, rows: [
-      new TableRow({ tableHeader: true, children: cols.map((s, i) => cell(s, i, true)) }),
-      ...rows.map(r => new TableRow({ cantSplit: true, children: r.map((s, i) => cell(s, i)) }))
-    ] })
-  }
-  const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
-  const noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none }
-  k.screensTable = screens => {
-    const cols = 3
-    const colW = 3008
-    const rows = []
-    for (let i = 0; i < screens.length; i += cols) {
-      const cells = []
-      for (let j = 0; j < cols; j++) {
-        const sc = screens[i + j]
-        const children = []
-        if (sc) {
-          const img = pngSize(out(pngFile(sc.id)))
-          const wPx = 170
-          children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type: 'png', data: img.data, transformation: { width: wPx, height: Math.round(wPx * img.h / img.w) }, altText: { title: sc.id, description: sc.alt || sc.id, name: sc.id } })] }))
-          children.push(new Paragraph({ spacing: { before: 60, after: 160 }, children: [
-            new TextRun({ text: `${i + j + 1}. ${sc.device}. `, bold: true, size: 16, font: FONT, color: NAVY }),
-            new TextRun({ text: sc.alt || '', size: 16, font: FONT, color: '444444' })
-          ] }))
-        } else children.push(new Paragraph({ children: [] }))
-        cells.push(new TableCell({ width: { size: colW, type: WidthType.DXA }, borders: noBorders, verticalAlign: 'top', margins: { left: 60, right: 60 }, children }))
-      }
-      rows.push(new TableRow({ cantSplit: true, children: cells }))
-    }
-    return new Table({ width: { size: colW * cols, type: WidthType.DXA }, columnWidths: [colW, colW, colW], borders: noBorders, rows })
-  }
-  k.stepBlock = (st, label, nums) => {
-    const ch = [k.H(`${label}: ${st.title}`, HeadingLevel.HEADING_3), k.P(`${st.time} · on ${st.device}`, { color: '555555', italics: true })]
-    if (st.skip) ch.push(k.callout(st.skip.text, 'EEF6FD', '1A5C9E', nums), k.space())
-    if (st.already) ch.push(k.callout(st.already, 'E6F7F1', '0B7A67', nums), k.space())
-    if (st.intro) ch.push(k.P(st.intro, { nums }))
-    ch.push(...k.numbered(st.items || [], nums))
-    ;(st.after || []).forEach(a => ch.push(k.P(a, { nums })))
-    if (st.list) {
-      const d = G.allowlist.discretion
-      ch.push(k.callout([`**${d.title}**`, ...d.text], 'EEF6FD', '1A5C9E', nums), k.space())
-    }
-    if (st.warn) ch.push(k.callout(st.warn, 'FFF1C9', 'E0A800', nums), k.space())
-    if (st.check) ch.push(k.callout(st.check, 'E6F7F1', '0B7A67', nums), k.space())
-    if (st.screens && st.screens.length) ch.push(k.screensTable(st.screens))
-    return ch
-  }
-  k.pack = (title, footer, body) => Packer.toBuffer(new Document({
-    creator: 'PUBLIC',
-    title,
-    styles: {
-      default: { document: { run: { font: FONT, size: 22 }, paragraph: { spacing: { line: 276 } } } },
-      paragraphStyles: [
-        { id: 'Title', name: 'Title', basedOn: 'Normal', run: { size: 48, bold: true, color: NAVY, font: FONT } },
-        { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { size: 34, bold: true, color: NAVY, font: FONT }, paragraph: { outlineLevel: 0 } },
-        { id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { size: 28, bold: true, color: NAVY, font: FONT }, paragraph: { outlineLevel: 1 } },
-        { id: 'Heading3', name: 'Heading 3', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { size: 24, bold: true, color: CORAL, font: FONT }, paragraph: { outlineLevel: 2, keepNext: true } }
-      ]
-    },
-    numbering: { config: numberingConfigs },
-    sections: [{
-      properties: { page: { margin: { top: 1134, bottom: 1134, left: 1440, right: 1440 } } },
-      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `${footer} · page `, size: 16, color: '777777', font: FONT }), new TextRun({ children: [PageNumber.CURRENT], size: 16, color: '777777', font: FONT })] })] }) },
-      children: body
-    }]
-  }))
-  k.titleBlock = title => [
-    new Paragraph({ children: [new TextRun({ text: 'The SMART Study', bold: true, color: CORAL, size: 28, font: FONT })], spacing: { after: 80 } }),
-    new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun({ text: title, font: FONT })], spacing: { after: 200 } })
-  ]
-  return k
-}
-
-function buildGuidanceDocx () {
-  const k = docxKit()
-  const { HeadingLevel } = k
-  const body = [...k.titleBlock(G.intro.title)]
-  body.push(k.P(G.intro.lead))
-  G.intro.text.forEach(t => body.push(k.P(t)))
-
-  body.push(k.H('Which guide is yours?', HeadingLevel.HEADING_2))
-  body.push(k.P('It depends only on your child\'s phone. Your own phone can be anything.'))
-  body.push(k.table(['Your child\'s phone', 'Your guide'], G.guides.map(g => [g.short, `**${g.title}**. ${g.time}.`]), [3000, 6026]))
-  body.push(k.space())
-
-  body.push(k.H(G.yourself.title, HeadingLevel.HEADING_2))
-  body.push(k.callout(G.yourself.text, 'FDE7D3', k.CORAL), k.space())
-
-  body.push(k.H('Before you start: four things to have ready', HeadingLevel.HEADING_2))
-  G.intro.before.forEach(b => body.push(k.bullet(b)))
-  body.push(k.callout(G.intro.beforeWarn, 'FDE7D3', k.CORAL), k.space())
-  body.push(k.P(G.intro.moreDevices))
-
-
-  G.guides.forEach(guide => {
-    const nums = numbers(guide)
-    const steps = stepsFor(guide)
-    body.push(k.pageBreak())
-    body.push(k.H(guide.title, HeadingLevel.HEADING_1))
-    body.push(k.P(guide.lead, { nums }))
-    body.push(k.P(`${guide.time}.`, { italics: true, color: '555555' }))
-    if (guide.os === 'android') body.push(k.P(G.intro.androidNote))
-
-    const sf = guide.startFrom
-    body.push(k.H(sf.title, HeadingLevel.HEADING_2))
-    body.push(k.P(sf.text))
-    body.push(k.table(['Where you are', 'Start at'], sf.rows.map(r => [r.have, `**Step ${nums.get(r.go)}**: ${guide.steps[nums.get(r.go) - 1].title}`]), [5400, 3626], nums))
-    body.push(k.space(), k.P(sf.after, { nums }))
-
-    partKeys(guide).forEach(p => {
-      body.push(k.H(guide.parts[p].title, HeadingLevel.HEADING_2))
-      body.push(k.P(guide.parts[p].text, { italics: true }))
-      if (p === 'connect' && guide.compare) {
-        const c = guide.compare
-        body.push(k.P(`**${c.title}.** ${c.text}`, { nums }))
-        body.push(k.table(c.cols, c.rows, [2600, 3213, 3213], nums), k.space())
-      }
-      if (p === 'connect' && guide.shortcut) body.push(k.callout([`**${guide.shortcut.title}.**`, ...guide.shortcut.text], 'EEF6FD', '1A5C9E', nums), k.space())
-      steps.forEach((st, i) => { if (st.part === p) body.push(...k.stepBlock(st, `Step ${i + 1}`, nums)) })
-    })
-  })
-
-  body.push(k.H(G.intro.optional.title, HeadingLevel.HEADING_2))
-  G.intro.optional.text.forEach(t => body.push(k.P(t)))
-  return k.pack('SMART Study: setting up your child\'s phone', 'SMART Study · setting up your child\'s phone', body)
-}
-
-function buildVersionsDocx () {
-  const k = docxKit()
-  const { HeadingLevel } = k
-  const body = [...k.titleBlock(V.title)]
-  body.push(k.P(V.lead))
-  body.push(k.P(`The guides on the website show **version ${V.shown}**. To see another in context, add ?version= and the letter to a guide's address, for example guide-iphone.html?version=C.`))
-  body.push(k.table(['Version', 'What changes', 'Ends with', 'Why try it', 'Watch for'], V.versions.map(v => [`**${v.id}**: ${v.name}`, v.what, v.endState, v.why, v.watch]), [1500, 2200, 1300, 2000, 2026]))
-  body.push(k.space())
-  body.push(k.H('How we\'d tell them apart', HeadingLevel.HEADING_2))
-  V.measure.forEach(m => body.push(k.bullet(m)))
-  V.versions.forEach(v => {
-    body.push(k.pageBreak())
-    body.push(k.H(`Version ${v.id}: ${v.name}${v.id === V.shown ? ' (in the guides now)' : ''}`, HeadingLevel.HEADING_1))
-    body.push(k.P(`**What changes.** ${v.what}`), k.P(`**Ends with.** ${v.endState}`), k.P(`**Why try it.** ${v.why}`), k.P(`**Watch for.** ${v.watch}`))
-    G.guides.forEach(g => {
-      const nums = numbers(g)
-      body.push(k.H(g.short, HeadingLevel.HEADING_2))
-      stepsFor(g, v.id).forEach((st, i) => { if (st.version) body.push(...k.stepBlock(st, `Step ${i + 1}`, nums)) })
-    })
-  })
-  return k.pack('SMART Study: versions of the Block apps step', 'SMART Study · versions of the "Block apps" step (for the team)', body)
-}
-
-// ------------------------------------------------------------------ 5. Figma boards
+// ------------------------------------------------------------------ 4. Figma boards
 // `blocks` is a list of { label, step, nums }: one white card each
 function figmaBoard (title, blocks) {
   const BW = 1800
@@ -663,28 +384,15 @@ function guideBoard (guide) {
   const nums = numbers(guide)
   return figmaBoard(guide.title, stepsFor(guide).map((st, i) => ({ label: `Step ${i + 1}`, step: st, nums })))
 }
-function versionsBoard () {
-  const blocks = []
-  V.versions.forEach(v => G.guides.forEach(g => {
-    const nums = numbers(g)
-    stepsFor(g, v.id).forEach((st, i) => { if (st.version) blocks.push({ label: `Version ${v.id} · ${g.short} · Step ${i + 1}`, step: st, nums }) })
-  }))
-  return figmaBoard(V.title, blocks)
-}
-
 // ------------------------------------------------------------------ run
 ;(async () => {
   const screens = allScreens()
   writeSvgs(screens)
   G.guides.forEach(g => fs.writeFileSync(out(`${g.slug}.html`), pageHtml(g)))
-  fs.writeFileSync(out('guide-versions.html'), versionsHtml())
-  console.log(`${screens.size} screens, ${G.guides.length} guides, ${V.versions.length} versions of the "Block apps" step`)
+  console.log(`${screens.size} screens, ${G.guides.length} guides`)
   mkdir('exports/figma')
   G.guides.forEach(g => fs.writeFileSync(out(`exports/figma/${g.slug}.svg`), guideBoard(g)))
-  fs.writeFileSync(out('exports/figma/block-step-versions.svg'), versionsBoard())
   if (process.argv.includes('--no-export')) return
   await writePngs(screens)
-  fs.writeFileSync(out('exports/SMART-restrictions-guidance.docx'), await buildGuidanceDocx())
-  fs.writeFileSync(out('exports/SMART-block-step-versions.docx'), await buildVersionsDocx())
-  console.log('Word documents and PNGs written')
+  console.log('PNGs written')
 })().catch(e => { console.error(e); process.exit(1) })

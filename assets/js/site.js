@@ -226,16 +226,6 @@
       '</div></div>' + (caption ? '<p class="smart-phone__caption" aria-hidden="true">' + esc(caption) + '</p>' : '')
   })
 
-  // ------------------------------------------------------------------ guide versions (for testing)
-  // A step with versions holds each one in a [data-version] block, all but one
-  // hidden. ?version=C in the address shows version C instead.
-  var wanted = (location.search.match(/[?&]version=([A-Za-z])/) || [])[1]
-  if (wanted && document.querySelector('[data-version="' + wanted.toUpperCase() + '"]')) {
-    wanted = wanted.toUpperCase()
-    document.querySelectorAll('[data-version]').forEach(function (n) { n.hidden = n.getAttribute('data-version') !== wanted })
-    body.classList.add('smart-has-version')
-  }
-
   // ------------------------------------------------------------------ guide progress ("I've done this step")
   // Saved in this browser only. In a real build this could also be sent as an
   // engagement signal. A step is true (done), 'skip' (skipped, or already done
