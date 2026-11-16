@@ -105,13 +105,17 @@ Each is one page: a single ask (with a QR code), what taking part involves term 
 
 ## The documents: onboarding packs and the guidance for parents
 
-These go out as Word and PDF, in one house style taken from the April 2027 packs and the design review: Nunito, body text at 10.5pt, one heading hierarchy, and a colour per audience (navy and yellow for schools, coral for parents). Words in [square brackets] are still to be confirmed and are highlighted in yellow. `npm run build:docs` builds each one as Word, then makes the PDF from the Word file with LibreOffice, so the two always match:
+These go out as Word and PDF, in one house style taken from the April 2027 packs and the design review: Nunito, body text at 10.5pt, one heading hierarchy, and a colour per audience (navy and yellow for schools, coral for parents). Words in [square brackets] are still to be confirmed and are highlighted in yellow.
+
+Each document opens with a **cover** in its audience's colour, so a school leader can sort them at a glance: a full-width band saying who it's for ("For school leaders", "For parents and carers"), then what kind of document it is, its title, one line on what's in it, an illustration and "Who it's for". The colours are set once in `ACCENT` in `tools/build-docs.js`: navy and yellow for schools, coral for parents, green for children (ready for the first document for children). The cover's words live with each document: `cover` in `content/onboarding.js`, and `GUIDE.cover` in `tools/build-docs.js`. Page numbers start after the cover.
+
+`npm run build:docs` builds each one as Word, then makes the PDF from the Word file with LibreOffice, so the two always match:
 
 | Document | Source | Files |
 | --- | --- | --- |
-| Welcome pack for schools | `content/onboarding.js` (`schools`) | `exports/SMART-onboarding-pack-schools.docx\|pdf` (4 pages) |
-| Welcome pack for families | `content/onboarding.js` (`parents`) | `exports/SMART-onboarding-pack-parents.docx\|pdf` (4 pages) |
-| Setting up your child's phone (the guidance for parents) | `content/guidance.js` | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` (about 23 pages) |
+| Welcome pack for schools | `content/onboarding.js` (`schools`) | `exports/SMART-onboarding-pack-schools.docx\|pdf` (cover and 4 pages) |
+| Welcome pack for families | `content/onboarding.js` (`parents`) | `exports/SMART-onboarding-pack-parents.docx\|pdf` (cover and 4 pages) |
+| Setting up your child's phone (the guidance for parents) | `content/guidance.js` | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` (cover and about 23 pages) |
 
 The packs are lists of blocks (the main ask, headings, paragraphs, stats, tables, lists, boxes). They're adapted to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, a screen time screenshot once a month, and the study video and how-to videos in place of webinars. Both say plainly that tablets, computers and borrowing a parent's phone are expected and built into the study.
 
