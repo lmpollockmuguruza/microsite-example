@@ -38,7 +38,6 @@ const schools = {
     kind: 'Welcome pack',
     title: 'Welcome pack for schools',
     what: 'What the study asks of your school, the year ahead, and the support you\'ll have.',
-    use: 'headteachers and the staff leading the study at your school.',
     illustration: 'school'
   },
   eyebrow: 'Welcome pack for schools',
@@ -154,7 +153,6 @@ const parents = {
     kind: 'Welcome pack',
     title: 'Welcome pack for families',
     what: 'What the study is, what we\'re asking of your family, and the help you\'ll have along the way.',
-    use: `every family taking part, with a child in ${YEARS}.`,
     illustration: 'family'
   },
   eyebrow: 'Welcome pack for families',
