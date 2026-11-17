@@ -93,15 +93,15 @@ There are three posters, each with one ask: one covering both situations (the on
 
 ## The invitation to take part
 
-The first thing school leaders and parents get from us, also in **`content/resources.js`** (`invitations`) and built by `npm run build:resources`:
+The first thing school leaders and parents get from us, in **`content/resources.js`** (`invitations`), built by `npm run build:docs` in the house style with a cover (navy and yellow for schools, coral for parents) and one page:
 
 | Output | Where | Use it for |
 | --- | --- | --- |
 | Word | `exports/invitations/SMART-invitation-{schools,parents}.docx` | Editing the wording and filling in the details. |
-| PDF and PNG | `exports/invitations/SMART-invitation-{schools,parents}.{pdf,png}` | Printing, emailing, newsletters. |
-| Figma | `exports/figma/invitation-{schools,parents}.svg` | An A4 frame each, text editable. |
+| PDF | `exports/invitations/SMART-invitation-{schools,parents}.pdf` | Printing and emailing. |
+| PNG | `exports/invitations/SMART-invitation-{schools,parents}.png` | The invitation page as an image, for emails and newsletters. |
 
-Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey length) are still to be confirmed. The build warns if a page gets too full for A4.
+The page has a single ask (with room for a QR code), what taking part involves term by term, a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. For schools: two short surveys (autumn 2027 and summer 2028) alongside the two assessments, and one thank-you payment when the study ends. Sign-up and contact details are to come from Navigator Insight. Words in [square brackets] are still to be confirmed.
 
 ## The documents: onboarding packs and the guidance for parents
 

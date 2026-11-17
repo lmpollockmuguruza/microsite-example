@@ -153,6 +153,8 @@ const invitations = [
     id: 'schools', name: 'School leaders',
     use: 'For headteachers and school leaders: the first invitation to take part.',
     eyebrow: 'Invitation for school leaders',
+    accent: 'schools',
+    cover: { audience: 'For school leaders', kind: 'Invitation', title: 'Will your school take part?', what: 'Help find out what\'s best for children and phones, from September 2027 to September 2028.', illustration: 'school' },
     headline: 'Will your school help find out what\'s best for children and phones?',
     intro: `Nobody knows yet the best age for a first smartphone, or how best to set one up. The SMART Study will help find out, for the Department for Education. We're inviting around 80 primary schools in England, with their pupils in **${YEARS}**, from **${START}** to **${END}**.`,
     ask: {
@@ -162,24 +164,27 @@ const invitations = [
     involvesTitle: 'What taking part involves for your school',
     timeline: [
       { when: 'Summer term 2027', text: 'Sign up and name a contact. Share our invitation with families in ' + YEARS + ': we give you everything you need.' },
-      { when: TERM1, text: `Pupils do the first of two short ${ASSESS} in class, about **[45] minutes**.` },
-      { when: 'During the year', text: 'Pass on our messages and posters to families now and then, and give us short feedback three times. No extra teaching.' },
-      { when: TERM3, text: 'Pupils do the second assessment. The study ends in ' + END + '.' }
+      { when: TERM1, text: `Pupils do the first of two short ${ASSESS} in class, about **[45] minutes**. You fill in a short survey.` },
+      { when: 'During the year', text: 'Pass on our messages and posters to families now and then. No extra teaching.' },
+      { when: TERM3, text: 'Pupils do the second assessment. You fill in a last short survey.' }
     ],
     groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps. In the other, families carry on as usual. Every school does the same assessments and surveys.`,
     gets: [
-      { icon: 'school', title: '£500 for your school', text: 'For taking part, plus [£XX] for each feedback round.' },
+      { icon: 'school', title: '[£X] for your school', text: 'A thank-you payment when the study ends.' },
       { icon: 'chart-column', title: 'Your pupils\' results', text: 'Reading and maths scores from both assessments.' },
       { icon: 'sparkles', title: 'Resources for families', text: 'Motivational videos, comic books and a newsletter.' },
       { icon: 'mail', title: 'What we find', text: 'A summary of the findings, shared with you first.' }
     ],
     choice: 'Taking part is your school\'s choice, and you can stop at any time.',
-    contact: `Questions? Email ${EMAIL}, or call [phone number].`
+    // Sign-up and contact details come from Navigator Insight [TBC]
+    contact: 'Questions? Email [email address].'
   },
   {
     id: 'parents', name: 'Parents and carers',
     use: 'For parents and carers of children in ' + YEARS + ', sent through the school.',
     eyebrow: 'Invitation for parents and carers',
+    accent: 'parents',
+    cover: { audience: 'For parents and carers', kind: 'Invitation', title: 'Will your family take part?', what: 'Help find out what\'s best for children and phones, from September 2027 to September 2028.', illustration: 'family' },
     headline: 'Will your family help find out what\'s best for children and phones?',
     intro: `Nobody knows yet the best age for a first smartphone, or how best to set one up. **[School name]** is helping to find out, as one of around 80 primary schools in the SMART Study. It runs from **${START}** to **${END}**, for children in **${YEARS}**, and we'd love your family to take part.`,
     ask: {

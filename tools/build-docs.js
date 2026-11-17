@@ -5,6 +5,9 @@
  *   exports/SMART-onboarding-pack-parents.docx|pdf   welcome pack for families  (content/onboarding.js)
  *   exports/SMART-onboarding-pack-children.docx|pdf  welcome pack for children  (content/onboarding.js)
  *   exports/SMART-delay-guide.docx|pdf               waiting for a first smartphone (content/resources.js)
+ *   exports/invitations/SMART-invitation-{schools,parents}.docx|pdf|png
+ *                                                    the invitations to take part (content/resources.js);
+ *                                                    the PNG is the invitation page, for emails and newsletters
  *   exports/SMART-setting-up-your-childs-phone.docx|pdf
  *                                                    the guidance for parents   (content/guidance.js)
  *
@@ -53,7 +56,9 @@ const ACCENT = {
 const FONT = 'Nunito'
 const SIZE = { body: 21, small: 18, caption: 16, lead: 23, eyebrow: 17, title: 52, h1: 34, h2: 27, h3: 23 }
 // Documents for children use bigger text (12pt body), as the design review asked
-const SIZES = { default: { ...SIZE }, children: { body: 23, small: 20, caption: 16, lead: 26, eyebrow: 18, title: 56, h1: 36, h2: 30, h3: 25 } }
+const SIZES = { default: { ...SIZE }, children: { body: 23, small: 20, caption: 16, lead: 26, eyebrow: 18, title: 56, h1: 36, h2: 30, h3: 25 },
+  // invitations fit on one page
+  invitation: { body: 20, small: 17, caption: 16, lead: 22, eyebrow: 16, title: 40, h1: 32, h2: 25, h3: 22 } }
 // Sizes are read as each document is built, and documents are built one at a time
 const useSizes = name => Object.assign(SIZE, SIZES[name || 'default'])
 const PAGE = { w: 11906, h: 16838, x: 1134, top: 1300, bottom: 1134 }
@@ -184,6 +189,24 @@ function kit (accentName, docTitle, logo) {
         cell(iw, [new Paragraph({ children: [k.icon(it.icon, 28)], spacing: { after: 0, line: 240, lineRule: AUTO } })]),
         cell(tw, [k.P(it.text, { after: 0, line: 240 })], { l: 20 })
       ]) })]
+    })
+  }
+  // Tiles in a row, each an icon, a title and a line of text
+  k.tiles = items => {
+    const gap = 140
+    const w = Math.floor((TW - gap * (items.length - 1)) / items.length)
+    const fills = [C.mint, C.peach, C.sky, C.lemon]
+    const blank = () => new TableCell({ width: { size: gap, type: WidthType.DXA }, borders: { top: none, bottom: none, left: none, right: none }, children: [new Paragraph({ children: [] })] })
+    return new Table({
+      width: { size: w * items.length + gap * (items.length - 1), type: WidthType.DXA }, columnWidths: items.flatMap((x, i) => i ? [gap, w] : [w]), borders: noBorders,
+      rows: [new TableRow({ cantSplit: true, children: items.flatMap((it, i) => {
+        const c = new TableCell({ width: { size: w, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: fills[i % fills.length] }, borders: { top: none, bottom: none, left: none, right: none }, margins: { top: 150, bottom: 120, left: 150, right: 150 }, children: [
+          new Paragraph({ children: [k.icon(it.icon, 30)], spacing: { after: 80, line: 240, lineRule: AUTO } }),
+          k.P(it.title, { bold: true, color: C.navy, after: 40 }),
+          k.P(it.text, { size: SIZE.small, after: 0 })
+        ] })
+        return i ? [blank(), c] : [c]
+      }) })]
     })
   }
   // A heading, title or line of text with an icon badge in front
@@ -382,6 +405,34 @@ function packBody (pack, k) {
     else throw new Error('Unknown block type ' + b.type)
   }
   if (pack.footer) body.push(new Paragraph({ children: runs(pack.footer, { size: SIZE.small, color: C.grey }), spacing: { before: 160, after: 0 }, border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 8 } } }))
+  return body
+}
+
+// ------------------------------------------------------------------ invitations to take part (one page after the cover)
+function invitationBody (v, k) {
+  // no eyebrow: the page header already says who it's for
+  const body = k.titleBlock(v.eyebrow, v.headline, v.intro).slice(1, 2)
+  body.push(k.P(v.intro, { size: SIZE.lead, color: C.grey, after: 160 }))
+  // the ask, with room for the QR code
+  const qw = 1700
+  const aw = TW - qw - 200
+  body.push(new Table({
+    width: { size: TW, type: WidthType.DXA }, columnWidths: [aw, 200, qw], borders: noBorders,
+    rows: [new TableRow({ cantSplit: true, children: [
+      new TableCell({ width: { size: aw, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: k.A.ask }, borders: { top: none, bottom: none, left: none, right: none }, margins: { top: 160, bottom: 120, left: 220, right: 220 }, verticalAlign: VerticalAlign.CENTER, children: [
+        k.P(v.ask.title, { bold: true, color: C.navy, size: SIZE.h2, after: 80 }), k.P(v.ask.text, { after: 40 })
+      ] }),
+      new TableCell({ width: { size: 200, type: WidthType.DXA }, borders: { top: none, bottom: none, left: none, right: none }, children: [new Paragraph({ children: [] })] }),
+      new TableCell({ width: { size: qw, type: WidthType.DXA }, borders: { top: lineB, bottom: lineB, left: lineB, right: lineB }, verticalAlign: VerticalAlign.CENTER, children: [k.P(`[${v.qr}]`, { align: AlignmentType.CENTER, color: C.grey, after: 0 })] })
+    ] })]
+  }), k.space(60))
+  body.push(k.H2(v.involvesTitle))
+  body.push(k.table(['When', 'What happens'], v.timeline.map(t => [`**${t.when}**`, t.text]), [0.24, 0.76]), k.space(80))
+  body.push(k.titledBox(v.groupsTitle, v.groups, C.sky), k.space(0))
+  body.push(k.H2(v.getTitle))
+  body.push(k.tiles(v.gets), k.space(80))
+  body.push(k.P(`**${v.choice}** ${v.contact}`, { after: 0 }))
+  // who runs the study is in the page footer
   return body
 }
 
@@ -646,7 +697,7 @@ function toPdf (docx) {
   const sharp = require('sharp')
   const logoSvg = fs.readFileSync(out('assets/images/logo-mark.svg'), 'utf8')
   const logo = await sharp(Buffer.from(logoSvg)).resize(192, 192).png().toBuffer()
-  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }, { ...R.delay.cover, accent: 'parents' }])
+  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }, { ...R.delay.cover, accent: 'parents' }, ...R.invitations.map(v => ({ ...v.cover, accent: v.accent }))])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
   const docs = []
@@ -661,6 +712,13 @@ function toPdf (docx) {
     await loadIcons(iconsIn(R.delay.ask.chips), ACCENT.parents.band)
     const k = kit('parents', R.delay.title, logo)
     docs.push({ file: 'exports/SMART-delay-guide.docx', buf: await k.pack(delayBody(k), { title: `The SMART Study: ${R.delay.title.toLowerCase()}`, short: 'Guide for families', footer: 'The SMART Study · ' + R.delay.title, description: R.delay.lead, cover: cover(R.delay.cover) }) })
+  }
+  for (const v of R.invitations) {
+    useSizes('invitation')
+    await loadIcons(iconsIn(v.gets), ACCENT[v.accent].band)
+    const k = kit(v.accent, v.name, logo)
+    fs.mkdirSync(out('exports/invitations'), { recursive: true })
+    docs.push({ file: `exports/invitations/SMART-invitation-${v.id}.docx`, png: true, buf: await k.pack(invitationBody(v, k), { title: `The SMART Study: ${v.eyebrow.toLowerCase()}`, short: v.eyebrow, footer: v.runBy, description: v.intro, cover: cover(v.cover) }) })
   }
   useSizes()
   {
@@ -692,6 +750,10 @@ function toPdf (docx) {
   }
   console.log(`${docs.length} Word documents written`)
   if (process.argv.includes('--no-pdf')) return
-  for (const d of docs) toPdf(out(d.file))
+  for (const d of docs) {
+    toPdf(out(d.file))
+    // the invitation page as an image, for emails and newsletters
+    if (d.png) execFileSync('pdftoppm', ['-png', '-r', '150', '-f', '2', '-l', '2', '-singlefile', out(d.file.replace(/\.docx$/, '.pdf')), out(d.file.replace(/\.docx$/, ''))])
+  }
   console.log(`${docs.length} PDFs written`)
 })().catch(e => { console.error(e); process.exit(1) })
