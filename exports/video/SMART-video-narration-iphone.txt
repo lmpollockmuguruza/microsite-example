@@ -1,0 +1,105 @@
+THE SMART STUDY · VIDEO GUIDE: SETTING UP YOUR CHILD'S IPHONE
+
+Narration for Google Vids. One block per slide, in order. The same words are in each slide's speaker notes.
+Parents are told at the start to pause after each step, do it, and carry on.
+
+CHAPTERS (put the times in once the video is made, here, on slide 3 and in the video description)
+[0:00]  Introduction  (slide 1)
+[0:00]  Before you start  (slide 4)
+[0:00]  Step 1: Add your child to your family group  (slide 6)
+[0:00]  Step 2: Sign your child's iPhone in to their account  (slide 9)
+[0:00]  Step 3: Turn on Screen Time and set your code  (slide 13)
+[0:00]  Step 4: Block apps  (slide 16)
+[0:00]  Step 5: Allow back the apps your child needs  (slide 19)
+[0:00]  Step 6: Allow only the websites they need  (slide 21)
+[0:00]  Step 7: Lock the settings  (slide 25)
+[0:00]  Step 8: Check it works  (slide 27)
+[0:00]  If you get stuck  (slide 29)
+
+--- Slide 1: Title  [chapter: Introduction]
+This short video shows you how to set up your child's iPhone for the SMART Study, so it only has a short list of apps and websites. It takes about 25 minutes, or 35 if you also connect it to your own iPhone or iPad. Let's get started.
+
+--- Slide 2: How to use this video
+Have your child's phone with you. This video goes one step at a time. After each step, pause the video, do the step on the phone, then press play to carry on. If some of it is already set up, use the chapters to skip straight to the step you need. Everything is also in the written guide, Setting up your child's phone.
+
+--- Slide 3: Chapters
+Here are the chapters, with the times to skip to. You'll also find them under the video.
+
+--- Slide 4: Before you start  [chapter: Before you start]
+Before you start, have four things ready. Your child's phone. The password for the account on it. Somewhere safe to write down a new four-digit code. And, only if you're creating a new account for your child, a credit card for an age check. You won't be charged. One more thing: please do this yourself, not your child. Whoever sets it up knows the code, and whoever knows the code can undo all of it.
+
+--- Slide 5: Part 1: Connect their iPhone to yours
+Part 1 connects your child's iPhone to your own iPhone or iPad, so you can manage it from your phone. It's worth doing, but you can skip it. If you don't have an iPhone or iPad, or you're short of time, skip to Step 3. Your child's phone will be just as locked down.
+
+--- Slide 6: Step 1: Add your child to your family group  [chapter: Step 1: Add your child to your family group]
+Step 1. On your own phone, open Settings, tap your name, then Family. Add your child: invite their Apple Account if they have one, or create a child account. Check their date of birth is right. You may be asked for a card to check you're over 18. You won't be charged. Stuck on the age check? Skip to Step 3 and come back another day.
+
+--- Slide 7: Step 1 screens 1
+The top of Settings on your phone. Your Apple Account page. Family is at the bottom.
+
+--- Slide 8: Step 1 screens 2
+Invite Family, with two options: Invite Others, or Create Child Account. Create a Child Account, with fields for first name, last name and date of birth.
+
+--- Slide 9: Step 2: Sign your child's iPhone in to their account  [chapter: Step 2: Sign your child's iPhone in to their account]
+Step 2. On your child's iPhone, sign it in to their own account. If it's signed in to someone else's account, sign out first. Then tap Sign in to your iPhone, choose Sign in a child in my Family, sign in with your own Apple Account, and choose your child.
+
+--- Slide 10: Step 2 screens 1
+Settings on your child's iPhone, before it is signed in. Apple Account sign-in on your child's iPhone.
+
+--- Slide 11: Step 2 screens 2
+Parent or Guardian Sign-In. Which child will use this iPhone?
+
+--- Slide 12: Part 2: The study settings
+Part 2 is the study settings. Everyone does these, on your child's phone.
+
+--- Slide 13: Step 3: Turn on Screen Time and set your code  [chapter: Step 3: Turn on Screen Time and set your code]
+Step 3. On your child's phone, open Settings, then Screen Time, and turn it on. Tap Lock Screen Time Settings, and choose a four-digit code your child doesn't know. When you're asked for an Apple Account for recovery, enter your own. Please don't skip this step: without the code, your child can undo everything in a few taps.
+
+--- Slide 14: Step 3 screens 1
+The Settings app. Screen Time is in the list, below Focus. A pop-up called App & Website Activity, with a blue button at the bottom to turn it on. Further down the Screen Time page there is a blue link: Lock Screen Time Settings.
+
+--- Slide 15: Step 3 screens 2
+The Screen Time Passcode keypad. Screen Time Passcode Recovery asks for an Apple Account email.
+
+--- Slide 16: Step 4: Block apps  [chapter: Step 4: Block apps]
+Step 4. In Screen Time, tap App Limits, then Add Limit. Tick these categories one by one: Social, Games, Entertainment, Creativity, Productivity and Finance, Education, Health and Fitness, Shopping and Food, Travel, and Other. Leave Information and Reading and Utilities unticked, and don't tick All Apps and Categories, or Websites. Tap Next, set the time to zero minutes, and turn on Block at End of Limit.
+
+--- Slide 17: Step 4 screens 1
+The Screen Time page. App Limits is the second option under Limit Usage. The App Limits page with a blue Add Limit button. Choose Apps. Every category from Social to Other is ticked except Information & Reading and Utilities.
+
+--- Slide 18: Step 4 screens 2
+A time picker, set to 0 hours and 0 minutes. The limit you just made. App Limit is on, Time is 0 minutes every day, and Block at End of Limit is switched on. What your child sees when they open an app that's blocked: Time Limit.
+
+--- Slide 19: Step 5: Allow back the apps your child needs  [chapter: Step 5: Allow back the apps your child needs]
+Step 5. Now allow back the apps your child needs. In Screen Time, tap Always Allowed. Keep Phone, Messages and Maps, remove anything else, such as FaceTime, and add the apps listed in the guide, such as WhatsApp, Camera and Clock.
+
+--- Slide 20: Step 5 screens 1
+The Screen Time page. Always Allowed is the third option under Limit Usage. Always Allowed. The top section lists the allowed apps, each with a red minus.
+
+--- Slide 21: Step 6: Allow only the websites they need  [chapter: Step 6: Allow only the websites they need]
+Step 6. Blocking an app doesn't block its website, so now you limit the web. In Screen Time, turn on Content and Privacy Restrictions, and check Safari is allowed. Then go to App Store, Media, Web and Games, then Web Content, and choose Only Approved Websites. Delete the sites already listed, and add the ones in the guide, exactly as written. Then test it: an approved site should open, and youtube dot com should be blocked.
+
+--- Slide 22: Step 6 screens 1
+The Screen Time page. Content & Privacy Restrictions is under Restrictions, lower down. Content & Privacy Restrictions, with the switch at the top turned on. Allowed Apps & Features. The switch next to Safari is on.
+
+--- Slide 23: Step 6 screens 2
+App Store, Media, Web & Games. Web Content set to Only Approved Websites, with a list of websites and an Add Website button. The approved websites list.
+
+--- Slide 24: Step 6 screens 3
+Add Website, with a Title and a URL field. Safari opening an approved website, BBC Bitesize, as normal. com. This is what you want to see.
+
+--- Slide 25: Step 7: Lock the settings  [chapter: Step 7: Lock the settings]
+Step 7. Still in Content and Privacy Restrictions, tap iTunes and App Store Purchases, and set Installing Apps, Deleting Apps and In-app Purchases to Don't Allow. Then, under Allow Changes, set Passcode and Face ID, and Accounts, to Don't Allow.
+
+--- Slide 26: Step 7 screens 1
+Content & Privacy Restrictions. iTunes & App Store Purchases, with Installing Apps, Deleting Apps and In-app Purchases all set to Don't Allow. Near the bottom of Content & Privacy Restrictions, under Allow Changes: Passcode & Face ID and Accounts, both set to Don't Allow.
+
+--- Slide 27: Step 8: Check it works, and agree how you'll check in  [chapter: Step 8: Check it works]
+Step 8. If you did Part 1, open Screen Time on your own phone and tap your child's name: you should see the settings you just made. If you skipped it, agree a time each week, say Sunday evening, to look at their phone together.
+
+--- Slide 28: Step 8 screens 1
+Screen Time on your phone. Your child's Screen Time settings, seen from your own phone: App Limits, Always Allowed and Content & Privacy Restrictions, as you set them. The top of Screen Time on your child's phone, with the daily average and a chart for the week.
+
+--- Slide 29: That's it. Thank you!  [chapter: If you get stuck]
+That's it. Thank you! In about a week, we'll ask you to share a screenshot of your child's screen time, and then once a month. If a step doesn't match your phone, or you get stuck, email smartphonestudy at public dot io, and we'll help.
+

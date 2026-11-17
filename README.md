@@ -147,3 +147,14 @@ Text is Nunito, which Google Slides has built in; PowerPoint users need it insta
 
 `exports/newsletter/SMART-family-update-mailchimp.html` is the monthly newsletter for parents and carers, to paste into Mailchimp's code editor. It's written by hand, not built: the words change every issue, inside the `mc:edit` regions, and Mailchimp's merge tags (`*|UNSUB|*` and the rest) and the hosted logo stay as they are. `SMART-family-update-mailchimp-code.txt` is the same code as plain text, to open in any editor and copy: opening the .html in TextEdit or Word shows the page, not the code, so copying from there pastes text. Its `<head>` matches the original template exactly. It follows the house style: Nunito where the reader has it (otherwise Arial), the cream page, coral for parents on the header rule and footer, a navy hero with a yellow progress bar, cards tinted sky, lemon, peach and mint with coral number badges, and a rounded coral button. Cards stack on phones.
 
+## The video guides (Google Vids)
+
+`npm run build:video` builds a slide deck and a narration script for each phone, from `content/video.js` (what the video says) and `content/guidance.js` (the steps, Step 4 as Option A, and every screen):
+
+| Output | Use it for |
+| --- | --- |
+| `exports/video/SMART-video-{iphone,android}.pptx` | Upload to Google Slides, then create the video from it in Google Vids. Each slide's speaker notes are its narration. |
+| `exports/video/SMART-video-narration-{iphone,android}.txt` | The same narration as one script, slide by slide, with the chapters. |
+
+Each deck: a title slide; how to use the video (pause after each step, do it, carry on; skip with the chapters); the chapter list; before you start; then each part and step, a step slide with its time, where to do it and a few key points, followed by every screen for that step, two or three to a slide, in order. The narration gives each step's essentials rather than every line of the guide (about 10 minutes a video). Chapter times say [0:00] until the video is made: put them on slide 3, in the script and in the video description.
+

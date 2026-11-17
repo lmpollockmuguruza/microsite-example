@@ -1,0 +1,105 @@
+THE SMART STUDY · VIDEO GUIDE: SETTING UP YOUR CHILD'S ANDROID PHONE
+
+Narration for Google Vids. One block per slide, in order. The same words are in each slide's speaker notes.
+Parents are told at the start to pause after each step, do it, and carry on.
+
+CHAPTERS (put the times in once the video is made, here, on slide 3 and in the video description)
+[0:00]  Introduction  (slide 1)
+[0:00]  Before you start  (slide 4)
+[0:00]  Step 1: Get the Family Link app  (slide 6)
+[0:00]  Step 2: Add your child's Google Account  (slide 8)
+[0:00]  Step 3: Link your child's phone  (slide 11)
+[0:00]  Step 4: Block apps  (slide 16)
+[0:00]  Step 5: Allow back the apps your child needs  (slide 19)
+[0:00]  Step 6: Allow only the websites they need  (slide 22)
+[0:00]  Step 7: Lock the settings  (slide 25)
+[0:00]  Step 8: Check it works  (slide 27)
+[0:00]  If you get stuck  (slide 29)
+
+--- Slide 1: Title  [chapter: Introduction]
+This short video shows you how to set up your child's Android phone for the SMART Study, so it only has a short list of apps and websites. It takes about 40 minutes, or 20 if you already use Google's Family Link app. Let's get started.
+
+--- Slide 2: How to use this video
+Have your child's phone with you. This video goes one step at a time. After each step, pause the video, do the step on the phone, then press play to carry on. If some of it is already set up, use the chapters to skip straight to the step you need. Everything is also in the written guide, Setting up your child's phone.
+
+--- Slide 3: Chapters
+Here are the chapters, with the times to skip to. You'll also find them under the video.
+
+--- Slide 4: Before you start  [chapter: Before you start]
+Before you start, have four things ready. Your child's phone. The password for the account on it. Somewhere safe to write down a new four-digit code. And, only if you're creating a new account for your child, a credit card for an age check. You won't be charged. One more thing: please do this yourself, not your child. Whoever sets it up knows the code, and whoever knows the code can undo all of it.
+
+--- Slide 5: Part 1: Connect their phone to Family Link
+Part 1 connects your child's phone to Google's Family Link app, which works on any phone, iPhones included. You'll need it, because Android's own settings can't be locked with a code. If you already use Family Link with this child, skip to Step 4.
+
+--- Slide 6: Step 1: Get the Family Link app  [chapter: Step 1: Get the Family Link app]
+Step 1. On your own phone, install the Family Link app from the Play Store or the App Store, and sign in with your own Google Account.
+
+--- Slide 7: Step 1 screens 1
+The app store, showing Google Family Link with an Install button. Family Link asking you to choose an account.
+
+--- Slide 8: Step 2: Add your child's Google Account  [chapter: Step 2: Add your child's Google Account]
+Step 2. Family Link asks whether your child has a Google Account. If they don't, create one. If they do, add it. Check their date of birth is right. Google may check you're over 18, with a text message or a card. You won't be charged. When asked about settings, choose fewer steps: you'll make the study settings later.
+
+--- Slide 9: Step 2 screens 1
+Family Link asks whether your child has a Google Account. Creating your child's Google Account: name, date of birth and a Gmail address, then a password.
+
+--- Slide 10: Step 2 screens 2
+Choose settings for your child. Family Link asks about personalising your data.
+
+--- Slide 11: Step 3: Link your child's phone  [chapter: Step 3: Link your child's phone]
+Step 3. On your child's phone, first check that the only Google Account on it is theirs. Then open Settings, Google, Parental controls. Tap Get started, choose Child or teen, and sign in with your own Google Account when asked for a parent. Set a PIN your child doesn't know. Your child then types their password and taps Agree. On a Samsung phone, you may also be asked to set up a Samsung account: the written guide explains how.
+
+--- Slide 12: Step 3 screens 1
+The accounts on your child's phone. The Settings app on your child's phone. On your child's phone: Settings, Google.
+
+--- Slide 13: Step 3 screens 2
+The start of parental controls set-up, with a Get started button. A question asking who will use the phone. On your child's phone, Family Link asks a parent to sign in.
+
+--- Slide 14: Step 3 screens 3
+Set a parental controls PIN: four digits your child does not know. Your child agrees to supervision by entering their own password and tapping Agree. Can't find it? Search Settings for parental controls and tap the result.
+
+--- Slide 15: Part 2: The study settings
+Part 2 is the study settings. You make them from Family Link, on your own phone.
+
+--- Slide 16: Step 4: Block apps  [chapter: Step 4: Block apps]
+Step 4. In Family Link, tap Schedules and turn on Downtime. Leave School time off. Tap Weekly schedule, then Monday. Set the start time to twelve o'clock and the end time to eleven fifty-nine, tick Apply to all days of the week, and tap Done. Downtime now covers the whole day. Your child's phone will lock, apart from calls, until you finish the next step, so carry straight on.
+
+--- Slide 17: Step 4 screens 1
+Family Link on your phone opens on Screen time. Schedules in Family Link.
+
+--- Slide 18: Step 4 screens 2
+One day of the weekly schedule. The weekly schedule. Once it is set, every day shows 12:00–11:59.
+
+--- Slide 19: Step 5: Allow back the apps your child needs  [chapter: Step 5: Allow back the apps your child needs]
+Step 5. Go back to Screen time, tap Time limits, then App limits. Tap each app your child needs, such as Messages, WhatsApp and Google Maps, and choose Unlimited time. Do the same for Google Chrome. Then go to Schedules, Allowed apps, and turn on Unlimited apps, so these apps work during downtime.
+
+--- Slide 20: Step 5 screens 1
+Screen time in Family Link. Time limits in Family Link. App limits in Family Link.
+
+--- Slide 21: Step 5 screens 2
+Schedules in Family Link, with Downtime on. Allowed apps in Family Link.
+
+--- Slide 22: Step 6: Allow only the websites they need  [chapter: Step 6: Allow only the websites they need]
+Step 6. In Family Link, tap Controls, then Google Chrome and web, and choose Only allow approved sites. Under Approved sites, add each site in the guide, using the main web address.
+
+--- Slide 23: Step 6 screens 1
+The Controls tab in Family Link (at the bottom). Google Chrome and web in Family Link, set to Only allow approved sites.
+
+--- Slide 24: Step 6 screens 2
+Approved sites in Family Link, with an Add site button above the sites you have added. uk), then tap Done.
+
+--- Slide 25: Step 7: Lock the settings  [chapter: Step 7: Lock the settings]
+Step 7. In Controls, tap Google Play, then Require approval for, and choose All content, so nothing new can be installed without your say-so.
+
+--- Slide 26: Step 7 screens 1
+The Controls tab in Family Link (at the bottom). Google Play in Family Link.
+
+--- Slide 27: Step 8: Check it works, and agree how you'll check in  [chapter: Step 8: Check it works]
+Step 8. Open Family Link on Screen time. If it shows your child's phone, the link is live. Then agree a time each week, say Sunday evening, to look at their phone together.
+
+--- Slide 28: Step 8 screens 1
+Screen time in Family Link, showing your child's phone and what it's doing now, such as Downtime until 11:59.
+
+--- Slide 29: That's it. Thank you!  [chapter: If you get stuck]
+That's it. Thank you! In about a week, we'll ask you to share a screenshot of your child's screen time, and then once a month. If a step doesn't match your phone, or you get stuck, email smartphonestudy at public dot io, and we'll help.
+
