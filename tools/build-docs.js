@@ -24,6 +24,9 @@
  * (soffice) for the PDFs. Nunito is embedded in the Word files and given to
  * LibreOffice from assets/fonts/ttf, so it needn't be installed.
  *
+ * Each document's cover is also saved as an SVG for Figma, with editable text:
+ *   exports/figma/covers/cover-*.svg
+ *
  * Run: npm run build:docs   (add --no-pdf to write the Word files only)
  */
 const fs = require('fs')
@@ -658,25 +661,90 @@ async function coverImages (list) {
       p{margin-top:18px;color:${hexc(C.grey)};font-size:19px;line-height:1.4;max-width:520px}
       .art{flex:1 1 0;min-height:0;display:flex;justify-content:center;align-items:center;padding:24px 0 30px}
       .art img{height:100%;width:auto;max-width:430px;object-fit:contain}
-      .badges{display:flex;gap:14px;margin-top:30px}
-      .badge{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:16px;color:${hexc(C.navy)}}
-      .badge span{width:74px;height:74px;border-radius:50%;display:grid;place-items:center}
-      .badge svg{width:40px;height:40px}
       .bottom{background:${hexc(A.band)};color:#fff;padding:22px 40px 24px}
       .bottom b{display:block;font-weight:800;font-size:16px}
       .bottom span{display:block;margin-top:4px;font-size:12px;opacity:.95}
     </style></head><body><div class="card">
-      <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span>THE SMART STUDY</div><div class="for">${cv.audience.toUpperCase()}</div></div>
+      <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span><span class="brandtext">THE SMART STUDY</span></div><div class="for">${cv.audience.toUpperCase()}</div></div>
       <div class="body"><div class="kind">${cv.kind.toUpperCase()}</div><h1>${cv.title.replace(/'/g, '&rsquo;')}</h1><p>${cv.what.replace(/'/g, '&rsquo;')}</p>
-        ${cv.badges ? `<div class="badges">${cv.badges.map(b => `<div class="badge"><span style="background:#${b.colour}">${fs.readFileSync(require.resolve(`lucide-static/icons/${b.icon}.svg`), 'utf8').replace(/<!--[\s\S]*?-->/, '').replace(/stroke="currentColor"/, 'stroke="#FFFFFF"').replace(/stroke-width="2"/, 'stroke-width="2.4"')}</span>${b.label}</div>`).join('')}</div>` : ''}
         <div class="art"><img src="${svgData(`assets/images/illustrations/${cv.illustration}.svg`)}" alt=""></div></div>
       <div class="bottom"><b>${R.START} to ${R.END}</b><span>${R.RUN_BY}</span></div>
     </div></body></html>`, { waitUntil: 'load' })
     await page.evaluate(() => document.fonts.ready)
     images.set(cv.title, await page.screenshot({ type: 'png', omitBackground: true }))
+    if (cv.svg) fs.writeFileSync(out(`exports/figma/covers/${cv.svg}.svg`), coverSvg(cv, A, await coverLayout(page)))
   }
   await browser.close()
   return images
+}
+
+// Where everything on a cover page landed: boxes, and each line of text
+function coverLayout (page) {
+  return page.evaluate(() => {
+    const box = sel => { const r = document.querySelector(sel).getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height } }
+    const text = sel => {
+      const el = document.querySelector(sel)
+      const cs = getComputedStyle(el)
+      const words = []
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      let n
+      while ((n = walker.nextNode())) {
+        const re = /\S+/g
+        let m
+        while ((m = re.exec(n.textContent))) {
+          const r = document.createRange()
+          r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length)
+          const b = r.getClientRects()[0]
+          words.push({ w: m[0], x: b.left, top: b.top, h: b.height })
+        }
+      }
+      const lines = []
+      for (const w of words) {
+        const last = lines[lines.length - 1]
+        if (last && Math.abs(last.top - w.top) < 2) last.text += ' ' + w.w
+        else lines.push({ text: w.w, x: w.x, top: w.top, h: w.h })
+      }
+      return { lines, size: parseFloat(cs.fontSize), weight: cs.fontWeight, color: cs.color, ls: parseFloat(cs.letterSpacing) || 0, opacity: parseFloat(cs.opacity) }
+    }
+    return {
+      top: box('.top'), bottom: box('.bottom'), disc: box('.disc'), logo: box('.disc img'), art: box('.art img'),
+      text: { brand: text('.brandtext'), audience: text('.for'), kind: text('.kind'), title: text('h1'), what: text('p'), dates: text('.bottom b'), runBy: text('.bottom span') }
+    }
+  })
+}
+
+// The cover as an SVG for Figma: shapes, the logo and illustration as vectors,
+// and every line of text as editable Nunito text, in named layers
+function coverSvg (cv, A, L) {
+  const r = n => Math.round(n * 100) / 100
+  const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const hexOf = rgb => { const m = rgb.match(/\d+/g).map(Number); return '#' + m.slice(0, 3).map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase() }
+  const inner = svg => svg.replace(/<\?xml[^>]*>/, '').replace(/<!--[\s\S]*?-->/g, '').replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
+  const vb = svg => svg.match(/viewBox="([\d.\s-]+)"/)[1].trim().split(/\s+/).map(Number)
+  const svgFile = f => fs.readFileSync(out(f), 'utf8')
+  // Nunito's ascent is 1.011 of the font size, out of a 1.364 line box
+  const block = (name, t) => `<g id="${name}">${t.lines.map(l => `<text x="${r(l.x)}" y="${r(l.top + l.h * 1.011 / 1.364)}" font-family="Nunito" font-size="${t.size}" font-weight="${t.weight}" fill="${hexOf(t.color)}"${t.opacity < 1 ? ` fill-opacity="${t.opacity}"` : ''}${t.ls ? ` letter-spacing="${r(t.ls)}"` : ''}>${xmlEsc(l.text)}</text>`).join('')}</g>`
+  const place = (name, f, b) => { const s = svgFile(f); const [, , w, h] = vb(s); const k = Math.min(b.w / w, b.h / h); return `<g id="${name}" transform="translate(${r(b.x + (b.w - w * k) / 2)} ${r(b.y + (b.h - h * k) / 2)}) scale(${r(k * 1000) / 1000})">${inner(s)}</g>` }
+  const t = L.text
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${COVER.w}" height="${COVER.h}" viewBox="0 0 ${COVER.w} ${COVER.h}">
+<defs><clipPath id="card-shape"><rect width="${COVER.w}" height="${COVER.h}" rx="22"/></clipPath></defs>
+<g id="Cover: ${xmlEsc(cv.title)}" clip-path="url(#card-shape)">
+<rect id="Background" width="${COVER.w}" height="${COVER.h}" fill="#${C.cream}"/>
+<rect id="Top band" x="0" y="0" width="${COVER.w}" height="${r(L.top.y + L.top.h)}" fill="#${A.band}"/>
+<rect id="Bottom band" x="0" y="${r(L.bottom.y)}" width="${COVER.w}" height="${r(COVER.h - L.bottom.y)}" fill="#${A.band}"/>
+<circle id="Logo disc" cx="${r(L.disc.x + L.disc.w / 2)}" cy="${r(L.disc.y + L.disc.h / 2)}" r="${r(L.disc.w / 2)}" fill="#FFFFFF"/>
+${place('Logo', 'assets/images/logo-mark.svg', L.logo)}
+${block('The SMART Study', t.brand)}
+${block('Audience', t.audience)}
+${block('Kind of document', t.kind)}
+${block('Title', t.title)}
+${block('What it is', t.what)}
+${place('Illustration', `assets/images/illustrations/${cv.illustration}.svg`, L.art)}
+${block('Dates', t.dates)}
+${block('Run by', t.runBy)}
+</g>
+</svg>
+`
 }
 
 // ------------------------------------------------------------------ PDF (LibreOffice, with Nunito from the repo)
@@ -697,7 +765,13 @@ function toPdf (docx) {
   const sharp = require('sharp')
   const logoSvg = fs.readFileSync(out('assets/images/logo-mark.svg'), 'utf8')
   const logo = await sharp(Buffer.from(logoSvg)).resize(192, 192).png().toBuffer()
-  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }, { ...R.delay.cover, accent: 'parents' }, ...R.invitations.map(v => ({ ...v.cover, accent: v.accent }))])
+  fs.mkdirSync(out('exports/figma/covers'), { recursive: true })
+  const covers = await coverImages([
+    ...O.packs.map(p => ({ ...p.cover, accent: p.accent, svg: `cover-onboarding-pack-${p.id}` })),
+    { ...GUIDE.cover, accent: 'parents', svg: 'cover-setting-up-your-childs-phone' },
+    { ...R.delay.cover, accent: 'parents', svg: 'cover-delay-guide' },
+    ...R.invitations.map(v => ({ ...v.cover, accent: v.accent, svg: `cover-invitation-${v.id}` }))
+  ])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
   const docs = []
