@@ -69,7 +69,7 @@ const schools = {
       cols: ['Child\'s situation', 'What we ask', 'Their guide'],
       widths: [0.22, 0.52, 0.26],
       rows: [
-        ['**No smartphone of their own**', `Hold off getting one until ${END}. Nothing else changes: tablets, computers and borrowing a parent's phone are all fine. Most children in ${YEARS} are in this group.`, '**Waiting for a first smartphone** (one page)'],
+        ['**No smartphone of their own**', `Hold off getting one until ${END}. Nothing else changes: tablets, computers and borrowing a parent's phone are all fine. Most children in ${YEARS} are in this group.`, '**Waiting for a first smartphone** (a short guide)'],
         ['**Has a smartphone**', 'Spend 30 to 40 minutes turning on settings already built into the phone. Every app is blocked apart from a short list (calls, messages, maps, camera and a few others), and the web is limited to a few sites. Once a month, share a screenshot of the phone\'s screen time.', '**Setting up your child\'s phone** (step by step, with videos)']
       ]
     },
@@ -164,7 +164,7 @@ const parents = {
       title: 'What we\'re asking',
       intro: `Until **${END}**, one of two things, depending on your child:`,
       paras: [
-        '**If your child doesn\'t have a smartphone:** please hold off getting them one. Your guide is **Waiting for a first smartphone** (one page).',
+        '**If your child doesn\'t have a smartphone:** please hold off getting them one. Your guide is **Waiting for a first smartphone** (a short guide).',
         '**If your child already has a smartphone:** spend 30 to 40 minutes turning on a few settings that are already built into the phone, so it only has a short list of apps and websites. Then leave them running, and once a month share a screenshot of its screen time. Your guide is **Setting up your child\'s phone**.'
       ],
       outro: 'Both guides come with this pack and are on the study website. Everything else here is to help you do it.'
@@ -241,7 +241,7 @@ const parents = {
     {
       type: 'steps',
       items: [
-        '**Find your guide.** No smartphone: read **Waiting for a first smartphone** (one page). Already has one: set aside 30 to 40 minutes for **Setting up your child\'s phone**.',
+        '**Find your guide.** No smartphone: read **Waiting for a first smartphone** (a short guide). Already has one: set aside 30 to 40 minutes for **Setting up your child\'s phone**.',
         `**Put ${END} on the calendar,** somewhere your child can see it.`,
         `**Sign in to the study website,** and save our email address, ${EMAIL}.`,
         '**Watch the study video with your child,** and talk it through together.',
@@ -252,4 +252,75 @@ const parents = {
   footer: `Questions? Email ${EMAIL}. ${RUN_BY}`
 }
 
-module.exports = { schools, parents, packs: [schools, parents] }
+// ------------------------------------------------------------------ children
+// Written for children in Years 3 to 5: bigger text, an icon by every heading,
+// and lists drawn as icons. Adapted from the April 2027 draft.
+const children = {
+  id: 'children',
+  name: 'Welcome pack for children',
+  accent: 'children',
+  sizes: 'children',
+  cover: {
+    audience: 'For children',
+    kind: 'Welcome pack',
+    title: 'You\'re part of the SMART Study',
+    what: 'A big study about children and phones. Here\'s what it means for you.',
+    illustration: 'guide-delay',
+    badges: [
+      { icon: 'moon', label: 'Sleep', colour: '5E5CE6' },
+      { icon: 'users', label: 'Friends', colour: 'FF7A5C' },
+      { icon: 'book-open', label: 'School', colour: '1A5C9E' },
+      { icon: 'smile', label: 'Feeling good', colour: '37C3A0' }
+    ]
+  },
+  eyebrow: 'Welcome pack for children',
+  title: 'You\'re part of the SMART Study',
+  lead: 'A big study about children and phones. Here\'s what it means for you.',
+  blocks: [
+    { type: 'h2', icon: 'users', text: 'Why we need you' },
+    { type: 'p', text: 'Lots of grown-ups wonder when children should get their own smartphone. The truth is, nobody knows for sure yet. Not parents, not teachers, not scientists.' },
+    { type: 'p', text: 'So we\'re finding out. **[More than 11,000] children** at **more than 80 schools** in England are taking part, and you\'re one of them. What we learn will help children all over the country, and in other countries too.' },
+    { type: 'note', tint: 'mint', icon: 'hand-heart', text: '**You\'re not on your own.** Lots of children at your school are doing this too.' },
+
+    { type: 'h2', icon: 'smartphone', text: 'What it means for you' },
+    {
+      type: 'boxes',
+      items: [
+        { tint: 'lemon', icon: 'sun', title: 'If you don\'t have a smartphone yet', text: `Your family is waiting a bit longer, until **${END}**. You can still:`, list: [
+          { icon: 'tablet-smartphone', text: 'use a family tablet or computer' },
+          { icon: 'phone', text: 'borrow a grown-up\'s phone' },
+          { icon: 'gamepad-2', text: 'play games and watch TV, like now' }
+        ] },
+        { tint: 'mint', icon: 'shield-check', title: 'If you already have a smartphone', text: `Your grown-up will change some settings on it until **${END}**. You can still:`, list: [
+          { icon: 'message-circle', text: 'call and message family and friends' },
+          { icon: 'map', text: 'find your way with maps' },
+          { icon: 'camera', text: 'take photos, set alarms and check the weather' }
+        ], after: 'Other apps, like games, videos and social media, will be switched off.' }
+      ]
+    },
+
+    { type: 'h2', icon: 'clock', text: 'Why wait?' },
+    { type: 'p', text: 'Phones can be brilliant. But some apps are built to keep you looking at them for as long as possible, and that can get in the way of sleep, friends and school. This study will show whether waiting a bit longer helps children feel better, sleep better and do better at school.' },
+
+    { type: 'h2', icon: 'heart', text: 'It\'s OK to feel fed up' },
+    { type: 'p', text: 'If your friends have phones, waiting can feel unfair. That\'s normal. Tell your grown-up how you feel and talk about it together. Remember: it isn\'t forever, and you\'re not the only one.' },
+
+    { type: 'h2', icon: 'lightbulb', text: 'Your ideas count' },
+    { type: 'p', text: 'The list of apps that still work was made with help from children your age. If there\'s an app you think should be on it, maybe one you need for school, tell your grown-up. They can ask us, and we\'ll think about adding it for everyone.' },
+
+    { type: 'h2', icon: 'calendar', text: 'What happens next' },
+    {
+      type: 'iconlist',
+      items: [
+        { icon: 'calendar', text: `Put **${END}** on your calendar. That\'s when the study ends.` },
+        { icon: 'circle-play', text: 'Watch the study video with your grown-up.' },
+        { icon: 'book-open', text: 'You\'ll do two short reading and maths tasks in class: one this autumn and one next summer.' },
+        { icon: 'clipboard-check', text: 'During the year, you might be asked some questions about how you\'re getting on. There are no right or wrong answers. [TBC]' },
+        { icon: 'circle-help', text: 'If you have a question, ask your grown-up or your teacher.' }
+      ]
+    },
+    { type: 'note', tint: 'lemon', icon: 'party-popper', title: 'Thank you for helping us find out!', text: 'The SMART Study is run for the Department for Education by the University of Cambridge, IFF Research and PUBLIC.' }
+  ]
+}
+
+module.exports = { schools, parents, children, packs: [schools, parents, children] }
