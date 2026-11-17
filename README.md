@@ -85,7 +85,7 @@ These live in **`content/resources.js`**. Run `npm run build:resources` to gener
 | Output | Where | Use it for |
 | --- | --- | --- |
 | Guide to waiting | `guide-delay.html` | The microsite, for families whose child has no phone yet. Don't edit by hand. |
-| Delay guide, one page | `exports/SMART-delay-guide.docx`, `exports/figma/delay-guide.svg` | Word to share and print; an A4 frame for Figma. |
+| Delay guide | `exports/SMART-delay-guide.docx\|pdf` (built by `npm run build:docs`) | Word and PDF, with a cover, to share and print. |
 | E-posters | `exports/posters/SMART-poster-{both,delay,restrict}.{docx,pdf,png}`, `exports/figma/poster-*.svg` | Schools: Word to add their details, PDF to print, PNG for screens and newsletters; A4 frames for Figma. |
 | School resources page | `schools.html` | The page school leaders see, listing the posters. |
 
@@ -118,8 +118,10 @@ So the Word files open everywhere, the build writes the package's own parts firs
 | Welcome pack for schools | `content/onboarding.js` (`schools`) | `exports/SMART-onboarding-pack-schools.docx\|pdf` (cover and 4 pages) |
 | Welcome pack for families | `content/onboarding.js` (`parents`) | `exports/SMART-onboarding-pack-parents.docx\|pdf` (cover and 4 pages) |
 | Setting up your child's phone (the guidance for parents) | `content/guidance.js` | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` (cover and about 23 pages) |
+| Welcome pack for children | `content/onboarding.js` (`children`) | `exports/SMART-onboarding-pack-children.docx\|pdf` (cover and 2 pages) |
+| Waiting for a first smartphone (the guide for families whose child has no phone yet) | `content/resources.js` (`delay`) | `exports/SMART-delay-guide.docx\|pdf` (cover and 2 pages) |
 
-The packs are lists of blocks (the main ask, headings, paragraphs, stats, tables, lists, boxes). They're adapted to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, a screen time screenshot once a month, and the study video and how-to videos in place of webinars. Both say plainly that tablets, computers and borrowing a parent's phone are expected and built into the study.
+The packs are lists of blocks (the main ask, headings, paragraphs, stats, tables, lists, boxes, and lists drawn as icons). The children's pack uses bigger text (11.5pt body, `SIZES.children`), an icon badge by every heading and lists drawn as icons; its cover adds four big icons (sleep, friends, school, feeling good). Icons are Lucide, the site's icon set, drawn as white line icons on a disc in the audience's colour. They're adapted to the current design: September 2027 to September 2028, Years 3 to 5, the two reading and maths assessments, one study website for every family, a screen time screenshot once a month, and the study video and how-to videos in place of webinars. Both say plainly that tablets, computers and borrowing a parent's phone are expected and built into the study.
 
 The guidance reads top to bottom: what we're asking, which guide is yours (a link to each), what to have ready, then the iPhone guide and the Android guide. Each guide starts with **Start from what you already have**, whose rows link to the right step; "Skip to Step 3", "Go to Step 4" and the other step references are links too. The longer explanations (what changes if you skip Part 1 on an iPhone, why Android has no shortcut) are in **Good to know** at the end, linked from Part 1. Each step has a tick box for parents who print it.
 
@@ -140,3 +142,8 @@ It needs the screen PNGs from `npm run build:guides` and LibreOffice (`soffice`,
 | `exports/png/deck/*.png` | The logo, icons and illustrations the deck uses, as PNGs (Google Slides can't place SVG). |
 
 Text is Nunito, which Google Slides has built in; PowerPoint users need it installed from Google Fonts. Titles use Nunito Bold, as slide tools can't pick the website's Black weight reliably.
+
+## The family newsletter (Mailchimp)
+
+`exports/newsletter/SMART-family-update-mailchimp.html` is the monthly newsletter for parents and carers, to paste into Mailchimp's code editor. It's written by hand, not built: the words change every issue, inside the `mc:edit` regions, and Mailchimp's merge tags (`*|UNSUB|*` and the rest) and the hosted logo stay as they are. It follows the house style: Nunito where the mail app can load it (Apple Mail, iOS; Gmail and Outlook show Arial), the cream page, coral for parents on the header rule and footer, a navy hero with a yellow progress bar, cards tinted sky, lemon, peach and mint with coral number badges, and a rounded coral button. Cards stack on phones.
+

@@ -4,8 +4,6 @@
  *
  *   guide-delay.html                          the guide for families whose child has no phone yet
  *   schools.html                              the school leaders' page
- *   exports/SMART-delay-guide.docx            one-page Word guide
- *   exports/figma/delay-guide.svg             A4 frame for Figma
  *   exports/posters/SMART-poster-*.docx|pdf|png   each e-poster
  *   exports/figma/poster-*.svg                each e-poster as an A4 frame
  *   exports/invitations/SMART-invitation-*.docx|pdf|png   each invitation to take part
@@ -106,61 +104,6 @@ const svgDoc = (w, h, body, bg) => `<svg xmlns="http://www.w3.org/2000/svg" view
 const A4 = { w: 595, h: 842 }
 
 // The delay guide as an A4 frame
-function delaySvg () {
-  const d = R.delay
-  const M = 44
-  const W = A4.w - M * 2
-  let y = 40
-  let s = logoAt(M, y - 4, 26) + `<text x="${M + 34}" y="${y + 14}" font-family="Inter" font-size="10" font-weight="700" fill="${C.coral}" letter-spacing=".6">${esc(d.eyebrow.toUpperCase())}</text>`
-  y += 38
-  let t = rich(M, y, d.title, { size: 26, font: 'Nunito', weight: 900, fill: C.navy, maxW: W, lh: 30 }); s += t.svg; y += t.h + 6
-  t = rich(M, y, d.lead, { size: 11.5, maxW: W, fill: C.grey }); s += t.svg; y += t.h + 14
-
-  // the ask
-  const askTop = y
-  let inner = ''
-  let iy = y + 16
-  t = rich(M + 18, iy, d.ask.title, { size: 13, font: 'Nunito', weight: 800, fill: C.navy, maxW: W - 36 }); inner += t.svg; iy += t.h + 4
-  t = rich(M + 18, iy, d.ask.text, { size: 13, maxW: W - 36 }); inner += t.svg; iy += t.h + 6
-  t = rich(M + 18, iy, d.ask.still, { size: 10.5, maxW: W - 36, fill: C.grey }); inner += t.svg; iy += t.h + 6
-  let cx = M + 18
-  d.ask.chips.forEach(ch => {
-    const cw = textW(ch.text, 9.5, false) + 22
-    inner += rect(cx, iy, cw, 20, 10, '#FFFFFF') + `<text x="${cx + 11}" y="${iy + 13.5}" font-family="Inter" font-size="9.5" fill="${C.ink}">${esc(ch.text)}</text>`
-    cx += cw + 6
-  })
-  iy += 20 + 16
-  s += rect(M, askTop, W, iy - askTop, 14, C.lemon) + inner
-  y = iy + 16
-
-  t = rich(M, y, d.why.title, { size: 13, font: 'Nunito', weight: 800, fill: C.navy, maxW: W }); s += t.svg; y += t.h + 2
-  t = rich(M, y, d.why.text, { size: 10, maxW: W }); s += t.svg; y += t.h + 12
-
-  t = rich(M, y, d.tips.title, { size: 13, font: 'Nunito', weight: 800, fill: C.navy, maxW: W }); s += t.svg; y += t.h + 4
-  d.tips.items.forEach((it, i) => {
-    s += `<circle cx="${M + 9}" cy="${y + 9}" r="9" fill="${C.sun}"/><text x="${M + 9}" y="${y + 12.5}" font-family="Nunito" font-size="10" font-weight="900" fill="${C.navy}" text-anchor="middle">${i + 1}</text>`
-    t = rich(M + 26, y, `**${it.title}** ${it.text}`, { size: 10, maxW: W - 26 }); s += t.svg; y += t.h + 4
-    if (it.quote) {
-      const q = rich(M + 38, y + 6, `"${it.quote}"`, { size: 9.5, maxW: W - 52, italic: true, fill: C.ink })
-      s += rect(M + 26, y, W - 26, q.h + 12, 8, C.sky) + q.svg
-      y += q.h + 16
-    }
-  })
-  y += 8
-
-  // two boxes side by side
-  const bw = (W - 12) / 2
-  const b1 = rich(M + 14, y + 12, `**${d.everyone.title}**`, { size: 10.5, maxW: bw - 28, fill: C.navy })
-  const b1t = rich(M + 14, y + 12 + b1.h + 2, d.everyone.text, { size: 9.5, maxW: bw - 28 })
-  const b2 = rich(M + bw + 26, y + 12, `**${d.gotOne.title}**`, { size: 10.5, maxW: bw - 28, fill: C.navy })
-  const b2t = rich(M + bw + 26, y + 12 + b2.h + 2, d.gotOne.text, { size: 9.5, maxW: bw - 28 })
-  const bh = Math.max(b1.h + b1t.h, b2.h + b2t.h) + 28
-  s += rect(M, y, bw, bh, 12, C.mint) + b1.svg + b1t.svg + rect(M + bw + 12, y, bw, bh, 12, '#FDE7D3') + b2.svg + b2t.svg
-  y += bh + 14
-
-  t = rich(M, A4.h - 44, d.footer, { size: 8, maxW: W, fill: C.grey }); s += `<rect x="${M}" y="${A4.h - 50}" width="${W}" height="1" fill="${C.line}"/>` + t.svg
-  return { svg: svgDoc(A4.w, A4.h, s, '#FFFFFF'), used: y }
-}
 
 // An e-poster as an A4 frame
 function posterSvg (p, spare = 0, tight = false) {
@@ -384,40 +327,6 @@ function docFor (children, margin) {
   })
 }
 
-function delayDocx (logo) {
-  const g = R.delay
-  const TW = 11906 - 2 * 850
-  const ch = []
-  ch.push(new Paragraph({ children: [logoRun(logo, 26), new TextRun({ text: '  ' + g.eyebrow.toUpperCase(), bold: true, color: hex(C.coral), size: 18, font: FONT })], spacing: { after: 160 } }))
-  ch.push(P(g.title, { size: 52, bold: true, color: C.navy, after: 80 }))
-  ch.push(P(g.lead, { size: 23, color: C.grey, after: 220 }))
-  ch.push(table([TW], [new TableRow({ children: [cell([
-    P(g.ask.title, { size: 27, bold: true, color: C.navy, after: 60 }),
-    P(g.ask.text, { size: 28, after: 80 }),
-    P(g.ask.still + ' ' + g.ask.chips.map(c => c.text.replace(/^./, m => m.toLowerCase())).join('; ') + '.', { size: 21, color: C.grey, after: 0 })
-  ], { w: TW, fill: C.lemon, pad: 220, padX: 260 })] })]))
-  ch.push(spacer(200))
-  ch.push(P(g.why.title, { size: 27, bold: true, color: C.navy, after: 40, keepNext: true }))
-  ch.push(P(g.why.text, { size: 21, after: 220 }))
-  ch.push(P(g.tips.title, { size: 27, bold: true, color: C.navy, after: 100, keepNext: true }))
-  g.tips.items.forEach(it => {
-    ch.push(new Paragraph({ children: [...runs(`**${it.title}** `, { size: 21 }), ...runs(it.text, { size: 21 })], numbering: { reference: 'tips', level: 0 }, spacing: { after: it.quote ? 60 : 110 } }))
-    if (it.quote) {
-      ch.push(new Table({ width: { size: TW - 360, type: WidthType.DXA }, columnWidths: [TW - 360], indent: { size: 360, type: WidthType.DXA }, borders: noBorders, rows: [new TableRow({ children: [cell([P(`"${it.quote}"`, { size: 20, italics: true, after: 0 })], { w: TW - 360, fill: C.sky, pad: 120, padX: 200 })] })] }))
-      ch.push(spacer(110))
-    }
-  })
-  ch.push(spacer(120))
-  const half = (TW - 200) / 2
-  ch.push(table([half, 200, half], [new TableRow({ children: [
-    cell([P(g.everyone.title, { size: 22, bold: true, color: C.navy, after: 60 }), P(g.everyone.text, { size: 20, after: 0 })], { w: half, fill: C.mint, pad: 180, padX: 200 }),
-    cell([P('')], { w: 200, padX: 0 }),
-    cell([P(g.gotOne.title, { size: 22, bold: true, color: C.navy, after: 60 }), P(g.gotOne.text, { size: 20, after: 0 })], { w: half, fill: '#FDE7D3', pad: 180, padX: 200 })
-  ] })]))
-  ch.push(spacer(260))
-  ch.push(P(g.footer, { size: 16, color: C.grey, after: 0 }))
-  return Packer.toBuffer(docFor(ch, 850))
-}
 
 function posterDocx (p, logo) {
   const MG = 720
@@ -563,7 +472,7 @@ function delayPage () {
           </ul>
           <div class="govuk-button-group smart-no-print">
             <a href="#" class="govuk-button govuk-button--secondary" data-print>${icon('printer')} Print or save as PDF</a>
-            <a class="govuk-link" href="exports/SMART-delay-guide.docx" download>Download the one-page guide (Word)</a>
+            <a class="govuk-link" href="exports/SMART-delay-guide.pdf" download>Download the guide (PDF)</a> or <a class="govuk-link" href="exports/SMART-delay-guide.docx" download>Word</a>
           </div>
 
           <h2 class="govuk-heading-l" id="asking">${esc(g.ask.title)}</h2>
@@ -598,7 +507,7 @@ function pdfPages (file) {
 }
 
 function schoolsPage () {
-  const [schools, parents] = PACKS
+  const [schools, parents, children] = PACKS
   const ask = schools.blocks.find(b => b.type === 'ask')
   const dl = (pack, label) => {
     const n = pdfPages(`exports/SMART-onboarding-pack-${pack.id}.pdf`)
@@ -646,8 +555,15 @@ function schoolsPage () {
             <p class="govuk-body">For you to share with families in ${R.YEARS}: what the study is, what we're asking, the year ahead and the help they'll get. It comes with their guide: waiting for a first smartphone, or setting up the phone their child already has.</p>
             <ul class="govuk-list govuk-body-s smart-downloads govuk-!-margin-bottom-0">
               ${dl(parents, 'Download the families\' pack')}
-              <li><a class="govuk-link" href="exports/SMART-delay-guide.docx" download>${icon('file-text')} Waiting for a first smartphone (Word)</a></li>
+              <li><a class="govuk-link" href="exports/SMART-delay-guide.pdf" download>${icon('printer')} Waiting for a first smartphone (PDF)</a></li>
               <li><a class="govuk-link" href="exports/SMART-setting-up-your-childs-phone.pdf" download>${icon('printer')} Setting up your child's phone (PDF)</a></li>
+            </ul>
+          </div>
+          <div class="smart-box">
+            <p class="govuk-body"><strong>${esc(children.name)}</strong></p>
+            <p class="govuk-body">For children in ${R.YEARS}, in bigger text and pictures: why the study matters, what it means for them, and that it's OK to find it hard.</p>
+            <ul class="govuk-list govuk-body-s smart-downloads govuk-!-margin-bottom-0">
+              ${dl(children, 'Download the children\'s pack')}
             </ul>
           </div>
 
@@ -681,9 +597,6 @@ function schoolsPage () {
   mkdir('exports/figma')
   mkdir('exports/posters')
   mkdir('exports/invitations')
-  const delay = delaySvg()
-  fs.writeFileSync(out('exports/figma/delay-guide.svg'), delay.svg)
-  if (delay.used > A4.h - 56) console.warn(`Delay guide frame is too full (${Math.round(delay.used)}px)`)
   const posterSvgs = R.posters.map(p => {
     const r = fitPoster(p)
     if (r.used > A4.h - 74) console.warn(`Poster ${p.id} is too full (${Math.round(r.used)}px)`)
@@ -705,7 +618,6 @@ function schoolsPage () {
     ...posterSvgs.map(({ p, svg }) => ({ svg, png: out(`exports/posters/SMART-poster-${p.id}.png`), pdf: out(`exports/posters/SMART-poster-${p.id}.pdf`) })),
     ...invitationSvgs.map(({ v, svg }) => ({ svg, png: out(`exports/invitations/SMART-invitation-${v.id}.png`), pdf: out(`exports/invitations/SMART-invitation-${v.id}.pdf`) }))
   ])
-  fs.writeFileSync(out('exports/SMART-delay-guide.docx'), await delayDocx(r.logo))
   for (const { p } of posterSvgs) fs.writeFileSync(out(`exports/posters/SMART-poster-${p.id}.docx`), await posterDocx(p, r.logo))
   for (const { v } of invitationSvgs) fs.writeFileSync(out(`exports/invitations/SMART-invitation-${v.id}.docx`), await invitationDocx(v, r.logo))
   console.log('Word documents, PDFs and PNGs written')

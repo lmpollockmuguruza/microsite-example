@@ -3,8 +3,7 @@
  *
  * `npm run build:resources` turns this file into:
  *   - guide-delay.html, the microsite guide for families whose child has no phone yet
- *   - exports/SMART-delay-guide.docx, the same guide as a one-page Word document
- *   - exports/figma/delay-guide.svg, an A4 frame for Figma
+ *   - exports/SMART-delay-guide.docx|pdf (built by tools/build-docs.js), the same guide with a cover
  *   - exports/posters/: each e-poster as Word, PDF and PNG
  *   - exports/figma/poster-*.svg, each e-poster as an A4 frame for Figma
  *
@@ -19,33 +18,42 @@ const END = 'September 2028'
 const YEARS = 'Years 3 to 5'
 const RUN_BY = 'Run by IFF Research, PUBLIC and the University of Cambridge for the Department for Education.'
 
-// ------------------------------------------------------------------ guide to waiting (one page), for families whose child has no phone yet
+// ------------------------------------------------------------------ guide to waiting, for families whose child has no phone yet
 const delay = {
   title: 'Waiting for a first smartphone',
+  // The cover of the Word and PDF version (tools/build-docs.js)
+  cover: {
+    audience: 'For parents and carers',
+    kind: 'Guide for families',
+    title: 'Waiting for a first smartphone',
+    what: 'Ideas to make waiting easier, for families whose child doesn\'t have a smartphone yet.',
+    illustration: 'guide-delay'
+  },
   eyebrow: 'The SMART Study · guide for families',
-  lead: 'Thank you for taking part. This is everything we\'re asking, on one page.',
+  lead: 'Thank you for taking part. This is everything we\'re asking you and all other parents at your school.',
   ask: {
     title: 'What we\'re asking',
     text: `Until **${END}**, please hold off getting your child their own smartphone.`,
     still: 'Nothing else needs to change. Your child can still:',
     chips: [
       { icon: 'tablet-smartphone', text: 'Use a family tablet or computer' },
-      { icon: 'phone', text: 'Borrow your phone, with you' },
+      { icon: 'phone', text: 'Borrow your phone' },
       { icon: 'monitor-play', text: 'Play games and watch TV, as now' }
     ]
   },
   why: {
     title: 'Why it matters',
-    text: 'Nobody knows yet the best age for a first smartphone. By waiting a little longer, your family is helping to answer that question for parents everywhere. Other families at your child\'s school are taking part too, so your child won\'t be the only one waiting.'
+    text: 'Nobody knows the best age for a first smartphone. By waiting a little longer, your family is helping to answer that question for parents everywhere. Other families at your child\'s school are taking part too, so your child won\'t be the only one waiting.'
   },
   tips: {
-    title: 'Five things that make it easier',
+    title: 'Six things that make it easier',
     items: [
       { id: 'talking', title: 'Tell your child together, and say why.', text: 'Children find waiting easier when they know the reason, and know it isn\'t forever.', quote: `Our school is helping with a big study about children and phones. We're one of the families waiting a bit longer for a phone. It's until ${END}, and it helps grown-ups work out what's best for children.` },
       { id: 'date', title: 'Put the date on the calendar.', text: `Mark ${END} somewhere your child can see it. A clear end date makes waiting feel fair.` },
       { id: 'family', title: 'Tell family and friends early.', text: 'Phones are a common birthday or Christmas present. Let grandparents and others know about the study now, so nobody is caught out.' },
-      { id: 'touch', title: 'Agree how you\'ll stay in touch.', text: `For trips and clubs, your child can borrow a family phone. If you think your child needs a phone of their own for safety, email ${EMAIL} first and we'll talk it through.` },
-      { id: 'summer', title: 'Plan ahead for the summer holidays.', text: `The summer before a new school year is when many children get a first phone. Agree before the holidays how your child will keep in touch, so the plan holds until ${END}.` }
+      { id: 'touch', title: 'Agree how you\'ll stay in touch.', text: `For trips and clubs, your child can borrow a family phone. If you think your child needs a phone of their own for safety, email ${EMAIL} first and we can talk it through.` },
+      { id: 'secondary', title: 'Plan ahead for secondary school.', text: 'Starting Year 7 is when many children get a phone. If your child moves up during the study, plan the journey to school, and how you\'ll keep in touch, before the summer.' },
+      { id: 'resources', title: 'Use our guides and resources.', text: 'Our website, [web address], has practical guides for families taking part. These include the things children often say when they want a phone, such as "Everyone else has one" or "I\'m the only one left out", with ideas for how to answer. You\'ll also find tips on talking to other parents and ideas for staying in touch without a phone.' }
     ]
   },
   everyone: {

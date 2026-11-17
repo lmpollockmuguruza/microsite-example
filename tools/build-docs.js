@@ -3,6 +3,8 @@
  *
  *   exports/SMART-onboarding-pack-schools.docx|pdf   welcome pack for schools   (content/onboarding.js)
  *   exports/SMART-onboarding-pack-parents.docx|pdf   welcome pack for families  (content/onboarding.js)
+ *   exports/SMART-onboarding-pack-children.docx|pdf  welcome pack for children  (content/onboarding.js)
+ *   exports/SMART-delay-guide.docx|pdf               waiting for a first smartphone (content/resources.js)
  *   exports/SMART-setting-up-your-childs-phone.docx|pdf
  *                                                    the guidance for parents   (content/guidance.js)
  *
@@ -50,6 +52,10 @@ const ACCENT = {
 }
 const FONT = 'Nunito'
 const SIZE = { body: 21, small: 18, caption: 16, lead: 23, eyebrow: 17, title: 52, h1: 34, h2: 27, h3: 23 }
+// Documents for children use bigger text (12pt body), as the design review asked
+const SIZES = { default: { ...SIZE }, children: { body: 23, small: 20, caption: 16, lead: 26, eyebrow: 18, title: 56, h1: 36, h2: 30, h3: 25 } }
+// Sizes are read as each document is built, and documents are built one at a time
+const useSizes = name => Object.assign(SIZE, SIZES[name || 'default'])
 const PAGE = { w: 11906, h: 16838, x: 1134, top: 1300, bottom: 1134 }
 const TW = PAGE.w - PAGE.x * 2 // text width
 // The cover image, in pixels at 96 dpi: the text width, and nearly the text height
@@ -120,6 +126,24 @@ function runs (s, o = {}) {
   })
 }
 
+// ------------------------------------------------------------------ icons
+// Lucide icons (the site's icon set) as round badges: a white line icon on a
+// coloured disc. Made before a document is built (loadIcons), then used as images.
+const ICONS = new Map()
+const iconKey = (name, bg) => `${name}|${bg}`
+async function loadIcons (names, bg) {
+  const sharp = require('sharp')
+  for (const name of new Set(names)) {
+    if (ICONS.has(iconKey(name, bg))) continue
+    const svg = fs.readFileSync(require.resolve(`lucide-static/icons/${name}.svg`), 'utf8')
+    const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
+    const badge = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="48" fill="#${bg}"/><g transform="translate(24 24) scale(2)" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`
+    ICONS.set(iconKey(name, bg), await sharp(Buffer.from(badge)).resize(144, 144).png().toBuffer())
+  }
+}
+// Every `icon` named anywhere in a piece of content
+const iconsIn = x => Array.isArray(x) ? x.flatMap(iconsIn) : x && typeof x === 'object' ? [...(typeof x.icon === 'string' ? [x.icon] : []), ...Object.values(x).flatMap(iconsIn)] : []
+
 // ------------------------------------------------------------------ building blocks
 function kit (accentName, docTitle, logo) {
   const A = ACCENT[accentName]
@@ -131,6 +155,39 @@ function kit (accentName, docTitle, logo) {
   ]
   let lists = 0
   const k = { A, numbering }
+
+  // An icon badge, inline with text
+  k.icon = (name, px = 26) => {
+    const data = ICONS.get(iconKey(name, A.band))
+    if (!data) throw new Error(`Icon ${name} wasn't loaded`)
+    return new ImageRun({ type: 'png', data, transformation: { width: px, height: px }, altText: { title: name, description: '', name: `icon ${name}` } })
+  }
+  // A list drawn as icons: one row per item, the icon beside the words
+  k.iconList = (items, w = TW, o = {}) => {
+    const iw = 640
+    return new Table({
+      width: { size: w, type: WidthType.DXA }, columnWidths: [iw, w - iw], borders: noBorders,
+      rows: items.map(it => new TableRow({ cantSplit: true, children: [
+        new TableCell({ width: { size: iw, type: WidthType.DXA }, borders: { top: none, bottom: none, left: none, right: none }, verticalAlign: VerticalAlign.CENTER, margins: { top: 50, bottom: 50, left: 0, right: 80 }, children: [new Paragraph({ children: [k.icon(it.icon, o.px || 30)], spacing: { after: 0, line: 240, lineRule: AUTO } })] }),
+        new TableCell({ width: { size: w - iw, type: WidthType.DXA }, borders: { top: none, bottom: none, left: none, right: none }, verticalAlign: VerticalAlign.CENTER, margins: { top: 50, bottom: 50, left: 40, right: 0 }, children: [k.P(it.text, { after: 0, ctx: o.ctx })] })
+      ] }))
+    })
+  }
+  // The same, as one row: icon and words side by side, items next to each other
+  k.iconRow = (items, w = TW) => {
+    const iw = 560
+    const tw = Math.floor((w - iw * items.length) / items.length)
+    const cell = (cw, children, o = {}) => new TableCell({ width: { size: cw, type: WidthType.DXA }, borders: { top: none, bottom: none, left: none, right: none }, verticalAlign: VerticalAlign.CENTER, margins: { top: 40, bottom: 40, left: o.l || 0, right: 80 }, children })
+    return new Table({
+      width: { size: (iw + tw) * items.length, type: WidthType.DXA }, columnWidths: items.flatMap(() => [iw, tw]), borders: noBorders,
+      rows: [new TableRow({ cantSplit: true, children: items.flatMap(it => [
+        cell(iw, [new Paragraph({ children: [k.icon(it.icon, 28)], spacing: { after: 0, line: 240, lineRule: AUTO } })]),
+        cell(tw, [k.P(it.text, { after: 0, line: 240 })], { l: 20 })
+      ]) })]
+    })
+  }
+  // A heading, title or line of text with an icon badge in front
+  k.withIcon = (name, para, px) => name ? [k.icon(name, px), new TextRun({ text: '   ', font: FONT }), ...para] : para
 
   k.P = (s, o = {}) => new Paragraph({
     children: runs(s, o),
@@ -146,7 +203,7 @@ function kit (accentName, docTitle, logo) {
   k.pageBreak = () => new Paragraph({ children: [new PageBreak()] })
 
   k.H1 = (s, anchor) => new Paragraph({ heading: HeadingLevel.HEADING_1, children: anchored(anchor, [new TextRun({ text: s, font: FONT })]) })
-  k.H2 = (s, anchor) => new Paragraph({ heading: HeadingLevel.HEADING_2, children: anchored(anchor, [new TextRun({ text: s, font: FONT })]) })
+  k.H2 = (s, anchor, icon) => new Paragraph({ heading: HeadingLevel.HEADING_2, children: anchored(anchor, k.withIcon(icon, [new TextRun({ text: s, font: FONT })], 30)) })
   k.H3 = (children, anchor) => new Paragraph({ heading: HeadingLevel.HEADING_3, children: anchored(anchor, children) })
   function anchored (anchor, children) { return anchor ? [new Bookmark({ id: anchor, children })] : children }
 
@@ -176,10 +233,18 @@ function kit (accentName, docTitle, logo) {
       children
     })] })]
   })
-  k.titledBox = (title, paras, fill, o = {}) => k.box([
-    k.P(title, { bold: true, color: C.navy, size: SIZE.h3, after: 80, keepNext: true, ...o.titleOpts }),
-    ...[].concat(paras).flatMap(p => typeof p === 'string' ? k.Ps(p, { after: 80, ctx: o.ctx }) : [p])
-  ], fill, o)
+  k.titledBox = (title, paras, fill, o = {}) => {
+    const rest = [].concat(paras).flatMap(p => typeof p === 'string' ? k.Ps(p, { after: 80, ctx: o.ctx }) : [p])
+    if (!title) {
+      // no title: the icon goes in front of the first line
+      const [first, ...more] = [].concat(paras)
+      return k.box([new Paragraph({ children: k.withIcon(o.icon, runs(first, { ctx: o.ctx }), 28), spacing: { after: 80, line: 276, lineRule: AUTO } }), ...more.flatMap(p => k.Ps(p, { after: 80 }))], fill, o)
+    }
+    return k.box([
+      new Paragraph({ children: k.withIcon(o.icon, runs(title, { bold: true, color: C.navy, size: SIZE.h3 }), 28), keepNext: true, spacing: { after: 80, line: 276, lineRule: AUTO } }),
+      ...rest
+    ], fill, o)
+  }
   // Two boxes side by side
   k.pair = (a, b) => {
     const gap = 220
@@ -189,7 +254,12 @@ function kit (accentName, docTitle, logo) {
       shading: { type: ShadingType.CLEAR, color: 'auto', fill: x.fill },
       borders: { top: none, bottom: none, left: none, right: none },
       margins: { top: 150, bottom: 110, left: 200, right: 200 },
-      children: [k.P(x.title, { bold: true, color: C.navy, size: SIZE.h3, after: 80 }), ...[].concat(x.paras).flatMap(p => typeof p === 'string' ? k.Ps(p, { after: 80, ctx: x.ctx }) : [p])]
+      children: [
+        new Paragraph({ children: k.withIcon(x.icon, runs(x.title, { bold: true, color: C.navy, size: SIZE.h3 }), 28), spacing: { after: 80, line: 276, lineRule: AUTO } }),
+        ...[].concat(x.paras).flatMap(p => typeof p === 'string' ? k.Ps(p, { after: 80, ctx: x.ctx }) : [p]),
+        // a list of icons, then a paragraph: Word needs every cell to end with one
+        ...(x.list ? [k.iconList(x.list, w - 400, { px: 26 }), k.P(x.after || '', { before: x.after ? 60 : 0, after: 40 })] : [])
+      ]
     })
     return new Table({
       width: { size: TW, type: WidthType.DXA }, columnWidths: [w, gap, w], borders: noBorders,
@@ -300,17 +370,43 @@ function packBody (pack, k) {
       if (b.paras) b.paras.forEach(p => inner.push(k.P(p, { after: 100 })))
       if (b.outro) inner.push(k.P(b.outro, { color: C.grey, before: 60, after: 40 }))
       body.push(k.box(inner, k.A.ask, { cantSplit: false }), k.space(80))
-    } else if (b.type === 'h2') body.push(k.H2(b.text))
+    } else if (b.type === 'h2') body.push(k.H2(b.text, null, b.icon))
     else if (b.type === 'p') body.push(k.P(b.text, { after: 140 }))
     else if (b.type === 'stats') body.push(k.space(40), k.stats(b.items), k.space(160))
     else if (b.type === 'table') body.push(k.table(b.cols, b.rows, b.widths), k.space(160))
     else if (b.type === 'bullets') body.push(...k.bullets(b.items), k.space(60))
     else if (b.type === 'steps') body.push(...k.numbered(b.items))
-    else if (b.type === 'note') body.push(k.space(40), k.titledBox(b.title, b.text, C[b.tint]), k.space(120))
-    else if (b.type === 'boxes') body.push(k.pair(...b.items.map(x => ({ title: x.title, paras: x.text, fill: C[x.tint] }))), k.space(160))
+    else if (b.type === 'note') body.push(k.space(40), k.titledBox(b.title, b.text, C[b.tint], { icon: b.icon }), k.space(120))
+    else if (b.type === 'boxes') body.push(k.pair(...b.items.map(x => ({ title: x.title, paras: x.text, fill: C[x.tint], icon: x.icon, list: x.list, after: x.after }))), k.space(160))
+    else if (b.type === 'iconlist') body.push(k.iconList(b.items), k.space(120))
     else throw new Error('Unknown block type ' + b.type)
   }
-  body.push(new Paragraph({ children: runs(pack.footer, { size: SIZE.small, color: C.grey }), spacing: { before: 160, after: 0 }, border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 8 } } }))
+  if (pack.footer) body.push(new Paragraph({ children: runs(pack.footer, { size: SIZE.small, color: C.grey }), spacing: { before: 160, after: 0 }, border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 8 } } }))
+  return body
+}
+
+// ------------------------------------------------------------------ the guide to waiting (for families whose child has no phone yet)
+function delayBody (k) {
+  const g = R.delay
+  const body = [...k.titleBlock('Guide for families', g.title, g.lead)]
+  body.push(k.box([
+    k.P(g.ask.title, { bold: true, color: C.navy, size: SIZE.h2, after: 80 }),
+    k.P(g.ask.text, { size: SIZE.lead, after: 120 }),
+    k.P(g.ask.still, { after: 60 }),
+    k.iconRow(g.ask.chips, TW - 440),
+    k.P('', { after: 0 })
+  ], k.A.ask), k.space(80))
+  body.push(k.H2(g.why.title), k.P(g.why.text, { after: 120 }))
+  body.push(k.H2(g.tips.title))
+  // one numbered list, with the example words in a box under the first tip
+  const first = g.tips.items[0]
+  const tip = it => `**${it.title}** ${it.text}`
+  const list = k.numbered(g.tips.items.map(tip))
+  body.push(list[0])
+  if (first.quote) body.push(k.box([k.P(`"${first.quote}"`, { italics: true, after: 0, line: 252 })], C.sky, { w: TW - 380, bar: C.link }), k.space(40))
+  body.push(...list.slice(1))
+  body.push(k.space(80), k.pair({ title: g.everyone.title, paras: g.everyone.text, fill: C.mint }, { title: g.gotOne.title, paras: g.gotOne.text, fill: C.peach }))
+  body.push(new Paragraph({ children: runs(g.footer, { size: SIZE.small, color: C.grey }), spacing: { before: 120, after: 0 }, border: { top: { style: BorderStyle.SINGLE, size: 4, color: C.line, space: 8 } } }))
   return body
 }
 
@@ -505,18 +601,23 @@ async function coverImages (list) {
       .disc{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center}
       .disc img{width:32px;height:32px}
       .for{margin-top:30px;color:${hexc(A.label)};font-weight:900;font-size:33px;letter-spacing:.05em;line-height:1.1}
-      .body{flex:1;padding:52px 40px 0;display:flex;flex-direction:column}
+      .body{flex:1;min-height:0;padding:52px 40px 0;display:flex;flex-direction:column}
       .kind{color:${hexc(kind)};font-weight:800;font-size:15px;letter-spacing:.16em}
       h1{margin-top:12px;color:${hexc(C.navy)};font-weight:900;font-size:50px;line-height:1.04;letter-spacing:-.01em}
       p{margin-top:18px;color:${hexc(C.grey)};font-size:19px;line-height:1.4;max-width:520px}
-      .art{flex:1;display:grid;place-items:center;padding:20px 0 30px}
-      .art img{width:430px;max-height:100%}
+      .art{flex:1 1 0;min-height:0;display:flex;justify-content:center;align-items:center;padding:24px 0 30px}
+      .art img{height:100%;width:auto;max-width:430px;object-fit:contain}
+      .badges{display:flex;gap:14px;margin-top:30px}
+      .badge{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:16px;color:${hexc(C.navy)}}
+      .badge span{width:74px;height:74px;border-radius:50%;display:grid;place-items:center}
+      .badge svg{width:40px;height:40px}
       .bottom{background:${hexc(A.band)};color:#fff;padding:22px 40px 24px}
       .bottom b{display:block;font-weight:800;font-size:16px}
       .bottom span{display:block;margin-top:4px;font-size:12px;opacity:.95}
     </style></head><body><div class="card">
       <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span>THE SMART STUDY</div><div class="for">${cv.audience.toUpperCase()}</div></div>
       <div class="body"><div class="kind">${cv.kind.toUpperCase()}</div><h1>${cv.title.replace(/'/g, '&rsquo;')}</h1><p>${cv.what.replace(/'/g, '&rsquo;')}</p>
+        ${cv.badges ? `<div class="badges">${cv.badges.map(b => `<div class="badge"><span style="background:#${b.colour}">${fs.readFileSync(require.resolve(`lucide-static/icons/${b.icon}.svg`), 'utf8').replace(/<!--[\s\S]*?-->/, '').replace(/stroke="currentColor"/, 'stroke="#FFFFFF"').replace(/stroke-width="2"/, 'stroke-width="2.4"')}</span>${b.label}</div>`).join('')}</div>` : ''}
         <div class="art"><img src="${svgData(`assets/images/illustrations/${cv.illustration}.svg`)}" alt=""></div></div>
       <div class="bottom"><b>${R.START} to ${R.END}</b><span>${R.RUN_BY}</span></div>
     </div></body></html>`, { waitUntil: 'load' })
@@ -545,15 +646,23 @@ function toPdf (docx) {
   const sharp = require('sharp')
   const logoSvg = fs.readFileSync(out('assets/images/logo-mark.svg'), 'utf8')
   const logo = await sharp(Buffer.from(logoSvg)).resize(192, 192).png().toBuffer()
-  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }])
+  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }, { ...R.delay.cover, accent: 'parents' }])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
   const docs = []
   for (const pack of O.packs) {
+    useSizes(pack.sizes)
+    await loadIcons(iconsIn(pack.blocks), ACCENT[pack.accent].band)
     const k = kit(pack.accent, pack.name, logo)
     // a bookmark at the top, for "Back to the start"
     docs.push({ file: `exports/SMART-onboarding-pack-${pack.id}.docx`, buf: await k.pack(packBody(pack, k), { title: `The SMART Study: ${pack.name.toLowerCase()}`, short: pack.name, footer: 'The SMART Study · ' + pack.name, description: pack.lead, cover: cover(pack.cover) }) })
   }
+  {
+    await loadIcons(iconsIn(R.delay.ask.chips), ACCENT.parents.band)
+    const k = kit('parents', R.delay.title, logo)
+    docs.push({ file: 'exports/SMART-delay-guide.docx', buf: await k.pack(delayBody(k), { title: `The SMART Study: ${R.delay.title.toLowerCase()}`, short: 'Guide for families', footer: 'The SMART Study · ' + R.delay.title, description: R.delay.lead, cover: cover(R.delay.cover) }) })
+  }
+  useSizes()
   {
     const k = kit('parents', GUIDE.title, logo)
     const body = guidanceBody(k)
