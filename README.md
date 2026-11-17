@@ -93,15 +93,15 @@ There are three posters, each with one ask: one covering both situations (the on
 
 ## The invitation to take part
 
-The first thing school leaders and parents get from us, also in **`content/resources.js`** (`invitations`) and built by `npm run build:resources`:
+The first thing school leaders and parents get from us, in **`content/resources.js`** (`invitations`), built by `npm run build:docs` in the house style with a cover (navy and yellow for schools, coral for parents) and one page:
 
 | Output | Where | Use it for |
 | --- | --- | --- |
 | Word | `exports/invitations/SMART-invitation-{schools,parents}.docx` | Editing the wording and filling in the details. |
-| PDF and PNG | `exports/invitations/SMART-invitation-{schools,parents}.{pdf,png}` | Printing, emailing, newsletters. |
-| Figma | `exports/figma/invitation-{schools,parents}.svg` | An A4 frame each, text editable. |
+| PDF | `exports/invitations/SMART-invitation-{schools,parents}.pdf` | Printing and emailing. |
+| PNG | `exports/invitations/SMART-invitation-{schools,parents}.png` | The invitation page as an image, for emails and newsletters. |
 
-Each is one page: a single ask (with a QR code), what taking part involves term by term (including the two reading and maths assessments in the PIRA/PUMA format), a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. It goes out before schools are put into groups, so it describes both groups and promises both the same thanks. Words in [square brackets] (dates, web address, amounts, survey length) are still to be confirmed. The build warns if a page gets too full for A4.
+The page has a single ask (with room for a QR code), what taking part involves term by term, a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. For schools: two short surveys (autumn 2027 and summer 2028) alongside the two assessments, and one thank-you payment when the study ends. Sign-up and contact details are to come from Navigator Insight. Words in [square brackets] are still to be confirmed.
 
 ## The documents: onboarding packs and the guidance for parents
 
@@ -146,4 +146,15 @@ Text is Nunito, which Google Slides has built in; PowerPoint users need it insta
 ## The family newsletter (Mailchimp)
 
 `exports/newsletter/SMART-family-update-mailchimp.html` is the monthly newsletter for parents and carers, to paste into Mailchimp's code editor. It's written by hand, not built: the words change every issue, inside the `mc:edit` regions, and Mailchimp's merge tags (`*|UNSUB|*` and the rest) and the hosted logo stay as they are. `SMART-family-update-mailchimp-code.txt` is the same code as plain text, to open in any editor and copy: opening the .html in TextEdit or Word shows the page, not the code, so copying from there pastes text. Its `<head>` matches the original template exactly. It follows the house style: Nunito where the reader has it (otherwise Arial), the cream page, coral for parents on the header rule and footer, a navy hero with a yellow progress bar, cards tinted sky, lemon, peach and mint with coral number badges, and a rounded coral button. Cards stack on phones.
+
+## The video guides (Google Vids)
+
+`npm run build:video` builds a slide deck and a narration script for each phone, from `content/video.js` (what the video says) and `content/guidance.js` (the steps, Step 4 as Option A, and every screen):
+
+| Output | Use it for |
+| --- | --- |
+| `exports/video/SMART-video-{iphone,android}.pptx` | Upload to Google Slides, then create the video from it in Google Vids. Each slide's speaker notes are its narration. |
+| `exports/video/SMART-video-narration-{iphone,android}.txt` | The same narration as one script, slide by slide, with the chapters. |
+
+Each deck: a title slide; how to use the video (pause after each step, do it, carry on; skip with the chapters); the chapter list; before you start; then each part and step, a step slide with its time, where to do it and a few key points, followed by every screen for that step, two or three to a slide, in order. The narration gives each step's essentials rather than every line of the guide (about 10 minutes a video). Chapter times say [0:00] until the video is made: put them on slide 3, in the script and in the video description.
 
