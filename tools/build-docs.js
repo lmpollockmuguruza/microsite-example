@@ -5,6 +5,8 @@
  *   exports/SMART-onboarding-pack-parents.docx|pdf   welcome pack for families  (content/onboarding.js)
  *   exports/SMART-onboarding-pack-children.docx|pdf  welcome pack for children  (content/onboarding.js)
  *   exports/SMART-delay-guide.docx|pdf               waiting for a first smartphone (content/resources.js)
+ *   exports/SMART-junior-scientist-journal.docx|pdf  the Junior Scientist Journal     (content/journal.js)
+ *   exports/SMART-help-desk-guide.docx|pdf           help desk guide and triage tool (content/helpdesk.js)
  *   exports/invitations/SMART-invitation-{schools,parents}.docx|pdf|png
  *                                                    the invitations to take part (content/resources.js);
  *                                                    the PNG is the invitation page, for emails and newsletters
@@ -24,6 +26,9 @@
  * (soffice) for the PDFs. Nunito is embedded in the Word files and given to
  * LibreOffice from assets/fonts/ttf, so it needn't be installed.
  *
+ * Each document's cover is also saved as an SVG for Figma, with editable text:
+ *   exports/figma/covers/cover-*.svg
+ *
  * Run: npm run build:docs   (add --no-pdf to write the Word files only)
  */
 const fs = require('fs')
@@ -36,6 +41,7 @@ const {
   ExternalHyperlink, InternalHyperlink, Bookmark, VerticalAlign, HighlightColor, CharacterSet, HeadingLevel, LineRuleType,
   HeightRule, SectionType
 } = require('docx')
+const DASH = { style: BorderStyle.DASHED, size: 8, color: '8FA3B8' }
 const AUTO = LineRuleType.AUTO
 
 const ROOT = path.resolve(__dirname, '..')
@@ -43,6 +49,8 @@ const out = p => path.join(ROOT, p)
 const R = require('../content/resources')
 const O = require('../content/onboarding')
 const G = require('../content/guidance')
+const HD = require('../content/helpdesk')
+const J = require('../content/journal')
 
 // ------------------------------------------------------------------ house style
 const C = { cream: 'FFFAF3', navy: '003A69', ink: '12263F', grey: '4A5B70', coral: 'C4412A', sun: 'FFC845', lemon: 'FFF1C9', mint: 'E6F7F1', teal: '0B7A67', sky: 'EEF6FD', peach: 'FDE7D3', line: 'DFE5EC', link: '1A5C9E', white: 'FFFFFF' }
@@ -51,7 +59,9 @@ const C = { cream: 'FFFAF3', navy: '003A69', ink: '12263F', grey: '4A5B70', cora
 const ACCENT = {
   schools: { text: C.navy, mark: 'B88400', ask: C.lemon, rule: C.sun, band: C.navy, label: C.sun, tint: C.lemon },
   parents: { text: C.coral, mark: C.coral, ask: C.peach, rule: C.coral, band: C.coral, label: C.white, tint: C.peach },
-  children: { text: C.teal, mark: C.teal, ask: C.mint, rule: '37C3A0', band: C.teal, label: C.white, tint: C.mint }
+  children: { text: C.teal, mark: C.teal, ask: C.mint, rule: '37C3A0', band: C.teal, label: C.white, tint: C.mint },
+  // the study team and partners (IFF, DfE, school leaders): internal documents
+  team: { text: C.ink, mark: C.ink, ask: C.sky, rule: '8FA3B8', band: C.ink, label: 'CFE6FB', tint: C.sky }
 }
 const FONT = 'Nunito'
 const SIZE = { body: 21, small: 18, caption: 16, lead: 23, eyebrow: 17, title: 52, h1: 34, h2: 27, h3: 23 }
@@ -144,6 +154,16 @@ async function loadIcons (names, bg) {
     const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
     const badge = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="48" fill="#${bg}"/><g transform="translate(24 24) scale(2)" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`
     ICONS.set(iconKey(name, bg), await sharp(Buffer.from(badge)).resize(144, 144).png().toBuffer())
+  }
+}
+// Plain line icons, for things children circle (the feelings faces)
+async function loadPlainIcons (names, colour) {
+  const sharp = require('sharp')
+  for (const name of new Set(names)) {
+    const key = iconKey(name, 'plain-' + colour)
+    if (ICONS.has(key)) continue
+    const svg = fs.readFileSync(require.resolve(`lucide-static/icons/${name}.svg`), 'utf8').replace(/stroke="currentColor"/, `stroke="#${colour}"`).replace(/width="24"/, 'width="144"').replace(/height="24"/, 'height="144"')
+    ICONS.set(key, await sharp(Buffer.from(svg)).resize(144, 144).png().toBuffer())
   }
 }
 // Every `icon` named anywhere in a piece of content
@@ -408,6 +428,117 @@ function packBody (pack, k) {
   return body
 }
 
+// ------------------------------------------------------------------ the Junior Scientist Journal
+function journalBody (j, k) {
+  const body = [...k.titleBlock(j.eyebrow, j.title, j.lead)]
+  const cell = (w, children, o = {}) => new TableCell({ width: { size: w, type: WidthType.DXA }, borders: o.borders || { top: none, bottom: none, left: none, right: none }, shading: o.fill ? { type: ShadingType.CLEAR, color: 'auto', fill: o.fill } : undefined, verticalAlign: o.valign || VerticalAlign.TOP, margins: o.margins || { top: 60, bottom: 60, left: 80, right: 80 }, children })
+  // Lines to write on, as table rows (Word merges the borders of empty paragraphs that sit together)
+  const ruled = (n, w = TW, h = 470) => new Table({ width: { size: w, type: WidthType.DXA }, columnWidths: [w], borders: noBorders, rows: Array.from({ length: n }, () => new TableRow({ cantSplit: true, height: { value: h, rule: HeightRule.EXACT }, children: [
+    new TableCell({ width: { size: w, type: WidthType.DXA }, borders: { top: none, left: none, right: none, bottom: { style: BorderStyle.SINGLE, size: 6, color: 'B7C4D1' } }, children: [new Paragraph({ children: [] })] })
+  ] })) })
+  // A new page: the next paragraph starts one (a separate break paragraph can land on a page of its own)
+  const newPage = () => new Paragraph({ children: [], pageBreakBefore: true, spacing: { before: 0, after: 0, line: 20, lineRule: LineRuleType.EXACT } })
+  const plainIcon = (name, px) => new ImageRun({ type: 'png', data: ICONS.get(iconKey(name, 'plain-' + C.navy)), transformation: { width: px, height: px }, altText: { title: name, description: '', name } })
+  let breakNext = false // the next heading starts a new page
+  const spacers = new Set()
+  const gap = after => { const p = k.space(after); spacers.add(p); return p }
+  for (const b of j.blocks) {
+    if (b.type === 'page') {
+      // a spacer at the bottom of a full page would spill onto a page of its own
+      while (body.length && spacers.has(body[body.length - 1])) body.pop()
+      breakNext = true
+    }
+    else if (b.type === 'chapter') {
+      // a new page, opening with a band in the children's colour
+      body.push(newPage())
+      body.push(k.box([
+        new Paragraph({ children: [k.icon(b.icon, 40), new TextRun({ text: '   ' + b.label.toUpperCase(), bold: true, color: k.A.text, size: SIZE.eyebrow, font: FONT, characterSpacing: 30 })], spacing: { after: 60, line: 240, lineRule: AUTO } }),
+        k.P(b.title, { bold: true, color: C.navy, size: SIZE.title, after: 40, line: 240 }),
+        k.P(b.sub, { color: C.grey, after: 20 })
+      ], C.mint), k.space(120))
+    } else if (b.type === 'h2') {
+      body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, pageBreakBefore: breakNext, children: k.withIcon(b.icon, [new TextRun({ text: b.text, font: FONT })], 30) }))
+      breakNext = false
+    } else if (b.type === 'p') body.push(k.P(b.text, { after: 100 }))
+    else if (b.type === 'bullets') body.push(...k.bullets(b.items), k.space(60))
+    else if (b.type === 'lines') {
+      if (b.label) body.push(k.P(b.label, { bold: true, color: C.navy, before: 120, after: 0 }))
+      body.push(ruled(b.n), gap(100))
+    } else if (b.type === 'fields') {
+      const lw = 3200
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [lw, TW - lw], borders: noBorders, rows: b.items.map(f => new TableRow({ cantSplit: true, children: [
+        cell(lw, [k.P(f, { bold: true, color: C.navy, after: 0 })], { valign: VerticalAlign.BOTTOM, margins: { top: 260, bottom: 40, left: 0, right: 120 } }),
+        cell(TW - lw, [new Paragraph({ children: [] })], { valign: VerticalAlign.BOTTOM, borders: { top: none, left: none, right: none, bottom: { style: BorderStyle.SINGLE, size: 6, color: 'B7C4D1' } } })
+      ] })) }), k.space(200))
+    } else if (b.type === 'mood') {
+      const w = Math.floor(TW / j.mood.length)
+      body.push(new Table({ width: { size: w * j.mood.length, type: WidthType.DXA }, columnWidths: j.mood.map(() => w), borders: noBorders, rows: [new TableRow({ cantSplit: true, children: j.mood.map(m => cell(w, [
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [plainIcon(m.icon, 52)], spacing: { after: 40, line: 240, lineRule: AUTO } }),
+        k.P(m.label, { align: AlignmentType.CENTER, color: C.grey, size: SIZE.small, after: 0 })
+      ])) })] }), k.space(80))
+    } else if (b.type === 'photos') {
+      const gap = 200
+      const w = Math.floor((TW - gap * (b.months.length - 1)) / b.months.length)
+      const blank = () => cell(gap, [new Paragraph({ children: [] })])
+      const frame = { top: DASH, bottom: DASH, left: DASH, right: DASH }
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: b.months.flatMap((m, i) => i ? [gap, w] : [w]), borders: noBorders, rows: [
+        new TableRow({ cantSplit: true, children: b.months.flatMap((m, i) => { const c = cell(w, [k.P(m, { bold: true, color: k.A.text, after: 0 })], { margins: { top: 0, bottom: 60, left: 0, right: 0 } }); return i ? [blank(), c] : [c] }) }),
+        new TableRow({ cantSplit: true, height: { value: 3600, rule: HeightRule.ATLEAST }, children: b.months.flatMap((m, i) => { const c = cell(w, [new Paragraph({ alignment: AlignmentType.CENTER, children: [k.icon('camera', 34)], spacing: { before: 1100, after: 80, line: 240, lineRule: AUTO } }), k.P('Stick a photo or draw here', { align: AlignmentType.CENTER, color: C.grey, size: SIZE.small, after: 0 })], { borders: frame, fill: C.cream }); return i ? [blank(), c] : [c] }) }),
+        new TableRow({ cantSplit: true, children: b.months.flatMap((m, i) => { const c = cell(w, [k.P('What we did:', { color: C.grey, size: SIZE.small, before: 80, after: 0 }), ruled(2, w, 400), new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } }); return i ? [blank(), c] : [c] }) })
+      ] }), k.space(200))
+    } else if (b.type === 'draw') {
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [TW], borders: noBorders, rows: [new TableRow({ cantSplit: true, height: { value: b.height, rule: HeightRule.ATLEAST }, children: [
+        cell(TW, [k.P(b.label, { color: C.grey, size: SIZE.small, after: 0 })], { borders: { top: DASH, bottom: DASH, left: DASH, right: DASH }, fill: C.cream, margins: { top: 120, bottom: 120, left: 160, right: 160 } })
+      ] })] }))
+    } else if (b.type === 'puzzle') {
+      const inner = [new Paragraph({ children: [k.icon('puzzle', 32), new TextRun({ text: '   ' + b.title, bold: true, color: C.navy, size: SIZE.h3, font: FONT })], spacing: { after: 80, line: 276, lineRule: AUTO } })]
+      if (b.text) inner.push(k.P(b.text, { after: 60 }))
+      const spaced = w => w.split('').join(' ')
+      const blank = '   →   ______________'
+      const grid = (cells, cols = 2) => {
+        const cw = Math.floor((TW - 440) / cols)
+        const rows = Math.ceil(cells.length / cols)
+        return new Table({ width: { size: cw * cols, type: WidthType.DXA }, columnWidths: Array(cols).fill(cw), borders: noBorders, rows: Array.from({ length: rows }, (x, r) => new TableRow({ children: Array.from({ length: cols }, (y, c) => {
+          const it = cells[r + c * rows]
+          return cell(cw, [it ? new Paragraph({ children: it, spacing: { before: 120, after: 60, line: 276, lineRule: AUTO } }) : new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } })
+        }) })) })
+      }
+      const big = t => new TextRun({ text: t, bold: true, color: k.A.text, size: SIZE.h3, font: FONT })
+      const thin = t => new TextRun({ text: t, color: C.grey, size: SIZE.body, font: FONT })
+      if (b.kind === 'anagram') inner.push(grid(b.items.map(i => [big(spaced(i[0])), thin(blank)])), k.P('', { after: 0 }))
+      if (b.kind === 'missing') inner.push(grid(b.items.map(i => [big(spaced(i[0])), thin(blank)])), k.P('', { after: 0 }))
+      if (b.kind === 'code') {
+        // the message as numbers, a word to a line, with a line to write each word
+        b.message.split(' ').forEach(w => inner.push(new Paragraph({ children: [big(w.split('').map(ch => ch.charCodeAt(0) - 64).join(' – ')), thin(blank)], spacing: { before: 100, after: 40, line: 276, lineRule: AUTO } })))
+      }
+      if (b.kind === 'oddone') b.items.forEach(([words]) => inner.push(new Paragraph({ children: [big(words.join('      '))], spacing: { before: 100, after: 40, line: 276, lineRule: AUTO } })))
+      if (b.answers) b.answers.forEach(a => inner.push(k.P(a, { after: 40 })))
+      body.push(k.box(inner, C.lemon))
+      if (!b.answers) body.push(k.space(160))
+    } else if (b.type === 'log') {
+      body.push(k.table(b.cols, b.rows.map(r => [r ? `**${r}**` : ' ', ...b.cols.slice(1).map(() => ' ')]), b.widths, { size: SIZE.body }))
+      body.push(k.space(200))
+    } else if (b.type === 'checklist') {
+      body.push(...b.items.map((it, n) => new Paragraph({ children: [new TextRun({ text: '☐   ', size: SIZE.h2, color: k.A.text, font: FONT }), ...runs(it), ...(n === b.items.length - 1 && it.endsWith(':') ? [new TextRun({ text: '  ____________________', color: C.grey, font: FONT })] : [])], spacing: { before: 60, after: 80, line: 276, lineRule: AUTO } })), k.space(160))
+    } else if (b.type === 'facts') {
+      body.push(k.box(k.bullets(b.items), C.sky), k.space(120))
+    } else if (b.type === 'teaser') {
+      body.push(k.box([new Paragraph({ children: [k.icon(b.icon, 30), new TextRun({ text: '   Coming soon', bold: true, color: k.A.text, size: SIZE.h3, font: FONT })], spacing: { after: 60, line: 276, lineRule: AUTO } }), k.P(b.text, { after: 20 })], C.mint, { bar: k.A.band }))
+    } else if (b.type === 'certificate') {
+      body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, pageBreakBefore: true, children: k.withIcon('award', [new TextRun({ text: b.title, font: FONT })], 30) }))
+      const frame = { style: BorderStyle.DOUBLE, size: 18, color: k.A.band }
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [TW], borders: noBorders, rows: [new TableRow({ cantSplit: true, height: { value: 9000, rule: HeightRule.ATLEAST }, children: [
+        cell(TW, [
+          new Paragraph({ alignment: AlignmentType.CENTER, children: [k.icon('award', 64)], spacing: { before: 2600, after: 160, line: 240, lineRule: AUTO } }),
+          k.P('Stick your certificate here', { align: AlignmentType.CENTER, bold: true, color: C.navy, size: SIZE.h2, after: 120 }),
+          k.P(b.text, { align: AlignmentType.CENTER, color: C.grey, after: 0 })
+        ], { borders: { top: frame, bottom: frame, left: frame, right: frame }, fill: C.cream, margins: { top: 200, bottom: 200, left: 700, right: 700 } })
+      ] })] }))
+    } else throw new Error('Unknown journal block ' + b.type)
+  }
+  return body
+}
+
 // ------------------------------------------------------------------ invitations to take part (one page after the cover)
 function invitationBody (v, k) {
   // no eyebrow: the page header already says who it's for
@@ -431,7 +562,7 @@ function invitationBody (v, k) {
   body.push(k.titledBox(v.groupsTitle, v.groups, C.sky), k.space(0))
   body.push(k.H2(v.getTitle))
   body.push(k.tiles(v.gets), k.space(80))
-  body.push(k.P(`**${v.choice}** ${v.contact}`, { after: 0 }))
+  body.push(k.P(`**${v.choice}** ${v.privacy ? v.privacy + ' ' : ''}${v.contact}`, { after: 0 }))
   // who runs the study is in the page footer
   return body
 }
@@ -658,25 +789,95 @@ async function coverImages (list) {
       p{margin-top:18px;color:${hexc(C.grey)};font-size:19px;line-height:1.4;max-width:520px}
       .art{flex:1 1 0;min-height:0;display:flex;justify-content:center;align-items:center;padding:24px 0 30px}
       .art img{height:100%;width:auto;max-width:430px;object-fit:contain}
-      .badges{display:flex;gap:14px;margin-top:30px}
-      .badge{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:16px;color:${hexc(C.navy)}}
-      .badge span{width:74px;height:74px;border-radius:50%;display:grid;place-items:center}
-      .badge svg{width:40px;height:40px}
+      .owner{margin-top:26px;display:flex;align-items:flex-end;gap:12px;font-weight:800;font-size:17px;color:${hexc(C.navy)}}
+      .owner .write{flex:1;max-width:300px;height:26px;border-bottom:2px solid ${hexc(C.navy)}}
       .bottom{background:${hexc(A.band)};color:#fff;padding:22px 40px 24px}
       .bottom b{display:block;font-weight:800;font-size:16px}
       .bottom span{display:block;margin-top:4px;font-size:12px;opacity:.95}
     </style></head><body><div class="card">
-      <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span>THE SMART STUDY</div><div class="for">${cv.audience.toUpperCase()}</div></div>
+      <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span><span class="brandtext">THE SMART STUDY</span></div><div class="for">${cv.audience.toUpperCase()}</div></div>
       <div class="body"><div class="kind">${cv.kind.toUpperCase()}</div><h1>${cv.title.replace(/'/g, '&rsquo;')}</h1><p>${cv.what.replace(/'/g, '&rsquo;')}</p>
-        ${cv.badges ? `<div class="badges">${cv.badges.map(b => `<div class="badge"><span style="background:#${b.colour}">${fs.readFileSync(require.resolve(`lucide-static/icons/${b.icon}.svg`), 'utf8').replace(/<!--[\s\S]*?-->/, '').replace(/stroke="currentColor"/, 'stroke="#FFFFFF"').replace(/stroke-width="2"/, 'stroke-width="2.4"')}</span>${b.label}</div>`).join('')}</div>` : ''}
+        ${cv.owner ? `<div class="owner"><span class="ownertext">${cv.owner}</span><span class="write"></span></div>` : ''}
         <div class="art"><img src="${svgData(`assets/images/illustrations/${cv.illustration}.svg`)}" alt=""></div></div>
       <div class="bottom"><b>${R.START} to ${R.END}</b><span>${R.RUN_BY}</span></div>
     </div></body></html>`, { waitUntil: 'load' })
     await page.evaluate(() => document.fonts.ready)
     images.set(cv.title, await page.screenshot({ type: 'png', omitBackground: true }))
+    if (cv.svg) fs.writeFileSync(out(`exports/figma/covers/${cv.svg}.svg`), coverSvg(cv, A, await coverLayout(page)))
   }
   await browser.close()
   return images
+}
+
+// Where everything on a cover page landed: boxes, and each line of text
+function coverLayout (page) {
+  return page.evaluate(() => {
+    const box = sel => { const r = document.querySelector(sel).getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height } }
+    const text = sel => {
+      const el = document.querySelector(sel)
+      const cs = getComputedStyle(el)
+      const words = []
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      let n
+      while ((n = walker.nextNode())) {
+        const re = /\S+/g
+        let m
+        while ((m = re.exec(n.textContent))) {
+          const r = document.createRange()
+          r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length)
+          const b = r.getClientRects()[0]
+          words.push({ w: m[0], x: b.left, top: b.top, h: b.height })
+        }
+      }
+      const lines = []
+      for (const w of words) {
+        const last = lines[lines.length - 1]
+        if (last && Math.abs(last.top - w.top) < 2) last.text += ' ' + w.w
+        else lines.push({ text: w.w, x: w.x, top: w.top, h: w.h })
+      }
+      return { lines, size: parseFloat(cs.fontSize), weight: cs.fontWeight, color: cs.color, ls: parseFloat(cs.letterSpacing) || 0, opacity: parseFloat(cs.opacity) }
+    }
+    return {
+      owner: document.querySelector('.owner') ? { text: text('.ownertext'), line: box('.owner .write') } : null,
+      top: box('.top'), bottom: box('.bottom'), disc: box('.disc'), logo: box('.disc img'), art: box('.art img'),
+      text: { brand: text('.brandtext'), audience: text('.for'), kind: text('.kind'), title: text('h1'), what: text('p'), dates: text('.bottom b'), runBy: text('.bottom span') }
+    }
+  })
+}
+
+// The cover as an SVG for Figma: shapes, the logo and illustration as vectors,
+// and every line of text as editable Nunito text, in named layers
+function coverSvg (cv, A, L) {
+  const r = n => Math.round(n * 100) / 100
+  const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const hexOf = rgb => { const m = rgb.match(/\d+/g).map(Number); return '#' + m.slice(0, 3).map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase() }
+  const inner = svg => svg.replace(/<\?xml[^>]*>/, '').replace(/<!--[\s\S]*?-->/g, '').replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
+  const vb = svg => svg.match(/viewBox="([\d.\s-]+)"/)[1].trim().split(/\s+/).map(Number)
+  const svgFile = f => fs.readFileSync(out(f), 'utf8')
+  // Nunito's ascent is 1.011 of the font size, out of a 1.364 line box
+  const block = (name, t) => `<g id="${name}">${t.lines.map(l => `<text x="${r(l.x)}" y="${r(l.top + l.h * 1.011 / 1.364)}" font-family="Nunito" font-size="${t.size}" font-weight="${t.weight}" fill="${hexOf(t.color)}"${t.opacity < 1 ? ` fill-opacity="${t.opacity}"` : ''}${t.ls ? ` letter-spacing="${r(t.ls)}"` : ''}>${xmlEsc(l.text)}</text>`).join('')}</g>`
+  const place = (name, f, b) => { const s = svgFile(f); const [, , w, h] = vb(s); const k = Math.min(b.w / w, b.h / h); return `<g id="${name}" transform="translate(${r(b.x + (b.w - w * k) / 2)} ${r(b.y + (b.h - h * k) / 2)}) scale(${r(k * 1000) / 1000})">${inner(s)}</g>` }
+  const t = L.text
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${COVER.w}" height="${COVER.h}" viewBox="0 0 ${COVER.w} ${COVER.h}">
+<defs><clipPath id="card-shape"><rect width="${COVER.w}" height="${COVER.h}" rx="22"/></clipPath></defs>
+<g id="Cover: ${xmlEsc(cv.title)}" clip-path="url(#card-shape)">
+<rect id="Background" width="${COVER.w}" height="${COVER.h}" fill="#${C.cream}"/>
+<rect id="Top band" x="0" y="0" width="${COVER.w}" height="${r(L.top.y + L.top.h)}" fill="#${A.band}"/>
+<rect id="Bottom band" x="0" y="${r(L.bottom.y)}" width="${COVER.w}" height="${r(COVER.h - L.bottom.y)}" fill="#${A.band}"/>
+<circle id="Logo disc" cx="${r(L.disc.x + L.disc.w / 2)}" cy="${r(L.disc.y + L.disc.h / 2)}" r="${r(L.disc.w / 2)}" fill="#FFFFFF"/>
+${place('Logo', 'assets/images/logo-mark.svg', L.logo)}
+${block('The SMART Study', t.brand)}
+${block('Audience', t.audience)}
+${block('Kind of document', t.kind)}
+${block('Title', t.title)}
+${block('What it is', t.what)}
+${L.owner ? `${block('Belongs to', L.owner.text)}<rect id="Name line" x="${r(L.owner.line.x)}" y="${r(L.owner.line.y + L.owner.line.h - 2)}" width="${r(L.owner.line.w)}" height="2" fill="#${C.navy}"/>` : ''}
+${place('Illustration', `assets/images/illustrations/${cv.illustration}.svg`, L.art)}
+${block('Dates', t.dates)}
+${block('Run by', t.runBy)}
+</g>
+</svg>
+`
 }
 
 // ------------------------------------------------------------------ PDF (LibreOffice, with Nunito from the repo)
@@ -697,7 +898,15 @@ function toPdf (docx) {
   const sharp = require('sharp')
   const logoSvg = fs.readFileSync(out('assets/images/logo-mark.svg'), 'utf8')
   const logo = await sharp(Buffer.from(logoSvg)).resize(192, 192).png().toBuffer()
-  const covers = await coverImages([...O.packs.map(p => ({ ...p.cover, accent: p.accent })), { ...GUIDE.cover, accent: 'parents' }, { ...R.delay.cover, accent: 'parents' }, ...R.invitations.map(v => ({ ...v.cover, accent: v.accent }))])
+  fs.mkdirSync(out('exports/figma/covers'), { recursive: true })
+  const covers = await coverImages([
+    ...O.packs.map(p => ({ ...p.cover, accent: p.accent, svg: `cover-onboarding-pack-${p.id}` })),
+    { ...GUIDE.cover, accent: 'parents', svg: 'cover-setting-up-your-childs-phone' },
+    { ...R.delay.cover, accent: 'parents', svg: 'cover-delay-guide' },
+    ...R.invitations.map(v => ({ ...v.cover, accent: v.accent, svg: `cover-invitation-${v.id}` })),
+    { ...HD.cover, accent: HD.accent, svg: 'cover-help-desk-guide' },
+    { ...J.cover, accent: J.accent, svg: 'cover-junior-scientist-journal' }
+  ])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
   const docs = []
@@ -720,7 +929,18 @@ function toPdf (docx) {
     fs.mkdirSync(out('exports/invitations'), { recursive: true })
     docs.push({ file: `exports/invitations/SMART-invitation-${v.id}.docx`, png: true, buf: await k.pack(invitationBody(v, k), { title: `The SMART Study: ${v.eyebrow.toLowerCase()}`, short: v.eyebrow, footer: v.runBy, description: v.intro, cover: cover(v.cover) }) })
   }
+  {
+    useSizes(J.sizes)
+    await loadIcons(iconsIn(J.blocks).concat(['camera', 'puzzle', 'award']), ACCENT[J.accent].band)
+    await loadPlainIcons(J.mood.map(m => m.icon), C.navy)
+    const k = kit(J.accent, J.name, logo)
+    docs.push({ file: `exports/${J.file}.docx`, buf: await k.pack(journalBody(J, k), { title: 'The SMART Study: Junior Scientist Journal', short: J.name, footer: 'The SMART Study · ' + J.name, description: J.lead, cover: cover(J.cover) }) })
+  }
   useSizes()
+  {
+    const k = kit(HD.accent, HD.name, logo)
+    docs.push({ file: `exports/${HD.file}.docx`, buf: await k.pack(packBody(HD, k), { title: 'The SMART Study: help desk guide and triage tool', short: HD.name, footer: 'The SMART Study · ' + HD.name, description: HD.lead, cover: cover(HD.cover) }) })
+  }
   {
     const k = kit('parents', GUIDE.title, logo)
     const body = guidanceBody(k)

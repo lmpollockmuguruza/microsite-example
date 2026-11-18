@@ -219,3 +219,18 @@ b += f'<g transform="rotate(-30 300 180)"><circle cx="300" cy="180" r="24" fill=
 b += plant(90,250,0.8)
 open(f'{OUT}/sign-in.svg','w').write(svg(400,280,b))
 print('ok')
+
+# ---------------------------------------------------------------- Newsletter banner: children playing ball outside
+# Wide (544 x 240), to sit across the newsletter's content area. The newsletter
+# uses it as a PNG (exports/newsletter/), because mail apps don't show SVG.
+b = f'<rect width="544" height="240" rx="18" fill="{SKYL}"/>'
+b += blob(272,140,230,96,'#fff1c9') + sun(470,52,20) + cloud(48,48,0.85) + cloud(330,34,0.6)
+b += f'<path d="M0 206 q136 -26 272 -6 t272 -4 V222 a18 18 0 0 1 -18 18 H18 a18 18 0 0 1 -18 -18z" fill="{MINT}" opacity=".75"/>'
+# the ball, mid-air, with a little motion
+b += f'<path d="M232 96 q22 -14 44 -6" stroke="{GREY}" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 7"/>'
+b += f'<circle cx="290" cy="98" r="15" fill="{CORAL}"/><path d="M276 92 q14 8 28 0 M280 106 q10 -10 20 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+b += standing(196,214,112,SKINS[1],HAIRS[0],SUN,NAVY,'curly',wave=True)
+b += standing(350,214,104,SKINS[0],HAIRS[3],CORAL,INK,'long',wave=True)
+b += standing(424,214,96,SKINS[3],HAIRS[2],MINT,NAVY,'short')
+b += plant(92,206,0.75) + plant(500,206,0.6)
+open(f'{OUT}/children-playing.svg','w').write(svg(544,240,b))
