@@ -101,7 +101,7 @@ The first thing school leaders and parents get from us, in **`content/resources.
 | PDF | `exports/invitations/SMART-invitation-{schools,parents}.pdf` | Printing and emailing. |
 | PNG | `exports/invitations/SMART-invitation-{schools,parents}.png` | The invitation page as an image, for emails and newsletters. |
 
-The page has a single ask (with room for a QR code), what taking part involves term by term, a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. For schools: two short surveys (autumn 2027 and summer 2028) alongside the two assessments, and one thank-you payment when the study ends. Sign-up and contact details are to come from Navigator Insight. Words in [square brackets] are still to be confirmed.
+The page has a single ask (with room for a QR code), what taking part involves term by term, a plain note that schools are split into two groups by chance, and what everyone gets whichever group they're in. For schools: two short surveys (autumn 2027 and summer 2028) alongside the two assessments, and one thank-you payment when the study ends. Sign-up and contact details are to come from Navigator Insight. The parents' invitation is for school leaders to share before the school signs up, to see whether families are interested: it asks parents to register interest (it doesn't commit them), describes what taking part would involve, and says one group follows "a simple plan about children's phones" without saying what it is, so it works whichever group the school ends up in. It's on the school resources page. Words in [square brackets] are still to be confirmed.
 
 ## The documents: onboarding packs and the guidance for parents
 

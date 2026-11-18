@@ -180,31 +180,35 @@ const invitations = [
     contact: 'Questions? Email [email address].'
   },
   {
+    // Shared by school leaders with some or all parents before the school signs up,
+    // to see whether families would be interested. Either group is possible, so it
+    // says there's a simple plan in one group but not what the plan is.
     id: 'parents', name: 'Parents and carers',
-    use: 'For parents and carers of children in ' + YEARS + ', sent through the school.',
+    use: 'For school leaders to share with parents and carers of children in ' + YEARS + ' before the school signs up, to see whether families are interested.',
     eyebrow: 'Invitation for parents and carers',
     accent: 'parents',
-    cover: { audience: 'For parents and carers', kind: 'Invitation', title: 'Will your family take part?', what: 'Help find out what\'s best for children and phones, from September 2027 to September 2028.', illustration: 'family' },
-    headline: 'Will your family help find out what\'s best for children and phones?',
-    intro: `Nobody knows yet the best age for a first smartphone, or how best to set one up. **[School name]** is helping to find out, as one of around 80 primary schools in the SMART Study. It runs from **${START}** to **${END}**, for children in **${YEARS}**, and we'd love your family to take part.`,
+    cover: { audience: 'For parents and carers', kind: 'Invitation', title: 'Would your family like to take part?', what: `[School name] is thinking about joining a study about children and phones, from ${START} to ${END}.`, illustration: 'family' },
+    headline: 'Would your family help find out what\'s best for children and phones?',
+    intro: `Nobody knows yet the best age for a first smartphone. The SMART Study, for the Department for Education, will help find out. **[School name]** is thinking about taking part, with families of children in **${YEARS}**, from **${START}** to **${END}**, and would like to know what you think first.`,
     ask: {
-      title: 'Will you take part?',
-      text: 'Say yes by **[date]**: scan the QR code or go to **[web address]**. It takes about 5 minutes.'
+      title: 'Would you be interested?',
+      text: 'Let us know by **[date]**: scan the QR code or go to **[web address]**. It takes about 2 minutes, and it doesn\'t commit you to anything.'
     },
-    involvesTitle: 'What taking part involves for your family',
+    involvesTitle: 'What taking part would involve for your family',
     timeline: [
-      { when: 'Summer term 2027', text: 'Say yes. That\'s all until the study starts in ' + START + '.' },
+      { when: 'Summer term 2027', text: 'If your school takes part, you get a welcome pack before the study starts.' },
       { when: TERM1, text: `Your child does the first of two short ${ASSESS} at school. There's nothing to prepare.` },
-      { when: 'Three times', text: 'A short online survey about how your family is getting on (about **[10] minutes**), in [December 2027, April 2028 and September 2028].' },
+      { when: 'Three times', text: 'A short online survey about how your child and your family are getting on, about **[10] minutes**, in [December 2027, April 2028 and September 2028].' },
       { when: TERM3, text: 'Your child does the second assessment. The study ends in ' + END + '.' }
     ],
-    groups: `To make it a fair test, schools are split into two groups by chance. In one, families follow a simple plan until ${END}: if their child has no smartphone, they wait; if they have one, they set it up with a short list of apps and share a screen time screenshot once a month, with our step-by-step help. In the other, families carry on as usual. Everyone does the same surveys and assessments.`,
+    groups: `To make it a fair test, schools taking part are split into two groups by chance. In one, families are asked to follow a simple plan about children's phones until ${END}, with our support. In the other, families carry on as usual. Everyone does the same surveys, and you'd know your school's group before the study starts.`,
     gets: [
       { icon: 'gift', title: 'A [£X] voucher', text: 'After each survey you fill in.' },
-      { icon: 'sparkles', title: 'Fun things for your child', text: 'Motivational videos, comic books and a newsletter.' },
+      { icon: 'sparkles', title: 'Things for your child', text: 'Videos, comic books and a newsletter. [TBC: both groups?]' },
       { icon: 'mail', title: 'What we find', text: 'A summary of what your family helped to find out.' }
     ],
-    choice: 'Taking part is your choice. You can stop at any time, without giving a reason.',
+    choice: 'Taking part is your choice, and you can stop at any time.',
+    privacy: 'We never see your child\'s phone, and your answers stay confidential.',
     contact: `Questions? Ask [staff name] at school, or email ${EMAIL}.`
   }
 ].map(i => ({ ...invitationCommon, ...i }))

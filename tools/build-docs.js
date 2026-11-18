@@ -434,7 +434,7 @@ function invitationBody (v, k) {
   body.push(k.titledBox(v.groupsTitle, v.groups, C.sky), k.space(0))
   body.push(k.H2(v.getTitle))
   body.push(k.tiles(v.gets), k.space(80))
-  body.push(k.P(`**${v.choice}** ${v.contact}`, { after: 0 }))
+  body.push(k.P(`**${v.choice}** ${v.privacy ? v.privacy + ' ' : ''}${v.contact}`, { after: 0 }))
   // who runs the study is in the page footer
   return body
 }

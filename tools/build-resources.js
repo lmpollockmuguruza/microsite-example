@@ -431,6 +431,16 @@ function schoolsPage () {
             </ul>
           </div>
 
+          <h2 class="govuk-heading-l" id="invite-parents">Invitation for parents and carers</h2>
+          <div class="smart-box">
+            <p class="govuk-body">${md(R.invitations.find(v => v.id === 'parents').use)} It says what taking part would involve, without saying which group your school will be in.</p>
+            <ul class="govuk-list govuk-body-s smart-downloads govuk-!-margin-bottom-0">
+              <li><a class="govuk-link" href="exports/invitations/SMART-invitation-parents.pdf" download>${icon('printer')} PDF, to print or email</a></li>
+              <li><a class="govuk-link" href="exports/invitations/SMART-invitation-parents.png" download>${icon('image')} Image, for newsletters and messages</a></li>
+              <li><a class="govuk-link" href="exports/invitations/SMART-invitation-parents.docx" download>${icon('file-text')} Word, to add your school's details</a></li>
+            </ul>
+          </div>
+
           <h2 class="govuk-heading-l" id="posters">E-posters</h2>
           <p class="govuk-body">Print them, show them on screens, or send them with your newsletter. Most schools only need the first one. Before you share one, add your school's details: the Word version can be edited.</p>
           <ul class="smart-posters">${cards}
