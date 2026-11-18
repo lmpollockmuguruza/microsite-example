@@ -5,6 +5,7 @@
  *   exports/SMART-onboarding-pack-parents.docx|pdf   welcome pack for families  (content/onboarding.js)
  *   exports/SMART-onboarding-pack-children.docx|pdf  welcome pack for children  (content/onboarding.js)
  *   exports/SMART-delay-guide.docx|pdf               waiting for a first smartphone (content/resources.js)
+ *   exports/SMART-help-desk-guide.docx|pdf           help desk guide and triage tool (content/helpdesk.js)
  *   exports/invitations/SMART-invitation-{schools,parents}.docx|pdf|png
  *                                                    the invitations to take part (content/resources.js);
  *                                                    the PNG is the invitation page, for emails and newsletters
@@ -46,6 +47,7 @@ const out = p => path.join(ROOT, p)
 const R = require('../content/resources')
 const O = require('../content/onboarding')
 const G = require('../content/guidance')
+const HD = require('../content/helpdesk')
 
 // ------------------------------------------------------------------ house style
 const C = { cream: 'FFFAF3', navy: '003A69', ink: '12263F', grey: '4A5B70', coral: 'C4412A', sun: 'FFC845', lemon: 'FFF1C9', mint: 'E6F7F1', teal: '0B7A67', sky: 'EEF6FD', peach: 'FDE7D3', line: 'DFE5EC', link: '1A5C9E', white: 'FFFFFF' }
@@ -54,7 +56,9 @@ const C = { cream: 'FFFAF3', navy: '003A69', ink: '12263F', grey: '4A5B70', cora
 const ACCENT = {
   schools: { text: C.navy, mark: 'B88400', ask: C.lemon, rule: C.sun, band: C.navy, label: C.sun, tint: C.lemon },
   parents: { text: C.coral, mark: C.coral, ask: C.peach, rule: C.coral, band: C.coral, label: C.white, tint: C.peach },
-  children: { text: C.teal, mark: C.teal, ask: C.mint, rule: '37C3A0', band: C.teal, label: C.white, tint: C.mint }
+  children: { text: C.teal, mark: C.teal, ask: C.mint, rule: '37C3A0', band: C.teal, label: C.white, tint: C.mint },
+  // the study team and partners (IFF, DfE, school leaders): internal documents
+  team: { text: C.ink, mark: C.ink, ask: C.sky, rule: '8FA3B8', band: C.ink, label: 'CFE6FB', tint: C.sky }
 }
 const FONT = 'Nunito'
 const SIZE = { body: 21, small: 18, caption: 16, lead: 23, eyebrow: 17, title: 52, h1: 34, h2: 27, h3: 23 }
@@ -770,7 +774,8 @@ function toPdf (docx) {
     ...O.packs.map(p => ({ ...p.cover, accent: p.accent, svg: `cover-onboarding-pack-${p.id}` })),
     { ...GUIDE.cover, accent: 'parents', svg: 'cover-setting-up-your-childs-phone' },
     { ...R.delay.cover, accent: 'parents', svg: 'cover-delay-guide' },
-    ...R.invitations.map(v => ({ ...v.cover, accent: v.accent, svg: `cover-invitation-${v.id}` }))
+    ...R.invitations.map(v => ({ ...v.cover, accent: v.accent, svg: `cover-invitation-${v.id}` })),
+    { ...HD.cover, accent: HD.accent, svg: 'cover-help-desk-guide' }
   ])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
@@ -795,6 +800,10 @@ function toPdf (docx) {
     docs.push({ file: `exports/invitations/SMART-invitation-${v.id}.docx`, png: true, buf: await k.pack(invitationBody(v, k), { title: `The SMART Study: ${v.eyebrow.toLowerCase()}`, short: v.eyebrow, footer: v.runBy, description: v.intro, cover: cover(v.cover) }) })
   }
   useSizes()
+  {
+    const k = kit(HD.accent, HD.name, logo)
+    docs.push({ file: `exports/${HD.file}.docx`, buf: await k.pack(packBody(HD, k), { title: 'The SMART Study: help desk guide and triage tool', short: HD.name, footer: 'The SMART Study · ' + HD.name, description: HD.lead, cover: cover(HD.cover) }) })
+  }
   {
     const k = kit('parents', GUIDE.title, logo)
     const body = guidanceBody(k)
