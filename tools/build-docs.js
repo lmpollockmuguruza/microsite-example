@@ -439,8 +439,15 @@ function journalBody (j, k) {
   // A new page: the next paragraph starts one (a separate break paragraph can land on a page of its own)
   const newPage = () => new Paragraph({ children: [], pageBreakBefore: true, spacing: { before: 0, after: 0, line: 20, lineRule: LineRuleType.EXACT } })
   const plainIcon = (name, px) => new ImageRun({ type: 'png', data: ICONS.get(iconKey(name, 'plain-' + C.navy)), transformation: { width: px, height: px }, altText: { title: name, description: '', name } })
+  let breakNext = false // the next heading starts a new page
+  const spacers = new Set()
+  const gap = after => { const p = k.space(after); spacers.add(p); return p }
   for (const b of j.blocks) {
-    if (b.type === 'page') body.push(newPage())
+    if (b.type === 'page') {
+      // a spacer at the bottom of a full page would spill onto a page of its own
+      while (body.length && spacers.has(body[body.length - 1])) body.pop()
+      breakNext = true
+    }
     else if (b.type === 'chapter') {
       // a new page, opening with a band in the children's colour
       body.push(newPage())
@@ -449,12 +456,14 @@ function journalBody (j, k) {
         k.P(b.title, { bold: true, color: C.navy, size: SIZE.title, after: 40, line: 240 }),
         k.P(b.sub, { color: C.grey, after: 20 })
       ], C.mint), k.space(120))
-    } else if (b.type === 'h2') body.push(k.H2(b.text, null, b.icon))
-    else if (b.type === 'p') body.push(k.P(b.text, { after: 100 }))
+    } else if (b.type === 'h2') {
+      body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, pageBreakBefore: breakNext, children: k.withIcon(b.icon, [new TextRun({ text: b.text, font: FONT })], 30) }))
+      breakNext = false
+    } else if (b.type === 'p') body.push(k.P(b.text, { after: 100 }))
     else if (b.type === 'bullets') body.push(...k.bullets(b.items), k.space(60))
     else if (b.type === 'lines') {
       if (b.label) body.push(k.P(b.label, { bold: true, color: C.navy, before: 120, after: 0 }))
-      body.push(ruled(b.n), k.space(160))
+      body.push(ruled(b.n), gap(100))
     } else if (b.type === 'fields') {
       const lw = 3200
       body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [lw, TW - lw], borders: noBorders, rows: b.items.map(f => new TableRow({ cantSplit: true, children: [
@@ -484,17 +493,37 @@ function journalBody (j, k) {
     } else if (b.type === 'puzzle') {
       const inner = [new Paragraph({ children: [k.icon('puzzle', 32), new TextRun({ text: '   ' + b.title, bold: true, color: C.navy, size: SIZE.h3, font: FONT })], spacing: { after: 80, line: 276, lineRule: AUTO } })]
       if (b.text) inner.push(k.P(b.text, { after: 60 }))
-      if (b.words) {
-        const half = Math.ceil(b.words.length / 2)
-        const cw = Math.floor((TW - 440) / 2)
-        inner.push(new Table({ width: { size: cw * 2, type: WidthType.DXA }, columnWidths: [cw, cw], borders: noBorders, rows: Array.from({ length: half }, (x, r) => new TableRow({ children: [0, 1].map(c => {
-          const word = b.words[r + c * half]
-          return cell(cw, word ? [new Paragraph({ children: [new TextRun({ text: word.split('').join(' '), bold: true, color: k.A.text, size: SIZE.h3, font: FONT }), new TextRun({ text: '   →   ______________', color: C.grey, size: SIZE.body, font: FONT })], spacing: { before: 120, after: 60, line: 276, lineRule: AUTO } })] : [new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } })
-        }) })) }), k.P('', { after: 0 }))
+      const spaced = w => w.split('').join(' ')
+      const blank = '   →   ______________'
+      const grid = (cells, cols = 2) => {
+        const cw = Math.floor((TW - 440) / cols)
+        const rows = Math.ceil(cells.length / cols)
+        return new Table({ width: { size: cw * cols, type: WidthType.DXA }, columnWidths: Array(cols).fill(cw), borders: noBorders, rows: Array.from({ length: rows }, (x, r) => new TableRow({ children: Array.from({ length: cols }, (y, c) => {
+          const it = cells[r + c * rows]
+          return cell(cw, [it ? new Paragraph({ children: it, spacing: { before: 120, after: 60, line: 276, lineRule: AUTO } }) : new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } })
+        }) })) })
       }
+      const big = t => new TextRun({ text: t, bold: true, color: k.A.text, size: SIZE.h3, font: FONT })
+      const thin = t => new TextRun({ text: t, color: C.grey, size: SIZE.body, font: FONT })
+      if (b.kind === 'anagram') inner.push(grid(b.items.map(i => [big(spaced(i[0])), thin(blank)])), k.P('', { after: 0 }))
+      if (b.kind === 'missing') inner.push(grid(b.items.map(i => [big(spaced(i[0])), thin(blank)])), k.P('', { after: 0 }))
+      if (b.kind === 'code') {
+        // the message as numbers, a word to a line, with a line to write each word
+        b.message.split(' ').forEach(w => inner.push(new Paragraph({ children: [big(w.split('').map(ch => ch.charCodeAt(0) - 64).join(' – ')), thin(blank)], spacing: { before: 100, after: 40, line: 276, lineRule: AUTO } })))
+      }
+      if (b.kind === 'oddone') b.items.forEach(([words]) => inner.push(new Paragraph({ children: [big(words.join('      '))], spacing: { before: 100, after: 40, line: 276, lineRule: AUTO } })))
       if (b.answers) b.answers.forEach(a => inner.push(k.P(a, { after: 40 })))
       body.push(k.box(inner, C.lemon))
       if (!b.answers) body.push(k.space(160))
+    } else if (b.type === 'log') {
+      body.push(k.table(b.cols, b.rows.map(r => [r ? `**${r}**` : ' ', ...b.cols.slice(1).map(() => ' ')]), b.widths, { size: SIZE.body }))
+      body.push(k.space(200))
+    } else if (b.type === 'checklist') {
+      body.push(...b.items.map((it, n) => new Paragraph({ children: [new TextRun({ text: '☐   ', size: SIZE.h2, color: k.A.text, font: FONT }), ...runs(it), ...(n === b.items.length - 1 && it.endsWith(':') ? [new TextRun({ text: '  ____________________', color: C.grey, font: FONT })] : [])], spacing: { before: 60, after: 80, line: 276, lineRule: AUTO } })), k.space(160))
+    } else if (b.type === 'facts') {
+      body.push(k.box(k.bullets(b.items), C.sky), k.space(120))
+    } else if (b.type === 'teaser') {
+      body.push(k.box([new Paragraph({ children: [k.icon(b.icon, 30), new TextRun({ text: '   Coming soon', bold: true, color: k.A.text, size: SIZE.h3, font: FONT })], spacing: { after: 60, line: 276, lineRule: AUTO } }), k.P(b.text, { after: 20 })], C.mint, { bar: k.A.band }))
     } else if (b.type === 'certificate') {
       body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, pageBreakBefore: true, children: k.withIcon('award', [new TextRun({ text: b.title, font: FONT })], 30) }))
       const frame = { style: BorderStyle.DOUBLE, size: 18, color: k.A.band }
