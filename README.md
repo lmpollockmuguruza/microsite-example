@@ -118,6 +118,7 @@ So the Word files open everywhere, the build writes the package's own parts firs
 | Welcome pack for schools | `content/onboarding.js` (`schools`) | `exports/SMART-onboarding-pack-schools.docx\|pdf` (cover and 4 pages) |
 | Welcome pack for families | `content/onboarding.js` (`parents`) | `exports/SMART-onboarding-pack-parents.docx\|pdf` (cover and 4 pages) |
 | Setting up your child's phone (the guidance for parents) | `content/guidance.js` | `exports/SMART-setting-up-your-childs-phone.docx\|pdf` (cover and about 23 pages) |
+| Junior Scientist Journal (for children: feelings, observations, photos and puzzles, one chapter every three months, and a page for the certificate) | `content/journal.js` | `exports/SMART-junior-scientist-journal.docx\|pdf` (cover and 12 pages) |
 | Help desk guide and triage tool (for the study team and partners) | `content/helpdesk.js` | `exports/SMART-help-desk-guide.docx\|pdf` (cover and 4 pages) |
 | Welcome pack for children | `content/onboarding.js` (`children`) | `exports/SMART-onboarding-pack-children.docx\|pdf` (cover and 2 pages) |
 | Waiting for a first smartphone (the guide for families whose child has no phone yet) | `content/resources.js` (`delay`) | `exports/SMART-delay-guide.docx\|pdf` (cover and 2 pages) |

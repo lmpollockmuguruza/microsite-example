@@ -5,6 +5,7 @@
  *   exports/SMART-onboarding-pack-parents.docx|pdf   welcome pack for families  (content/onboarding.js)
  *   exports/SMART-onboarding-pack-children.docx|pdf  welcome pack for children  (content/onboarding.js)
  *   exports/SMART-delay-guide.docx|pdf               waiting for a first smartphone (content/resources.js)
+ *   exports/SMART-junior-scientist-journal.docx|pdf  the Junior Scientist Journal     (content/journal.js)
  *   exports/SMART-help-desk-guide.docx|pdf           help desk guide and triage tool (content/helpdesk.js)
  *   exports/invitations/SMART-invitation-{schools,parents}.docx|pdf|png
  *                                                    the invitations to take part (content/resources.js);
@@ -40,6 +41,7 @@ const {
   ExternalHyperlink, InternalHyperlink, Bookmark, VerticalAlign, HighlightColor, CharacterSet, HeadingLevel, LineRuleType,
   HeightRule, SectionType
 } = require('docx')
+const DASH = { style: BorderStyle.DASHED, size: 8, color: '8FA3B8' }
 const AUTO = LineRuleType.AUTO
 
 const ROOT = path.resolve(__dirname, '..')
@@ -48,6 +50,7 @@ const R = require('../content/resources')
 const O = require('../content/onboarding')
 const G = require('../content/guidance')
 const HD = require('../content/helpdesk')
+const J = require('../content/journal')
 
 // ------------------------------------------------------------------ house style
 const C = { cream: 'FFFAF3', navy: '003A69', ink: '12263F', grey: '4A5B70', coral: 'C4412A', sun: 'FFC845', lemon: 'FFF1C9', mint: 'E6F7F1', teal: '0B7A67', sky: 'EEF6FD', peach: 'FDE7D3', line: 'DFE5EC', link: '1A5C9E', white: 'FFFFFF' }
@@ -151,6 +154,16 @@ async function loadIcons (names, bg) {
     const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
     const badge = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="48" fill="#${bg}"/><g transform="translate(24 24) scale(2)" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`
     ICONS.set(iconKey(name, bg), await sharp(Buffer.from(badge)).resize(144, 144).png().toBuffer())
+  }
+}
+// Plain line icons, for things children circle (the feelings faces)
+async function loadPlainIcons (names, colour) {
+  const sharp = require('sharp')
+  for (const name of new Set(names)) {
+    const key = iconKey(name, 'plain-' + colour)
+    if (ICONS.has(key)) continue
+    const svg = fs.readFileSync(require.resolve(`lucide-static/icons/${name}.svg`), 'utf8').replace(/stroke="currentColor"/, `stroke="#${colour}"`).replace(/width="24"/, 'width="144"').replace(/height="24"/, 'height="144"')
+    ICONS.set(key, await sharp(Buffer.from(svg)).resize(144, 144).png().toBuffer())
   }
 }
 // Every `icon` named anywhere in a piece of content
@@ -415,6 +428,88 @@ function packBody (pack, k) {
   return body
 }
 
+// ------------------------------------------------------------------ the Junior Scientist Journal
+function journalBody (j, k) {
+  const body = [...k.titleBlock(j.eyebrow, j.title, j.lead)]
+  const cell = (w, children, o = {}) => new TableCell({ width: { size: w, type: WidthType.DXA }, borders: o.borders || { top: none, bottom: none, left: none, right: none }, shading: o.fill ? { type: ShadingType.CLEAR, color: 'auto', fill: o.fill } : undefined, verticalAlign: o.valign || VerticalAlign.TOP, margins: o.margins || { top: 60, bottom: 60, left: 80, right: 80 }, children })
+  // Lines to write on, as table rows (Word merges the borders of empty paragraphs that sit together)
+  const ruled = (n, w = TW, h = 470) => new Table({ width: { size: w, type: WidthType.DXA }, columnWidths: [w], borders: noBorders, rows: Array.from({ length: n }, () => new TableRow({ cantSplit: true, height: { value: h, rule: HeightRule.EXACT }, children: [
+    new TableCell({ width: { size: w, type: WidthType.DXA }, borders: { top: none, left: none, right: none, bottom: { style: BorderStyle.SINGLE, size: 6, color: 'B7C4D1' } }, children: [new Paragraph({ children: [] })] })
+  ] })) })
+  // A new page: the next paragraph starts one (a separate break paragraph can land on a page of its own)
+  const newPage = () => new Paragraph({ children: [], pageBreakBefore: true, spacing: { before: 0, after: 0, line: 20, lineRule: LineRuleType.EXACT } })
+  const plainIcon = (name, px) => new ImageRun({ type: 'png', data: ICONS.get(iconKey(name, 'plain-' + C.navy)), transformation: { width: px, height: px }, altText: { title: name, description: '', name } })
+  for (const b of j.blocks) {
+    if (b.type === 'page') body.push(newPage())
+    else if (b.type === 'chapter') {
+      // a new page, opening with a band in the children's colour
+      body.push(newPage())
+      body.push(k.box([
+        new Paragraph({ children: [k.icon(b.icon, 40), new TextRun({ text: '   ' + b.label.toUpperCase(), bold: true, color: k.A.text, size: SIZE.eyebrow, font: FONT, characterSpacing: 30 })], spacing: { after: 60, line: 240, lineRule: AUTO } }),
+        k.P(b.title, { bold: true, color: C.navy, size: SIZE.title, after: 40, line: 240 }),
+        k.P(b.sub, { color: C.grey, after: 20 })
+      ], C.mint), k.space(120))
+    } else if (b.type === 'h2') body.push(k.H2(b.text, null, b.icon))
+    else if (b.type === 'p') body.push(k.P(b.text, { after: 100 }))
+    else if (b.type === 'bullets') body.push(...k.bullets(b.items), k.space(60))
+    else if (b.type === 'lines') {
+      if (b.label) body.push(k.P(b.label, { bold: true, color: C.navy, before: 120, after: 0 }))
+      body.push(ruled(b.n), k.space(160))
+    } else if (b.type === 'fields') {
+      const lw = 3200
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [lw, TW - lw], borders: noBorders, rows: b.items.map(f => new TableRow({ cantSplit: true, children: [
+        cell(lw, [k.P(f, { bold: true, color: C.navy, after: 0 })], { valign: VerticalAlign.BOTTOM, margins: { top: 260, bottom: 40, left: 0, right: 120 } }),
+        cell(TW - lw, [new Paragraph({ children: [] })], { valign: VerticalAlign.BOTTOM, borders: { top: none, left: none, right: none, bottom: { style: BorderStyle.SINGLE, size: 6, color: 'B7C4D1' } } })
+      ] })) }), k.space(200))
+    } else if (b.type === 'mood') {
+      const w = Math.floor(TW / j.mood.length)
+      body.push(new Table({ width: { size: w * j.mood.length, type: WidthType.DXA }, columnWidths: j.mood.map(() => w), borders: noBorders, rows: [new TableRow({ cantSplit: true, children: j.mood.map(m => cell(w, [
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [plainIcon(m.icon, 52)], spacing: { after: 40, line: 240, lineRule: AUTO } }),
+        k.P(m.label, { align: AlignmentType.CENTER, color: C.grey, size: SIZE.small, after: 0 })
+      ])) })] }), k.space(80))
+    } else if (b.type === 'photos') {
+      const gap = 200
+      const w = Math.floor((TW - gap * (b.months.length - 1)) / b.months.length)
+      const blank = () => cell(gap, [new Paragraph({ children: [] })])
+      const frame = { top: DASH, bottom: DASH, left: DASH, right: DASH }
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: b.months.flatMap((m, i) => i ? [gap, w] : [w]), borders: noBorders, rows: [
+        new TableRow({ cantSplit: true, children: b.months.flatMap((m, i) => { const c = cell(w, [k.P(m, { bold: true, color: k.A.text, after: 0 })], { margins: { top: 0, bottom: 60, left: 0, right: 0 } }); return i ? [blank(), c] : [c] }) }),
+        new TableRow({ cantSplit: true, height: { value: 3600, rule: HeightRule.ATLEAST }, children: b.months.flatMap((m, i) => { const c = cell(w, [new Paragraph({ alignment: AlignmentType.CENTER, children: [k.icon('camera', 34)], spacing: { before: 1100, after: 80, line: 240, lineRule: AUTO } }), k.P('Stick a photo or draw here', { align: AlignmentType.CENTER, color: C.grey, size: SIZE.small, after: 0 })], { borders: frame, fill: C.cream }); return i ? [blank(), c] : [c] }) }),
+        new TableRow({ cantSplit: true, children: b.months.flatMap((m, i) => { const c = cell(w, [k.P('What we did:', { color: C.grey, size: SIZE.small, before: 80, after: 0 }), ruled(2, w, 400), new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } }); return i ? [blank(), c] : [c] }) })
+      ] }), k.space(200))
+    } else if (b.type === 'draw') {
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [TW], borders: noBorders, rows: [new TableRow({ cantSplit: true, height: { value: b.height, rule: HeightRule.ATLEAST }, children: [
+        cell(TW, [k.P(b.label, { color: C.grey, size: SIZE.small, after: 0 })], { borders: { top: DASH, bottom: DASH, left: DASH, right: DASH }, fill: C.cream, margins: { top: 120, bottom: 120, left: 160, right: 160 } })
+      ] })] }))
+    } else if (b.type === 'puzzle') {
+      const inner = [new Paragraph({ children: [k.icon('puzzle', 32), new TextRun({ text: '   ' + b.title, bold: true, color: C.navy, size: SIZE.h3, font: FONT })], spacing: { after: 80, line: 276, lineRule: AUTO } })]
+      if (b.text) inner.push(k.P(b.text, { after: 60 }))
+      if (b.words) {
+        const half = Math.ceil(b.words.length / 2)
+        const cw = Math.floor((TW - 440) / 2)
+        inner.push(new Table({ width: { size: cw * 2, type: WidthType.DXA }, columnWidths: [cw, cw], borders: noBorders, rows: Array.from({ length: half }, (x, r) => new TableRow({ children: [0, 1].map(c => {
+          const word = b.words[r + c * half]
+          return cell(cw, word ? [new Paragraph({ children: [new TextRun({ text: word.split('').join(' '), bold: true, color: k.A.text, size: SIZE.h3, font: FONT }), new TextRun({ text: '   →   ______________', color: C.grey, size: SIZE.body, font: FONT })], spacing: { before: 120, after: 60, line: 276, lineRule: AUTO } })] : [new Paragraph({ children: [] })], { margins: { top: 0, bottom: 0, left: 0, right: 0 } })
+        }) })) }), k.P('', { after: 0 }))
+      }
+      if (b.answers) b.answers.forEach(a => inner.push(k.P(a, { after: 40 })))
+      body.push(k.box(inner, C.lemon))
+      if (!b.answers) body.push(k.space(160))
+    } else if (b.type === 'certificate') {
+      body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, pageBreakBefore: true, children: k.withIcon('award', [new TextRun({ text: b.title, font: FONT })], 30) }))
+      const frame = { style: BorderStyle.DOUBLE, size: 18, color: k.A.band }
+      body.push(new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [TW], borders: noBorders, rows: [new TableRow({ cantSplit: true, height: { value: 9000, rule: HeightRule.ATLEAST }, children: [
+        cell(TW, [
+          new Paragraph({ alignment: AlignmentType.CENTER, children: [k.icon('award', 64)], spacing: { before: 2600, after: 160, line: 240, lineRule: AUTO } }),
+          k.P('Stick your certificate here', { align: AlignmentType.CENTER, bold: true, color: C.navy, size: SIZE.h2, after: 120 }),
+          k.P(b.text, { align: AlignmentType.CENTER, color: C.grey, after: 0 })
+        ], { borders: { top: frame, bottom: frame, left: frame, right: frame }, fill: C.cream, margins: { top: 200, bottom: 200, left: 700, right: 700 } })
+      ] })] }))
+    } else throw new Error('Unknown journal block ' + b.type)
+  }
+  return body
+}
+
 // ------------------------------------------------------------------ invitations to take part (one page after the cover)
 function invitationBody (v, k) {
   // no eyebrow: the page header already says who it's for
@@ -665,12 +760,15 @@ async function coverImages (list) {
       p{margin-top:18px;color:${hexc(C.grey)};font-size:19px;line-height:1.4;max-width:520px}
       .art{flex:1 1 0;min-height:0;display:flex;justify-content:center;align-items:center;padding:24px 0 30px}
       .art img{height:100%;width:auto;max-width:430px;object-fit:contain}
+      .owner{margin-top:26px;display:flex;align-items:flex-end;gap:12px;font-weight:800;font-size:17px;color:${hexc(C.navy)}}
+      .owner .write{flex:1;max-width:300px;height:26px;border-bottom:2px solid ${hexc(C.navy)}}
       .bottom{background:${hexc(A.band)};color:#fff;padding:22px 40px 24px}
       .bottom b{display:block;font-weight:800;font-size:16px}
       .bottom span{display:block;margin-top:4px;font-size:12px;opacity:.95}
     </style></head><body><div class="card">
       <div class="top"><div class="brand"><span class="disc"><img src="${svgData('assets/images/logo-mark.svg')}" alt=""></span><span class="brandtext">THE SMART STUDY</span></div><div class="for">${cv.audience.toUpperCase()}</div></div>
       <div class="body"><div class="kind">${cv.kind.toUpperCase()}</div><h1>${cv.title.replace(/'/g, '&rsquo;')}</h1><p>${cv.what.replace(/'/g, '&rsquo;')}</p>
+        ${cv.owner ? `<div class="owner"><span class="ownertext">${cv.owner}</span><span class="write"></span></div>` : ''}
         <div class="art"><img src="${svgData(`assets/images/illustrations/${cv.illustration}.svg`)}" alt=""></div></div>
       <div class="bottom"><b>${R.START} to ${R.END}</b><span>${R.RUN_BY}</span></div>
     </div></body></html>`, { waitUntil: 'load' })
@@ -711,6 +809,7 @@ function coverLayout (page) {
       return { lines, size: parseFloat(cs.fontSize), weight: cs.fontWeight, color: cs.color, ls: parseFloat(cs.letterSpacing) || 0, opacity: parseFloat(cs.opacity) }
     }
     return {
+      owner: document.querySelector('.owner') ? { text: text('.ownertext'), line: box('.owner .write') } : null,
       top: box('.top'), bottom: box('.bottom'), disc: box('.disc'), logo: box('.disc img'), art: box('.art img'),
       text: { brand: text('.brandtext'), audience: text('.for'), kind: text('.kind'), title: text('h1'), what: text('p'), dates: text('.bottom b'), runBy: text('.bottom span') }
     }
@@ -743,6 +842,7 @@ ${block('Audience', t.audience)}
 ${block('Kind of document', t.kind)}
 ${block('Title', t.title)}
 ${block('What it is', t.what)}
+${L.owner ? `${block('Belongs to', L.owner.text)}<rect id="Name line" x="${r(L.owner.line.x)}" y="${r(L.owner.line.y + L.owner.line.h - 2)}" width="${r(L.owner.line.w)}" height="2" fill="#${C.navy}"/>` : ''}
 ${place('Illustration', `assets/images/illustrations/${cv.illustration}.svg`, L.art)}
 ${block('Dates', t.dates)}
 ${block('Run by', t.runBy)}
@@ -775,7 +875,8 @@ function toPdf (docx) {
     { ...GUIDE.cover, accent: 'parents', svg: 'cover-setting-up-your-childs-phone' },
     { ...R.delay.cover, accent: 'parents', svg: 'cover-delay-guide' },
     ...R.invitations.map(v => ({ ...v.cover, accent: v.accent, svg: `cover-invitation-${v.id}` })),
-    { ...HD.cover, accent: HD.accent, svg: 'cover-help-desk-guide' }
+    { ...HD.cover, accent: HD.accent, svg: 'cover-help-desk-guide' },
+    { ...J.cover, accent: J.accent, svg: 'cover-junior-scientist-journal' }
   ])
   const cover = cv => ({ ...cv, image: covers.get(cv.title) })
   await loadScreens()
@@ -798,6 +899,13 @@ function toPdf (docx) {
     const k = kit(v.accent, v.name, logo)
     fs.mkdirSync(out('exports/invitations'), { recursive: true })
     docs.push({ file: `exports/invitations/SMART-invitation-${v.id}.docx`, png: true, buf: await k.pack(invitationBody(v, k), { title: `The SMART Study: ${v.eyebrow.toLowerCase()}`, short: v.eyebrow, footer: v.runBy, description: v.intro, cover: cover(v.cover) }) })
+  }
+  {
+    useSizes(J.sizes)
+    await loadIcons(iconsIn(J.blocks).concat(['camera', 'puzzle', 'award']), ACCENT[J.accent].band)
+    await loadPlainIcons(J.mood.map(m => m.icon), C.navy)
+    const k = kit(J.accent, J.name, logo)
+    docs.push({ file: `exports/${J.file}.docx`, buf: await k.pack(journalBody(J, k), { title: 'The SMART Study: Junior Scientist Journal', short: J.name, footer: 'The SMART Study · ' + J.name, description: J.lead, cover: cover(J.cover) }) })
   }
   useSizes()
   {
