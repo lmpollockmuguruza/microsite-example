@@ -127,6 +127,8 @@ The packs are lists of blocks (the main ask, headings, paragraphs, stats, tables
 
 The guidance reads top to bottom: what we're asking, which guide is yours (a link to each), what to have ready, then the iPhone guide and the Android guide. Each guide starts with **Start from what you already have**, whose rows link to the right step; "Skip to Step 3", "Go to Step 4" and the other step references are links too. The longer explanations (what changes if you skip Part 1 on an iPhone, why Android has no shortcut) are in **Good to know** at the end, linked from Part 1. Each step has a tick box for parents who print it.
 
+For the bottom of each page of the guidance, `npm run build:progress` draws progress bars for Figma in `exports/figma/progress/`: one for before you start, one for each of the 8 steps (the same for iPhone and Android), one for all done, and all of them on one board. Each is 482 wide, the guide's text width on an A4 frame; `page-map.txt` says which bar goes on which page.
+
 It needs the screen PNGs from `npm run build:guides` and LibreOffice (`soffice`, or set `SOFFICE`). Nunito is embedded in the Word files and given to LibreOffice from `assets/fonts/ttf`, so it needn't be installed. `npm run build` runs the steps in the right order; build the docs before the resources, so the school resources page shows the packs' page counts.
 
 ## The design system board

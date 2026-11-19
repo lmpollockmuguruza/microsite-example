@@ -1,0 +1,31 @@
+Which progress bar goes on which page of exports/SMART-setting-up-your-childs-phone.pdf
+(PDF page numbers, counting the cover as page 1. If the guide changes, its pages may move:
+each page takes the step it's mostly about.)
+
+Page 1    cover: no bar
+Pages 2-3 progress-start.svg       (what we're asking, before you start)
+
+iPhone guide
+Page 4    progress-start.svg       (start from what you already have)
+Page 5    progress-step-1.svg
+Page 6    progress-step-2.svg
+Page 7    progress-step-3.svg
+Page 8    progress-step-4.svg
+Page 9    progress-step-5.svg
+Page 10   progress-step-5.svg
+Page 11   progress-step-6.svg
+Page 12   progress-step-7.svg
+Page 13   progress-step-8.svg      (or progress-done.svg: it ends with "That's it. Thank you!")
+
+Android guide
+Page 14   progress-start.svg       (start from what you already have)
+Page 15   progress-step-1.svg
+Page 16   progress-step-2.svg
+Page 17   progress-step-3.svg
+Page 18   progress-step-4.svg
+Page 19   progress-step-5.svg
+Page 20   progress-step-5.svg
+Page 21   progress-step-6.svg
+Page 22   progress-step-8.svg      (or progress-done.svg)
+
+Pages 23-24 progress-done.svg      (good to know)

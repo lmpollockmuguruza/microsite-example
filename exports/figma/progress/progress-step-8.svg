@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="482" height="40" viewBox="0 0 482 40"><g id="Progress: Step 8 of 8" transform="translate(0 0)"><text x="0" y="12" font-family="Nunito" font-size="10" font-weight="800" fill="#003A69">Step 8 of 8</text><text x="452" y="12" text-anchor="end" font-family="Nunito" font-size="10" font-weight="800" fill="#0B7A67">Last step!</text><g id="Segments"><rect x="0.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="57.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="114.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="171.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="228.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="285.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="342.00" y="20" width="53.00" height="10" rx="5" fill="#37C3A0"/><rect x="399.00" y="20" width="53.00" height="10" rx="5" fill="#FFC845"/></g><g id="Finish" transform="translate(460 14) scale(0.92)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="#A9B6C4" d="M5.8 11.3 2 22l10.7-3.79" />
+  <path stroke="#A9B6C4" d="M4 3h.01" />
+  <path stroke="#A9B6C4" d="M22 8h.01" />
+  <path stroke="#A9B6C4" d="M15 2h.01" />
+  <path stroke="#A9B6C4" d="M22 20h.01" />
+  <path stroke="#A9B6C4" d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" />
+  <path stroke="#A9B6C4" d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" />
+  <path stroke="#A9B6C4" d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" />
+  <path stroke="#A9B6C4" d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /></g></g></svg>

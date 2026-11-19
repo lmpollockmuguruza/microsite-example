@@ -12,7 +12,8 @@
     "build": "npm run build:css && npm run build:js && npm run build:guides && npm run build:docs && npm run build:video && npm run build:resources && npm run build:design-system && npm run build:deck",
     "serve": "python3 -m http.server 8000",
     "build:docs": "node tools/build-docs.js",
-    "build:video": "node tools/build-video.js"
+    "build:video": "node tools/build-video.js",
+    "build:progress": "node tools/build-progress.js"
   },
   "devDependencies": {
     "@fontsource/nunito": "^5.0.0",
